@@ -75,7 +75,7 @@ showLogin(): void {
     this.authService.login(loginData).subscribe({
       next: (res) => {
         alert('Login successful!');
-         this.router.navigate(['/sidebar']);
+         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         alert('Invalid credentials.');

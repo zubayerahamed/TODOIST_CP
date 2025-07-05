@@ -1,0 +1,5 @@
+/* If your sidebar is tall with many items */
+.sidebar-nav {
+  height: calc(100vh - 60px); /* Adjust based on your header height */
+  overflow-y: auto;
+}
