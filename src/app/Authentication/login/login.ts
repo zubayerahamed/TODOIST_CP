@@ -29,7 +29,10 @@ export class Login implements AfterViewInit{
   loginEmail: string = '';
   loginPassword: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   
 
@@ -72,6 +75,7 @@ showLogin(): void {
     this.authService.login(loginData).subscribe({
       next: (res) => {
         alert('Login successful!');
+         this.router.navigate(['/sidebar']);
       },
       error: (err) => {
         alert('Invalid credentials.');
