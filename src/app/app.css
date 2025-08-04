@@ -406,7 +406,252 @@ RESPONSIVE DESIGN - TABLET AND MOBILE
   .mobile-overlay,
   .task-status-check-icons-container,
   .btn-add-project,
-  .btn-edit-project {
+  .btn-edit-project,
+  .modal-backdrop,
+  .modal-container {
     transition: none;
   }
+}
+
+/*
+MODAL STYLES
+*/
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-container {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+.modal-lg {
+  max-width: 800px;
+}
+
+.modal-header {
+  padding: 10px 24px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  background-color: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #202020;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #6c757d;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-close:hover {
+  background-color: #e9ecef;
+  color: #202020;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 10px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+}
+
+.participant-avatar {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dee2e6;
+}
+
+/* Modal animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal responsive styles */
+@media (max-width: 767.98px) {
+  .modal-backdrop {
+    padding: 10px;
+  }
+  
+  .modal-container {
+    margin: 0;
+  }
+  
+  .modal-lg {
+    max-width: 100%;
+  }
+  
+  .modal-header {
+    padding: 16px 20px;
+  }
+  
+  .modal-title {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    padding: 12px 20px;
+    flex-direction: column-reverse;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .modal-footer .btn:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Stack form elements on mobile */
+  .modal-body .row .col-md-3,
+  .modal-body .row .col-md-4,
+  .modal-body .row .col-md-6,
+  .modal-body .row .col-md-8 {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .modal-header {
+    padding: 12px 16px;
+  }
+  
+  .modal-title {
+    font-size: 1rem;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  .modal-footer {
+    padding: 12px 16px;
+  }
+  
+  .participant-avatar {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Form improvements in modal */
+.modal-body .form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 6px;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.modal-body .form-check {
+  margin-bottom: 12px;
+}
+
+.modal-body .form-check-label {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+/* Button improvements in modal */
+.modal-footer .btn {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.modal-footer .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.modal-footer .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
 }

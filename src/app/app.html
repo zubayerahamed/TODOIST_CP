@@ -20,7 +20,7 @@
       <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button">
         <i class="ph ph-plus-circle fs-5 me-2"></i><span>Add Task</span>
       </button>
-      <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button">
+      <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button" (click)="openAddEventModal()">
         <i class="ph ph-calendar-plus fs-5 me-2"></i><span>Add Event</span>
       </button>
     </div>
@@ -80,8 +80,8 @@
   <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
     <div class="header-area d-flex align-items-center justify-content-between">
       <!-- Mobile Menu Button -->
-      <button class="mobile-menu-btn d-md-none btn p-0 me-3" (click)="toggleSidebar()">
-        <i class="ph ph-list mobile-menu-bar-icon"></i>
+      <button class="mobile-menu-btn d-md-none btn btn-link p-0 me-3" (click)="toggleSidebar()">
+        <i class="ph ph-list fs-2"></i>
       </button>
       <h3 class="p-0 m-0 fw-bold flex-grow-1">Today</h3>
       <div class="d-flex align-items-center gap-3">
@@ -273,6 +273,119 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Event Modal -->
+  <div class="modal-backdrop" *ngIf="isAddEventModalOpen" (click)="onModalBackdropClick($event)">
+    <div class="modal-container modal-xl d-flex flex-column">
+      <div class="modal-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <i class="ph ph-calendar-plus me-2 fs-4"></i>
+          <h4 class="modal-title">Add New Event</h4>
+        </div>
+        <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeAddEventModal()">
+          <i class="ph ph-x fs-4"></i>
+        </button>
+      </div>
+      <div class="modal-body flex-grow-1">
+        <form>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="eventTitle" class="form-label">Event Title *</label>
+                <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventProject" class="form-label">Project</label>
+                <select class="form-select" id="eventProject">
+                  <option value="">Select Project</option>
+                  <option value="office">Office Work</option>
+                  <option value="house">House Work</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="eventDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="eventDescription" rows="3" placeholder="Enter event description"></textarea>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="eventDate" class="form-label">Date *</label>
+                <input type="date" class="form-control" id="eventDate">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label for="eventStartTime" class="form-label">Start Time *</label>
+                <input type="time" class="form-control" id="eventStartTime">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label for="eventEndTime" class="form-label">End Time *</label>
+                <input type="time" class="form-control" id="eventEndTime">
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="eventLocation" class="form-label">Location</label>
+                <input type="text" class="form-control" id="eventLocation" placeholder="Enter location">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="eventTag" class="form-label">Tag</label>
+                <input type="text" class="form-control" id="eventTag" placeholder="Enter tag">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Participants</label>
+            <div class="d-flex align-items-center gap-2">
+              <img src="/assets/images/zubayer.jpg" class="rounded-circle participant-avatar" alt="User">
+              <button type="button" class="btn btn-outline-secondary btn-sm">
+                <i class="ph ph-plus me-1"></i>Add Participant
+              </button>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="allDayEvent">
+                <label class="form-check-label" for="allDayEvent">
+                  All Day Event
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="reminderEnabled">
+                <label class="form-check-label" for="reminderEnabled">
+                  Set Reminder
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
+        <button type="button" class="btn btn-primary">
+          <i class="ph ph-calendar-plus me-2"></i>Create Event
+        </button>
       </div>
     </div>
   </div>
