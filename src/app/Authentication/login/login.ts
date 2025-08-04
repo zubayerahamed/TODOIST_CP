@@ -1,86 +1,175 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { AuthService } from '../../services/auth/auth-service';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { JsonPipe } from '@angular/common';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { FlatpickrDirective, provideFlatpickrDefaults } from 'angularx-flatpickr';
 
 @Component({
+  imports: [FlatpickrDirective, FormsModule, JsonPipe],
+  providers: [provideFlatpickrDefaults()],
+  template: `<div class="container-fluid">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Basic demo</h3>
+            </div>
+            <div class="panel-body">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="basicDemoValue"
+              />
+              NgModel value: {{ basicDemoValue }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Model value as date</h3>
+            </div>
+            <div class="panel-body">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="modelValueAsDate"
+                [altInput]="true"
+                [convertModelValue]="true"
+              />
+              NgModel value: {{ modelValueAsDate }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Date time picker</h3>
+            </div>
+            <div class="panel-body">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="dateTimeValue"
+                [altInput]="true"
+                [convertModelValue]="true"
+                [enableTime]="true"
+                dateFormat="Y-m-dTH:i"
+              />
+              NgModel value: {{ dateTimeValue }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Multi date picker</h3>
+            </div>
+            <div class="panel-body">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="multiDates"
+                [altInput]="true"
+                [convertModelValue]="true"
+                mode="multiple"
+              />
+              NgModel value: {{ multiDates }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Date range picker</h3>
+            </div>
+            <div class="panel-body">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="rangeValue"
+                [altInput]="true"
+                [convertModelValue]="true"
+                mode="range"
+              />
+              NgModel value: {{ rangeValue | json }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Time picker</h3>
+            </div>
+            <div class="panel-body">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="timePicker"
+                [noCalendar]="true"
+                [enableTime]="true"
+                [dateFormat]="'H:i'"
+              />
+              NgModel value: {{ timePicker }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Inline picker</h3>
+            </div>
+            <div class="panel-body inline-flatpickr">
+              <input
+                class="form-control"
+                type="text"
+                mwlFlatpickr
+                [(ngModel)]="inlineDatePicker"
+                [altInput]="true"
+                [convertModelValue]="true"
+                [inline]="true"
+              />
+              NgModel value: {{ inlineDatePicker }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule
+  encapsulation: ViewEncapsulation.None,
+   styles: [
+    `
+      .inline-flatpickr .form-control,
+      .flatpickr-calendar.arrowTop:before,
+      .flatpickr-calendar.arrowTop:after {
+        display: none;
+      }
+    `,
   ],
-  templateUrl: './login.html',
-  styleUrl: './login.css'
+  // imports: [FlatpickrDirective],
+  // templateUrl: './login.html',
+  // styleUrl: './login.css',
 })
-export class Login implements AfterViewInit{
-
-@ViewChild('container') container!: ElementRef;
-  // Registration fields
-  firstName: string = '';
-  lastName: string = '';
-  signupEmail: string = '';
-  signupPassword: string = '';
-
-  // Login fields
-  loginEmail: string = '';
-  loginPassword: string = '';
-
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
-
-  
-
-  ngAfterViewInit(): void {
-  }
-
-showRegister(): void {
-  this.container.nativeElement.classList.add('active');
-}
-
-showLogin(): void {
-  this.container.nativeElement.classList.remove('active');
-}
-
-  signup() {
-    const signupData = {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.signupEmail,
-      password: this.signupPassword
-    };
-
-    this.authService.signup(signupData).subscribe({
-      next: (res) => {
-        alert('Registration successful! Please login.');
-        this.showLogin();
-      },
-      error: (err) => {
-        alert('Registration failed.');
-      }
-    });
-  }
-
-  login() {
-    const loginData = {
-      email: this.loginEmail,
-      password: this.loginPassword
-    };
-
-    this.authService.login(loginData).subscribe({
-      next: (res) => {
-        alert('Login successful!');
-         this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        alert('Invalid credentials.');
-      }
-    });
-  }
-
+export class Login {
+  basicDemoValue = '2017-01-01';
+  modelValueAsDate: Date = new Date();
+  dateTimeValue: Date = new Date();
+  multiDates: Date[] = [new Date(), (new Date() as any)['fp_incr'](10)];
+  rangeValue: { from: Date; to: Date } = {
+    from: new Date(),
+    to: (new Date() as any)['fp_incr'](10),
+  };
+  inlineDatePicker: Date = new Date();
+  timePicker: Date | null = null;
 }

@@ -1,13 +1,29 @@
-
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { Login } from './Authentication/login/login';  // Make sure Login is a Standalone component or module
-import { SideNavBar } from './Home/side-nav-bar/side-nav-bar';
-import { Dashboard } from './Home/dashboard/dashboard';
+import { Layouts } from './layouts/layouts';
+import { Login } from './Authentication/login/login';
+import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: Login },
-  {path:'sidebar',component:SideNavBar},
-  {path: 'dashboard',component:Dashboard}
+
+  {
+    path: '',
+    component: Layouts,
+    children:[
+      {
+        path: 'dashboard',
+        component: Dashboard,
+      }
+    ]
+  },
+  {
+    path: 'login',
+    component: Login,
+  }
+
+
+  // { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // { path: 'login', component: Login },
+  // { path: 'sidebar', component: SideNavBar },
+  // { path: 'dashboard', component: Dashboard },
 ];
