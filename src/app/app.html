@@ -1,59 +1,272 @@
 <div class="wrapper bg-white vh-100 d-flex">
   <div class="sidebar-wrapper vh-100 d-flex flex-column">
     <div class="user-content d-flex justify-content-between align-items-center">
-      <img src="/assets/images/zubayer.jpg" class="rounded-circle user-content-user-image" alt="Cinque Terre">
-      <h5 class="user-content-workspace-title text-truncate fw-bold">Zubayer's Workspace</h5>
-      <i class="ph ph-caret-down fs-4 fw-bold"></i>
+      <img
+           src="/assets/images/zubayer.jpg"
+           class="rounded-circle user-content-user-image"
+           alt="Cinque Terre" />
+      <h5 class="user-content-workspace-title text-truncate fw-bold">
+        Zubayer's Workspace
+      </h5>
+      <a href="" class="page-link"><i class="ph ph-caret-down fs-4 fw-bold"></i></a>
     </div>
     <div class="d-grid gap-2">
-      <button class="btn btn-secondary" type="button"><i class="ph ph-user-sound me-2"></i> Voice Command</button>
-      <button class="btn btn-primary" type="button"><i class="ph ph-plus-circle me-2"></i> Add Task</button>
-      <button class="btn btn-dark" type="button"><i class="ph ph-calendar-plus me-2"></i> Add Event</button>
+      <button class="btn btn-warning d-flex align-items-center justify-content-center" type="button">
+        <i class="ph ph-user-sound fs-5 me-2"></i><span>Voice Command</span>
+      </button>
+      <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button">
+        <i class="ph ph-plus-circle fs-5 me-2"></i><span>Add Task</span>
+      </button>
+      <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button">
+        <i class="ph ph-calendar-plus fs-5 me-2"></i><span>Add Event</span>
+      </button>
     </div>
     <div class="divider"></div>
     <div class="d-flex align-items-center">
-      <i class="ph ph-tray fw-bold fs-4 me-2"></i>
-      <a href="" class="page-link fw-bold flex-grow-1">Inbox</a>
+      <i class="ph ph-tray fs-4 me-2"></i>
+      <a href="" class="page-link flex-grow-1">Inbox</a>
     </div>
     <div class="d-flex align-items-center">
-      <i class="ph ph-calendar-dot fw-bold fs-4 me-2"></i>
-      <a href="" class="page-link fw-bold flex-grow-1">Today</a>
-      <span class="fw-bold ms-3">2</span>
+      <i class="ph ph-calendar-dot fs-4 me-2"></i>
+      <a href="" class="page-link page-active flex-grow-1">Today</a>
+      <span class="ms-2 me-2">3</span>
     </div>
     <div class="d-flex align-items-center">
-      <i class="ph ph-calendar-dots fs-4 fw-bold me-2"></i>
-      <a href="" class="page-link fw-bold flex-grow-1">Upcoming</a>
+      <i class="ph ph-calendar-dots fs-4 me-2"></i>
+      <a href="" class="page-link flex-grow-1">Upcoming</a>
     </div>
     <div class="divider"></div>
     <div class="d-flex align-items-center">
-      <i class="ph ph-check-circle fs-4 fw-bold me-2"></i>
-      <a href="" class="page-link fw-bold flex-grow-1">Completed</a>
-      <span class="fw-bold ms-3">2</span>
+      <i class="ph ph-check-circle fs-4 me-2"></i>
+      <a href="" class="page-link flex-grow-1">Completed</a>
+      <span class="ms-2 me-2">2</span>
     </div>
     <div class="spacer"></div>
-    <div class="d-flex align-items-center text-muted">
+    <div class="d-flex align-items-center section-favourites">
       <i class="ph ph-star fs-4 fw-bold me-2"></i>
-      <a href="" class="page-link fw-bold flex-grow-1">Favourites</a>
-      <i class="ph ph-caret-down fs-4 fw-bold ms-3"></i>
+      <span class="page-link fw-bold flex-grow-1">Favourites</span>
+      <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
     </div>
-    <div class="d-flex align-items-center text-muted">
-      <i class="ph ph-hash fs-4 ms-3 me-2"></i>
+    <div class="d-flex align-items-center text-muted project-item">
+      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
       <a href="" class="page-link flex-grow-1">Office work</a>
-      <span class="fw-bold ms-3">2</span>
+      <span class="ms-2 me-2">2</span>
+      <a href="" class="page-link align-items-center btn-edit-project"><i class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
     </div>
     <div class="spacer"></div>
-    <div class="d-flex align-items-center text-muted">
+    <div class="d-flex align-items-center section-my-projects">
       <i class="ph ph-briefcase fs-4 fw-bold me-2"></i>
-      <a href="" class="page-link fw-bold flex-grow-1">My Projects</a>
-      <i class="ph ph-caret-down fs-4 fw-bold ms-3"></i>
+      <span class="page-link fw-bold flex-grow-1">My Projects</span>
+      <a href="" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
+      <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
     </div>
-    <div class="d-flex align-items-center text-muted">
-      <i class="ph ph-hash fs-4 ms-3 me-2"></i>
+    <div class="d-flex align-items-center text-muted project-item">
+      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
       <a href="" class="page-link flex-grow-1">Office work</a>
-      <span class="fw-bold ms-3">2</span>
+      <span class="ms-2 me-2">2</span>
+      <a href="" class="page-link align-items-center btn-edit-project"><i class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
     </div>
+    <div class="d-flex align-items-center text-muted project-item">
+      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+      <a href="" class="page-link flex-grow-1">Hous work</a>
+      <span class="ms-2 me-2">1</span>
+      <a href="" class="page-link align-items-center btn-edit-project"><i class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+    </div>
+
   </div>
-  <div class="content-wrapper vh-100 d-flex flex-grow-1">
-    hi there 2
+  <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
+    <div class="header-area d-flex align-items-center justify-content-between">
+      <h3 class="p-0 m-0 fw-bold flex-grow-1">Today</h3>
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2 p-1 ps-4 pe-4 bg-dark text-white rounded">
+          <i class="ph ph-timer fs-5"></i>
+          <span class="fs-5">07 : 06 : 02</span>
+        </div>
+        <i class="ph ph-bell fs-2"></i>
+        <img
+             src="/assets/images/zubayer.jpg"
+             class="rounded-circle user-content-user-image"
+             alt="Cinque Terre" />
+      </div>
+    </div>
+    <div class="content-area flex-grow-1 d-flex flex-column gap-5">
+      <div class="project-box d-flex gap-3 flex-column">
+        <div class="d-flex align-items-center project-box-header">
+          <i class="ph ph-hash fs-5 me-2"></i>
+          <h5 class="m-0 p-0 fw-bold">Office Work</h5>
+        </div>
+        <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+          <div class="task-status-check-icons-container">
+            <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+            <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+          </div>
+          <div class="flex-grow-1 d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-dark ps-3 pe-3">Task</span>
+              <h5 class="m-0">Learn Angular</h5>
+            </div>
+            <span class="mt-2 mb-2">Some task description here</span>
+            <div class="d-flex align-items-center gap-4">
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-calendar-dot"></i>
+                <span class="text-muted text-sm">Today: 9:00am</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-chat-teardrop-dots"></i>
+                <span class="text-muted text-sm">2</span>
+              </div>
+
+              <span class="badge bg-info fw-normal">In Progress</span>
+
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-tag"></i>
+                <span class="text-muted text-sm">Softwae Development</span>
+              </div>
+
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-arrow-fat-lines-up text-danger"></i>
+                <span class="text-muted text-sm">Very High</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-4">
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-calendar-slash"></i>
+                <span class="text-muted text-sm">Due date: Aug 29, 2025</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-clock"></i>
+                <span class="text-muted text-sm">Estimated time: 8 hour</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-clock-countdown"></i>
+                <span class="text-muted text-sm">Spent time: 2 hour</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center mt-2 gap-2">
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+            </div>
+          </div>
+        </div>
+
+        <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+          <div class="task-status-check-icons-container">
+            <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+            <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+          </div>
+          <div class="flex-grow-1 d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-primary ps-3 pe-3">Event</span>
+              <h5 class="m-0">Meeting with Arafat</h5>
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+            </div>
+            <span class="mt-2 mb-2">Some event description here</span>
+            <div class="d-flex align-items-center gap-4">
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-calendar-dot"></i>
+                <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-chat-teardrop-dots"></i>
+                <span class="text-muted text-sm">2</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-tag"></i>
+                <span class="text-muted text-sm">Project Management</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-4">
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-map-pin"></i>
+                <span class="text-muted text-sm">Location: Online Zoom Meeting</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center mt-2 gap-2">
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-box d-flex gap-3 flex-column">
+        <div class="d-flex align-items-center project-box-header">
+          <i class="ph ph-hash fs-5 me-2"></i>
+          <h5 class="m-0 p-0 fw-bold">House Work</h5>
+        </div>
+        <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+          <div class="task-status-check-icons-container">
+            <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+            <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+          </div>
+          <div class="flex-grow-1 d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-primary ps-3 pe-3">Event</span>
+              <h5 class="m-0">Bazar</h5>
+              <img
+                   src="/assets/images/zubayer.jpg"
+                   class="rounded-circle task-participants-image"
+                   alt="Cinque Terre" />
+            </div>
+            <span class="mt-2 mb-2">
+              <span class="fw-bold">Checklist</span>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" checked>
+                <label class="form-check-label text-deleted" for="defaultCheck1">
+                  Fish
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                  Meat
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                  Vegetables
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                  Rice
+                </label>
+              </div>
+            </span>
+            <div class="d-flex align-items-center gap-4">
+              <div class="d-flex align-items-center gap-1">
+                <i class="ph ph-calendar-dot"></i>
+                <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
