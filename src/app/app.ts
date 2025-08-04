@@ -11,4 +11,13 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   protected title = 'TODOIST';
+  isSidebarOpen = false;
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar() {
+    this.isSidebarOpen = false;
+  }
 }
