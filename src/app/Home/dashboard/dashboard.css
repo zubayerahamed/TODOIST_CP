@@ -1,0 +1,20 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+app-side-nav-bar {
+  width: 250px; /* Adjust width as needed */
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  background: #f8f9fa; /* Sidebar background color */
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.dashboard-content {
+  flex: 1;
+  margin-left: 250px; /* Should match sidebar width */
+  padding: 20px;
+  background: #fff; /* Content background */
+}
