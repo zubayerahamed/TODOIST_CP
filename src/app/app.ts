@@ -79,6 +79,10 @@ export class App {
     avatar: '/assets/images/zubayer.jpg'
   };
 
+  // Create Workspace modal properties
+  isCreateWorkspaceModalOpen : boolean = false;
+  newWorkspaceName = '';
+
   // Dummy participants data
   allParticipants: Participant[] = [
     { id: 1, name: 'John Doe', email: 'john.doe@example.com', avatar: '/assets/images/zubayer.jpg' },
@@ -190,6 +194,10 @@ export class App {
     this.isAddTaskModalOpen = false;
     this.isTaskParticipantSearchOpen = false;
     this.taskParticipantSearchQuery = '';
+    // Close all subtask participant searches when closing task modal
+    Object.keys(this.isSubtaskParticipantSearchOpen).forEach(key => {
+      this.closeSubtaskParticipantSearch(parseInt(key));
+    });
   }
 
   onTaskModalBackdropClick(event: Event) {
@@ -303,7 +311,6 @@ export class App {
   removeTaskFile(fileId: number) {
     this.taskAttachedFiles = this.taskAttachedFiles.filter(f => f.id !== fileId);
   }
-
 
   getFileIcon(fileName: string, fileType: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase();
@@ -485,6 +492,15 @@ export class App {
         this.closeUserProfileDropdown();
       }
     }
+
+    // Check if create workspace modal should be closed when clicking outside
+    if (this.isCreateWorkspaceModalOpen) {
+      const isClickInsideModal = target.closest('.modal-container');
+      
+      if (!isClickInsideModal) {
+        this.closeCreateWorkspaceModal();
+      }
+    }
   }
 
   onSubtaskParticipantSearchBackdropClick(event: Event, subtaskId: number) {
@@ -617,5 +633,57 @@ export class App {
     this.closeUserProfileDropdown();
     // Add logout logic here
     console.log('Logging out...');
+  }
+
+  // Create Workspace modal methods
+  openCreateWorkspaceModal() {
+    this.isCreateWorkspaceModalOpen = true;
+    this.newWorkspaceName = '';
+    this.closeWorkspaceDropdown();
+  }
+
+  closeCreateWorkspaceModal() {
+    this.isCreateWorkspaceModalOpen = false;
+    this.newWorkspaceName = '';
+  }
+
+  onCreateWorkspaceModalBackdropClick(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.closeCreateWorkspaceModal();
+    }
+  }
+
+  onWorkspaceNameInputChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.newWorkspaceName = target.value;
+  }
+
+  onWorkspaceNameKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.createWorkspace();
+    }
+  }
+
+  createWorkspace() {
+    console.log("hi");
+    if (this.newWorkspaceName.trim()) {
+      const newWorkspace: Workspace = {
+        id: Date.now(),
+        name: this.newWorkspaceName.trim(),
+        avatar: '/assets/images/zubayer.jpg'
+      };
+      
+      // Add to available workspaces
+      this.availableWorkspaces.push(newWorkspace);
+      
+      // Switch to the new workspace
+      this.currentWorkspace = newWorkspace;
+      
+      // Close the modal
+      this.closeCreateWorkspaceModal();
+      
+      console.log('Created new workspace:', newWorkspace.name);
+    }
   }
 }

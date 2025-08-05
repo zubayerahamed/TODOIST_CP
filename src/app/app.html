@@ -51,7 +51,7 @@
           <div class="workspace-dropdown-divider"></div>
           
           <!-- Create Workspace -->
-          <div class="workspace-dropdown-item" (click)="closeWorkspaceDropdown()">
+          <div class="workspace-dropdown-item" (click)="openCreateWorkspaceModal(); $event.stopPropagation()">
             <i class="ph ph-plus fs-5 me-3"></i>
             <span>Create Workspace</span>
           </div>
@@ -478,8 +478,8 @@
                 </button>
               </div>
               <div class="participant-search-container">
-                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openParticipantSearch()">
-                  <i class="ph ph-plus me-1"></i>Add Participant
+                <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="openParticipantSearch()">
+                  <i class="ph ph-plus me-1"></i><span>Add Participant</span>
                 </button>
 
                 <!-- Participant Search Dropdown -->
@@ -566,9 +566,9 @@
             <!-- Checklist Items -->
             <div class="checklist-items-container" *ngIf="checklistItems.length > 0">
               <div *ngFor="let item of checklistItems" class="checklist-item d-flex align-items-center justify-content-between">
-                <div class="form-check d-flex align-items-center flex-grow-1">
+                <div class="d-flex align-items-center fex-grow-1">
                   <input
-                         class="form-check-input"
+                         class="form-check-input me-2"
                          type="checkbox"
                          [id]="'checklist-' + item.id"
                          [checked]="item.completed"
@@ -629,9 +629,9 @@
                      #fileInput>
               <button
                       type="button"
-                      class="btn btn-outline-secondary btn-sm attach-file-btn"
+                      class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
                       (click)="fileInput.click()">
-                <i class="ph ph-plus me-1"></i>Attach file
+                <i class="ph ph-plus me-1"></i><span>Attach file</span>
               </button>
             </div>
           </div>
@@ -639,8 +639,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
-        <button type="button" class="btn btn-primary">
-          <i class="ph ph-calendar-plus me-2"></i>Create Event
+        <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+          <i class="ph ph-calendar-plus me-2"></i><span>Create Event</span>
         </button>
       </div>
     </div>
@@ -678,7 +678,7 @@
               <div class="row">
                 <div class="col-md-3">
                   <div class="mb-3">
-                    <label for="taskProject" class="form-label">Project</label>
+                    <label for="taskProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
                     <select class="form-select" id="taskProject">
                       <option value="">-- Select Project --</option>
                       <option value="daily-learning">Daily learning</option>
@@ -690,7 +690,7 @@
                 <div class="col-md-3">
                   <!-- Section -->
                   <div class="mb-3">
-                    <label for="taskSection" class="form-label">Section</label>
+                    <label for="taskSection" class="form-label"><i class="ph ph-arrows-out-cardinal me-2"></i>Section</label>
                     <select class="form-select" id="taskSection">
                       <option value="">-- Select Section --</option>
                       <option value="todo">To Do</option>
@@ -701,7 +701,7 @@
                 <div class="col-md-3">
                   <!-- Category -->
                   <div class="mb-3">
-                    <label for="taskCategory" class="form-label">Category</label>
+                    <label for="taskCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
                     <select class="form-select" id="taskCategory">
                       <option value="">-- Select Category --</option>
                       <option value="design">Design</option>
@@ -784,8 +784,8 @@
                     </button>
                   </div>
                   <div class="participant-search-container">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openTaskParticipantSearch()">
-                      <i class="ph ph-plus me-1"></i>Add Participant
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="openTaskParticipantSearch()">
+                      <i class="ph ph-plus me-1"></i><span>Add Participant</span>
                     </button>
                     
                     <!-- Task Participant Search Dropdown -->
@@ -894,7 +894,8 @@
                       
                       <!-- Participant Search Dropdown -->
                       <div class="participant-search-dropdown subtask-participant-dropdown" 
-                           *ngIf="isSubtaskParticipantSearchOpen[subtask.id]">
+                           *ngIf="isSubtaskParticipantSearchOpen[subtask.id]"
+                           (click)="$event.stopPropagation()">
                         <div class="participant-search-header">
                           <input
                                  type="text"
@@ -904,7 +905,7 @@
                                  (input)="onSubtaskParticipantSearchInput(subtask.id, $event)">
                           <button type="button" 
                                   class="btn-close-search" 
-                                  (click)="closeSubtaskParticipantSearch(subtask.id)">
+                                  (click)="closeSubtaskParticipantSearch(subtask.id); $event.stopPropagation()">
                             <i class="ph ph-x"></i>
                           </button>
                         </div>
@@ -912,7 +913,7 @@
                           <div
                                *ngFor="let participant of getFilteredSubtaskParticipants(subtask.id)"
                                class="participant-search-item"
-                               (click)="addParticipantToSubtask(subtask.id, participant)">
+                               (click)="addParticipantToSubtask(subtask.id, participant); $event.stopPropagation()">
                             <img [src]="participant.avatar" 
                                  class="rounded-circle participant-search-avatar"
                                  [alt]="participant.name">
@@ -986,9 +987,9 @@
                     #taskFileInput>
                   <button 
                     type="button" 
-                    class="btn btn-outline-secondary btn-sm attach-file-btn"
+                    class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
                     (click)="taskFileInput.click()">
-                    <i class="ph ph-plus me-1"></i>Attach file
+                    <i class="ph ph-plus me-1"></i><span>Attach file</span>
                   </button>
                 </div>
               </div>
@@ -1000,8 +1001,46 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeAddTaskModal()">Cancel</button>
-        <button type="button" class="btn btn-primary">
-          <i class="ph ph-plus-circle me-2"></i>Create task
+        <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+          <i class="ph ph-plus-circle me-2"></i><span>Create task</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Workspace Modal -->
+  <div class="modal-backdrop" *ngIf="isCreateWorkspaceModalOpen" (click)="onCreateWorkspaceModalBackdropClick($event)">
+    <div class="modal-container workspace-modal d-flex flex-column" style="max-width: 500px;">
+      <div class="modal-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <h4 class="modal-title m-0 p-0">Create Workspace</h4>
+        </div>
+        <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeCreateWorkspaceModal()">
+          <i class="ph ph-x fs-4"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Workspace name" 
+              [value]="newWorkspaceName"
+              (input)="onWorkspaceNameInputChange($event)"
+              (keypress)="onWorkspaceNameKeyPress($event)"
+              #workspaceNameInput>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeCreateWorkspaceModal()">Cancel</button>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          (click)="createWorkspace()"
+          [disabled]="!newWorkspaceName.trim()">
+          Create Workspace
         </button>
       </div>
     </div>

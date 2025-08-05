@@ -806,17 +806,14 @@ MODAL STYLES
 }
 
 .add-subtask-section .form-control {
-  border: 1px solid #e9ecef;
-  border-radius: 6px 0 0 6px;
+  border-radius: 5px 0 0 5px;
   padding: 8px 12px;
   font-size: 14px;
 }
 
 .add-subtask-section .btn {
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 5px 5px 0;
   padding: 8px 12px;
-  border: 1px solid #e9ecef;
-  border-left: none;
 }
 
 /* Progress Info */
@@ -1132,27 +1129,15 @@ MODAL STYLES
   border-radius: 6px;
   margin-bottom: 8px;
   transition: all 0.2s ease-in-out;
+  flex-grow: 1;
 }
 
 .checklist-item:hover {
   background-color: #f1f3f4;
 }
 
-.checklist-item .form-check {
-  flex: 1;
-  margin-bottom: 0;
-}
 
-.checklist-item .form-check-input {
-  margin-top: 0;
-}
 
-.checklist-item .form-check-label {
-  font-size: 0.875rem;
-  color: #495057;
-  cursor: pointer;
-  margin-left: 8px;
-}
 
 .checklist-remove-btn {
   background: none;
@@ -1165,7 +1150,6 @@ MODAL STYLES
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease-in-out;
-  flex-shrink: 0;
   margin-left: 8px;
 }
 
@@ -1178,17 +1162,13 @@ MODAL STYLES
   margin-top: 12px;
 }
 
-.add-checklist-section .input-group {
-  max-width: 400px;
-}
-
 .add-checklist-section .form-control {
-  border-radius: 4px 0 0 4px;
+  border-radius: 5px 0 0 5px;
 }
 
 .add-checklist-section .btn {
-  border-radius: 0 4px 4px 0;
-  border-left: none;
+  border-radius: 0 5px 5px 0;
+  
 }
 
 /* Responsive styles for checklist */
@@ -1212,32 +1192,8 @@ MODAL STYLES
 }
 
 @media (max-width: 575.98px) {
-  .checklist-item {
-    padding: 8px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
   
-  .checklist-remove-btn {
-    align-self: flex-end;
-    margin-left: 0;
-    margin-top: -4px;
-  }
   
-  .add-checklist-section .input-group {
-    flex-direction: column;
-  }
-  
-  .add-checklist-section .form-control {
-    border-radius: 4px;
-    margin-bottom: 8px;
-  }
-  
-  .add-checklist-section .btn {
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-  }
 }
 
 /* Workspace Dropdown Styles */
@@ -1402,4 +1358,9 @@ MODAL STYLES
 /* Ensure proper positioning for the user-content container */
 .user-content.position-relative {
   position: relative;
+}
+
+
+.workspace-modal{
+  max-height: 218px;;
 }
