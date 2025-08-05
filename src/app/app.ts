@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 interface Participant {
   id: number;
@@ -417,6 +417,36 @@ export class App {
   closeSubtaskParticipantSearch(subtaskId: number) {
     this.isSubtaskParticipantSearchOpen[subtaskId] = false;
     this.subtaskParticipantSearchQuery[subtaskId] = '';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    
+    // Check if any subtask participant search is open
+    const openSearches = Object.keys(this.isSubtaskParticipantSearchOpen).filter(
+      key => this.isSubtaskParticipantSearchOpen[parseInt(key)]
+    );
+    
+    if (openSearches.length > 0) {
+      // Check if the click is outside any subtask participant search dropdown
+      const isClickInsideDropdown = target.closest('.subtask-participant-dropdown');
+      const isClickOnParticipantCircle = target.closest('.subtask-participant-circle');
+      
+      if (!isClickInsideDropdown && !isClickOnParticipantCircle) {
+        // Close all open subtask participant searches
+        openSearches.forEach(key => {
+          this.closeSubtaskParticipantSearch(parseInt(key));
+        });
+      }
+    }
+  }
+
+  onSubtaskParticipantSearchBackdropClick(event: Event, subtaskId: number) {
+    // Close the dropdown if clicking outside of it
+    if (event.target === event.currentTarget) {
+      this.closeSubtaskParticipantSearch(subtaskId);
+    }
   }
 
   onSubtaskParticipantSearchInput(subtaskId: number, event: Event) {
