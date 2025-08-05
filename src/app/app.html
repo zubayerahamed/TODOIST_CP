@@ -768,10 +768,10 @@
 
                 <!-- Subtask Items -->
                 <div class="subtask-items-container" *ngIf="subtasks.length > 0">
-                  <div *ngFor="let subtask of subtasks; let i = index" class="subtask-item">
+                  <div *ngFor="let subtask of subtasks; let i = index" class="subtask-item d-flex align-items-center gap-3 mb-2">
                     
                     <!-- Checkbox -->
-                    <div class="form-check subtask-checkbox">
+                    <div class="form-check subtask-checkbox mb-0">
                       <input
                              class="form-check-input"
                              type="checkbox"
@@ -839,7 +839,7 @@
                     <!-- Delete Button -->
                     <button
                             type="button"
-                            class="btn btn-link subtask-remove-btn"
+                            class="btn subtask-remove-btn"
                             (click)="removeSubtask(subtask.id)">
                       <i class="ph ph-trash"></i>
                     </button>
