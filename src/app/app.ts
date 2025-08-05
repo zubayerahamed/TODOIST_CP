@@ -26,7 +26,9 @@ interface ChecklistItem {
 interface Subtask {
   id: number;
   title: string;
-  assignedTo?: Participant;
+  completed: boolean;
+  assignedParticipants: Participant[];
+  order: number;
 }
 
 interface Tag {
@@ -81,9 +83,13 @@ export class App {
   ];
   
   taskAttachedFiles: AttachedFile[] = [];
+  
+  // Subtask properties
   subtasks: Subtask[] = [];
   newSubtaskTitle = '';
-  showSubtasks = false;
+  isSubtaskParticipantSearchOpen: { [key: number]: boolean } = {};
+  subtaskParticipantSearchQuery: { [key: number]: string } = {};
+  draggedSubtaskIndex: number | null = null;
   
   availableTags: Tag[] = [
     { id: 1, name: 'DSA', color: '#28a745' },
@@ -159,9 +165,6 @@ export class App {
     this.isAddTaskModalOpen = false;
     this.isTaskParticipantSearchOpen = false;
     this.taskParticipantSearchQuery = '';
-    this.showSubtasks = false;
-    this.subtasks = [];
-    this.newSubtaskTitle = '';
   }
 
   onTaskModalBackdropClick(event: Event) {
@@ -276,50 +279,6 @@ export class App {
     this.taskAttachedFiles = this.taskAttachedFiles.filter(f => f.id !== fileId);
   }
 
-  // Subtask management methods
-  showSubtaskSection() {
-    this.showSubtasks = true;
-  }
-
-  addSubtask() {
-    if (this.newSubtaskTitle.trim()) {
-      const randomParticipant = this.allParticipants[Math.floor(Math.random() * this.allParticipants.length)];
-      const newSubtask: Subtask = {
-        id: Date.now(),
-        title: this.newSubtaskTitle.trim(),
-        assignedTo: randomParticipant
-      };
-      this.subtasks.push(newSubtask);
-      this.newSubtaskTitle = '';
-    }
-  }
-
-  removeSubtask(subtaskId: number) {
-    this.subtasks = this.subtasks.filter(s => s.id !== subtaskId);
-    if (this.subtasks.length === 0) {
-      this.showSubtasks = false;
-    }
-  }
-
-  onSubtaskInputChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.newSubtaskTitle = target.value;
-  }
-
-  onSubtaskInputKeyPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.addSubtask();
-    }
-  }
-
-  onSubtaskTitleChange(subtaskId: number, event: Event) {
-    const target = event.target as HTMLInputElement;
-    const subtask = this.subtasks.find(s => s.id === subtaskId);
-    if (subtask) {
-      subtask.title = target.value;
-    }
-  }
 
   getFileIcon(fileName: string, fileType: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase();
@@ -397,5 +356,151 @@ export class App {
       event.preventDefault();
       this.addChecklistItem();
     }
+  }
+
+  // Subtask management methods
+  addSubtask() {
+    if (this.newSubtaskTitle.trim()) {
+      const newSubtask: Subtask = {
+        id: Date.now(),
+        title: this.newSubtaskTitle.trim(),
+        completed: false,
+        assignedParticipants: [],
+        order: this.subtasks.length
+      };
+      this.subtasks.push(newSubtask);
+      this.newSubtaskTitle = '';
+    }
+  }
+
+  removeSubtask(subtaskId: number) {
+    this.subtasks = this.subtasks.filter(s => s.id !== subtaskId);
+    // Update order for remaining subtasks
+    this.subtasks.forEach((subtask, index) => {
+      subtask.order = index;
+    });
+  }
+
+  toggleSubtask(subtaskId: number) {
+    const subtask = this.subtasks.find(s => s.id === subtaskId);
+    if (subtask) {
+      subtask.completed = !subtask.completed;
+    }
+  }
+
+  onSubtaskTitleChange(subtaskId: number, event: Event) {
+    const target = event.target as HTMLInputElement;
+    const subtask = this.subtasks.find(s => s.id === subtaskId);
+    if (subtask) {
+      subtask.title = target.value;
+    }
+  }
+
+  onNewSubtaskInputChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.newSubtaskTitle = target.value;
+  }
+
+  onNewSubtaskKeyPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addSubtask();
+    }
+  }
+
+  // Subtask participant management
+  openSubtaskParticipantSearch(subtaskId: number) {
+    this.isSubtaskParticipantSearchOpen[subtaskId] = true;
+    this.subtaskParticipantSearchQuery[subtaskId] = '';
+  }
+
+  closeSubtaskParticipantSearch(subtaskId: number) {
+    this.isSubtaskParticipantSearchOpen[subtaskId] = false;
+    this.subtaskParticipantSearchQuery[subtaskId] = '';
+  }
+
+  onSubtaskParticipantSearchInput(subtaskId: number, event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.subtaskParticipantSearchQuery[subtaskId] = target.value;
+  }
+
+  getFilteredSubtaskParticipants(subtaskId: number): Participant[] {
+    const subtask = this.subtasks.find(s => s.id === subtaskId);
+    if (!subtask) return [];
+
+    const query = this.subtaskParticipantSearchQuery[subtaskId] || '';
+    let availableParticipants = this.allParticipants.filter(p => 
+      !subtask.assignedParticipants.find(ap => ap.id === p.id)
+    );
+
+    if (query.trim()) {
+      const searchQuery = query.toLowerCase();
+      availableParticipants = availableParticipants.filter(participant => 
+        participant.name.toLowerCase().includes(searchQuery) || 
+        participant.email.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    return availableParticipants;
+  }
+
+  addParticipantToSubtask(subtaskId: number, participant: Participant) {
+    const subtask = this.subtasks.find(s => s.id === subtaskId);
+    if (subtask && !subtask.assignedParticipants.find(p => p.id === participant.id)) {
+      subtask.assignedParticipants.push(participant);
+    }
+    this.closeSubtaskParticipantSearch(subtaskId);
+  }
+
+  removeParticipantFromSubtask(subtaskId: number, participantId: number) {
+    const subtask = this.subtasks.find(s => s.id === subtaskId);
+    if (subtask) {
+      subtask.assignedParticipants = subtask.assignedParticipants.filter(p => p.id !== participantId);
+    }
+  }
+
+  // Drag and drop functionality
+  onSubtaskDragStart(event: DragEvent, index: number) {
+    this.draggedSubtaskIndex = index;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+    }
+  }
+
+  onSubtaskDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+  }
+
+  onSubtaskDrop(event: DragEvent, dropIndex: number) {
+    event.preventDefault();
+    if (this.draggedSubtaskIndex !== null && this.draggedSubtaskIndex !== dropIndex) {
+      const draggedSubtask = this.subtasks[this.draggedSubtaskIndex];
+      this.subtasks.splice(this.draggedSubtaskIndex, 1);
+      this.subtasks.splice(dropIndex, 0, draggedSubtask);
+      
+      // Update order for all subtasks
+      this.subtasks.forEach((subtask, index) => {
+        subtask.order = index;
+      });
+    }
+    this.draggedSubtaskIndex = null;
+  }
+
+  onSubtaskDragEnd() {
+    this.draggedSubtaskIndex = null;
+  }
+
+  // Subtask progress calculation
+  get subtaskProgress(): number {
+    if (this.subtasks.length === 0) return 0;
+    const completedSubtasks = this.subtasks.filter(subtask => subtask.completed).length;
+    return Math.round((completedSubtasks / this.subtasks.length) * 100);
+  }
+
+  get completedSubtaskCount(): number {
+    return this.subtasks.filter(subtask => subtask.completed).length;
   }
 }
