@@ -1,7 +1,7 @@
 <div class="wrapper bg-white vh-100 d-flex">
   <!-- Mobile Menu Overlay -->
   <div class="mobile-overlay" [class.overlay-active]="isSidebarOpen" (click)="closeSidebar()"></div>
-  
+
   <div class="sidebar-wrapper vh-100 d-flex flex-column" [class.sidebar-open]="isSidebarOpen">
     <div class="user-content d-flex justify-content-between align-items-center">
       <img
@@ -17,10 +17,12 @@
       <button class="btn btn-warning d-flex align-items-center justify-content-center" type="button">
         <i class="ph ph-user-sound fs-5 me-2"></i><span>Voice Command</span>
       </button>
-      <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button">
+      <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button"
+              (click)="openAddTaskModal()">
         <i class="ph ph-plus-circle fs-5 me-2"></i><span>Add Task</span>
       </button>
-      <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button" (click)="openAddEventModal()">
+      <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button"
+              (click)="openAddEventModal()">
         <i class="ph ph-calendar-plus fs-5 me-2"></i><span>Add Event</span>
       </button>
     </div>
@@ -54,7 +56,8 @@
       <i class="ph ph-hash fs-5 ms-3 me-2"></i>
       <a href="" class="page-link flex-grow-1">Office work</a>
       <span class="ms-2 me-2">2</span>
-      <a href="" class="page-link align-items-center btn-edit-project"><i class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      <a href="" class="page-link align-items-center btn-edit-project"><i
+           class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
     </div>
     <div class="spacer"></div>
     <div class="d-flex align-items-center section-my-projects">
@@ -67,13 +70,15 @@
       <i class="ph ph-hash fs-5 ms-3 me-2"></i>
       <a href="" class="page-link flex-grow-1">Office work</a>
       <span class="ms-2 me-2">2</span>
-      <a href="" class="page-link align-items-center btn-edit-project"><i class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      <a href="" class="page-link align-items-center btn-edit-project"><i
+           class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
     </div>
     <div class="d-flex align-items-center text-muted project-item">
       <i class="ph ph-hash fs-5 ms-3 me-2"></i>
       <a href="" class="page-link flex-grow-1">Hous work</a>
       <span class="ms-2 me-2">1</span>
-      <a href="" class="page-link align-items-center btn-edit-project"><i class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      <a href="" class="page-link align-items-center btn-edit-project"><i
+           class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
     </div>
 
   </div>
@@ -278,43 +283,20 @@
   </div>
 
   <!-- Add Event Modal -->
-  <div class="modal-backdrop" *ngIf="isAddEventModalOpen" (click)="onModalBackdropClick($event)">
-    <div class="modal-container modal-xl d-flex flex-column">
+  <div class="modal-backdrop" *ngIf="isAddEventModalOpen" (click)="onEventModalBackdropClick($event)">
+    <div class="modal-container modal-lg d-flex flex-column">
       <div class="modal-header d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
           <i class="ph ph-calendar-plus me-2 fs-4"></i>
-          <h4 class="modal-title">Add New Event</h4>
+          <h4 class="modal-title">Create New Event</h4>
         </div>
-        <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeAddEventModal()">
+        <button type="button" class="btn-close d-flex align-items-center justify-content-center"
+                (click)="closeAddEventModal()">
           <i class="ph ph-x fs-4"></i>
         </button>
       </div>
       <div class="modal-body flex-grow-1">
         <form>
-          <div class="row">
-            <div class="col-md-8">
-              <div class="mb-3">
-                <label for="eventTitle" class="form-label">Event Title *</label>
-                <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3">
-                <label for="eventProject" class="form-label">Project</label>
-                <select class="form-select" id="eventProject">
-                  <option value="">Select Project</option>
-                  <option value="office">Office Work</option>
-                  <option value="house">House Work</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          <div class="mb-3">
-            <label for="eventDescription" class="form-label">Description</label>
-            <textarea class="form-control" id="eventDescription" rows="3" placeholder="Enter event description"></textarea>
-          </div>
-          
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
@@ -335,48 +317,240 @@
               </div>
             </div>
           </div>
-          
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventTitle" class="form-label">Event Title *</label>
+                <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
+                <select class="form-select" id="eventProject">
+                  <option value="">-- Select Project --</option>
+                  <option value="office">Office Work</option>
+                  <option value="house">House Work</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
+                <select class="form-select" id="eventCategory">
+                  <option value="">-- Select Category --</option>
+                  <option value="Software Development">Software Development</option>
+                  <option value="Iterview">Interview</option>
+                  <option value="Exam">Exam</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="eventDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="eventDescription" rows="3"
+                      placeholder="Enter event description"></textarea>
+          </div>
+
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="eventLocation" class="form-label">Location</label>
+                <label for="eventLocation" class="form-label"><i class="ph ph-map-pin me-2"></i>Location</label>
                 <input type="text" class="form-control" id="eventLocation" placeholder="Enter location">
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="eventTag" class="form-label">Tag</label>
-                <input type="text" class="form-control" id="eventTag" placeholder="Enter tag">
+                <label for="reminder" class="form-label d-flex align-items-center">
+                  <i class="ph ph-bell me-2"></i>Reminder
+                </label>
+                <select class="form-select" id="reminder">
+                  <option value="">-- Select Reminder --</option>
+                  <option value="0">At the time of event</option>
+                  <option value="5">5 minute before</option>
+                  <option value="10">10 minute before</option>
+                  <option value="15">15 minute before</option>
+                  <option value="30">30 minute before</option>
+                  <option value="60">1 hour before</option>
+                  <option value="120">2 hour before</option>
+                  <option value="360">6 hour before</option>
+                  <option value="720">12 hour before</option>
+                  <option value="1440">1 day before</option>
+                </select>
               </div>
             </div>
           </div>
-          
+
           <div class="mb-3">
-            <label class="form-label">Participants</label>
-            <div class="d-flex align-items-center gap-2">
-              <img src="/assets/images/zubayer.jpg" class="rounded-circle participant-avatar" alt="User">
-              <button type="button" class="btn btn-outline-secondary btn-sm">
-                <i class="ph ph-plus me-1"></i>Add Participant
-              </button>
+            <label class="form-label"><i class="ph ph-users-three me-2"></i>Participants</label>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <div *ngFor="let participant of selectedParticipants" class="participant-item">
+                <img 
+                  [src]="participant.avatar" 
+                  class="rounded-circle participant-avatar" 
+                  [alt]="participant.name"
+                  [title]="participant.name + ' - ' + participant.email"
+                  data-bs-toggle="tooltip" 
+                  data-bs-placement="top">
+                <button type="button" class="participant-remove-btn" (click)="removeParticipant(participant.id)">
+                  <i class="ph ph-x"></i>
+                </button>
+              </div>
+              <div class="participant-search-container">
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openParticipantSearch()">
+                  <i class="ph ph-plus me-1"></i>Add Participant
+                </button>
+                
+                <!-- Participant Search Dropdown -->
+                <div class="participant-search-dropdown" *ngIf="isParticipantSearchOpen">
+                  <div class="participant-search-header">
+                    <input 
+                      type="text" 
+                      class="form-control participant-search-input" 
+                      placeholder="Search participants..."
+                      [value]="participantSearchQuery"
+                      (input)="onParticipantSearchInput($event)"
+                      #searchInput>
+                    <button type="button" class="btn-close-search" (click)="closeParticipantSearch()">
+                      <i class="ph ph-x"></i>
+                    </button>
+                  </div>
+                  <div class="participant-search-results">
+                    <div 
+                      *ngFor="let participant of filteredParticipants" 
+                      class="participant-search-item"
+                      (click)="addParticipant(participant)">
+                      <img [src]="participant.avatar" class="rounded-circle participant-search-avatar" [alt]="participant.name">
+                      <div class="participant-info">
+                        <div class="participant-name">{{ participant.name }}</div>
+                        <div class="participant-email">{{ participant.email }}</div>
+                      </div>
+                    </div>
+                    <div *ngIf="filteredParticipants.length === 0" class="no-participants">
+                      No participants found
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="allDayEvent">
-                <label class="form-check-label" for="allDayEvent">
-                  All Day Event
-                </label>
+
+          <!-- Divider -->
+          <div class="divider mb-3"></div>
+
+          <!-- Checklist Section -->
+          <div class="mb-3">
+            <label class="form-label d-flex align-items-center justify-content-between">
+              <span class="d-flex align-items-center">
+                <i class="ph ph-list-checks me-2"></i>Checklist
+              </span>
+              <span class="checklist-progress-info" *ngIf="checklistItems.length > 0">
+                {{ completedChecklistCount }}/{{ checklistItems.length }} completed ({{ checklistProgress }}%)
+              </span>
+            </label>
+            
+            <!-- Progress Bar -->
+            <div class="progress mb-3" *ngIf="checklistItems.length > 0">
+              <div 
+                class="progress-bar bg-success" 
+                role="progressbar" 
+                [style.width.%]="checklistProgress"
+                [attr.aria-valuenow]="checklistProgress" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="reminderEnabled">
-                <label class="form-check-label" for="reminderEnabled">
-                  Set Reminder
-                </label>
+
+            <!-- Checklist Items -->
+            <div class="checklist-items-container" *ngIf="checklistItems.length > 0">
+              <div *ngFor="let item of checklistItems" class="checklist-item">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    [id]="'checklist-' + item.id"
+                    [checked]="item.completed"
+                    (change)="toggleChecklistItem(item.id)">
+                  <label 
+                    class="form-check-label" 
+                    [for]="'checklist-' + item.id"
+                    [class.text-decoration-line-through]="item.completed"
+                    [class.text-muted]="item.completed">
+                    {{ item.text }}
+                  </label>
+                </div>
+                <button 
+                  type="button" 
+                  class="checklist-remove-btn"
+                  (click)="removeChecklistItem(item.id)">
+                  <i class="ph ph-x"></i>
+                </button>
               </div>
+            </div>
+
+            <!-- Add New Checklist Item -->
+            <div class="add-checklist-section">
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  placeholder="Add checklist item..."
+                  [value]="newChecklistItem"
+                  (input)="onChecklistInputChange($event)"
+                  (keypress)="onChecklistInputKeyPress($event)">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary"
+                  (click)="addChecklistItem()"
+                  [disabled]="!newChecklistItem.trim()">
+                  <i class="ph ph-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="divider mb-3"></div>
+
+          <!-- File Attachments Section -->
+          <div class="mb-3">
+            <label class="form-label d-flex align-items-center">
+              <i class="ph ph-paperclip me-2"></i>Attachments
+            </label>
+            
+            <!-- Attached Files Display -->
+            <div class="attached-files-container" *ngIf="attachedFiles.length > 0">
+              <div *ngFor="let file of attachedFiles" class="attached-file-item">
+                <div class="file-icon">
+                  {{ file.icon }}
+                </div>
+                <div class="file-info">
+                  <div class="file-name">{{ file.name }}</div>
+                  <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                </div>
+                <button type="button" class="file-remove-btn" (click)="removeFile(file.id)">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Add File Button -->
+            <div class="attach-file-section">
+              <input 
+                type="file" 
+                id="fileInput" 
+                class="file-input" 
+                multiple 
+                (change)="onFileSelect($event)"
+                #fileInput>
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary btn-sm attach-file-btn"
+                (click)="fileInput.click()">
+                <i class="ph ph-plus me-1"></i>Attach file
+              </button>
             </div>
           </div>
         </form>
@@ -385,6 +559,281 @@
         <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
         <button type="button" class="btn btn-primary">
           <i class="ph ph-calendar-plus me-2"></i>Create Event
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div class="modal-backdrop" *ngIf="isAddTaskModalOpen" (click)="onTaskModalBackdropClick($event)">
+    <div class="modal-container modal-lg d-flex flex-column">
+      <div class="modal-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <i class="ph ph-plus-circle me-2 fs-4"></i>
+          <h4 class="modal-title">Create Task</h4>
+        </div>
+        <button type="button" class="btn-close d-flex align-items-center justify-content-center"
+                (click)="closeAddTaskModal()">
+          <i class="ph ph-x fs-4"></i>
+        </button>
+      </div>
+      <div class="modal-body flex-grow-1">
+        <div class="row">
+          <!-- Left Column -->
+          <div class="col-md-8">
+            <form>
+              <!-- Task Name -->
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Task name" id="taskName">
+              </div>
+
+              <!-- Task Description -->
+              <div class="mb-3">
+                <textarea class="form-control" rows="4" placeholder="Task description" id="taskDescription"></textarea>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex gap-2 mb-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="showSubtaskSection()">
+                  <i class="ph ph-check-square me-1"></i>Add subtask
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                  <i class="ph ph-paperclip me-1"></i>Attach file
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                  <i class="ph ph-tag me-1"></i>Add tag
+                </button>
+              </div>
+
+              <!-- Subtasks Section -->
+              <div class="mb-3" *ngIf="showSubtasks">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                  <i class="ph ph-check-square"></i>
+                  <span class="fw-bold">Subtasks</span>
+                  <span class="badge bg-secondary">{{ subtasks.length }}</span>
+                </div>
+                
+                <!-- Existing Subtasks -->
+                <div *ngFor="let subtask of subtasks" class="d-flex align-items-center mb-2 subtask-item">
+                  <input 
+                    type="text" 
+                    class="form-control subtask-input" 
+                    [value]="subtask.title"
+                    (input)="onSubtaskTitleChange(subtask.id, $event)"
+                    placeholder="Subtask title">
+                  <img 
+                    *ngIf="subtask.assignedTo"
+                    [src]="subtask.assignedTo.avatar" 
+                    class="rounded-circle subtask-participant-avatar ms-2" 
+                    [alt]="subtask.assignedTo.name">
+                  <button 
+                    type="button" 
+                    class="btn btn-link text-danger p-1 ms-2" 
+                    (click)="removeSubtask(subtask.id)">
+                    <i class="ph ph-x fs-5"></i>
+                  </button>
+                </div>
+
+                <!-- Add New Subtask Input -->
+                <div class="d-flex align-items-center">
+                  <input 
+                    type="text" 
+                    class="form-control subtask-input" 
+                    [(ngModel)]="newSubtaskTitle"
+                    (input)="onSubtaskInputChange($event)"
+                    (keypress)="onSubtaskInputKeyPress($event)"
+                    placeholder="Subtask title">
+                  <button 
+                    type="button" 
+                    class="btn btn-link text-success p-1 ms-2" 
+                    (click)="addSubtask()"
+                    [disabled]="!newSubtaskTitle.trim()">
+                    <i class="ph ph-plus fs-5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Attachments Section -->
+              <div class="mb-3" *ngIf="taskAttachedFiles.length > 0">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <i class="ph ph-paperclip"></i>
+                  <span class="fw-bold">Attachments</span>
+                </div>
+                
+                <div class="task-attached-files-container">
+                  <div *ngFor="let file of taskAttachedFiles" class="task-attached-file-item">
+                    <div class="file-icon">
+                      {{ file.icon }}
+                    </div>
+                    <div class="file-info">
+                      <div class="file-name">{{ file.name }}</div>
+                    </div>
+                    <button type="button" class="file-remove-btn" (click)="removeTaskFile(file.id)">
+                      <i class="ph ph-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Add File Button -->
+                <div class="attach-file-section mt-2">
+                  <input 
+                    type="file" 
+                    id="taskFileInput" 
+                    class="file-input" 
+                    multiple 
+                    (change)="onTaskFileSelect($event)"
+                    #taskFileInput>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary btn-sm attach-file-btn"
+                    (click)="taskFileInput.click()">
+                    <i class="ph ph-plus me-1"></i>Attach file
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-md-4">
+            <form>
+              <!-- Project -->
+              <div class="mb-3">
+                <label for="taskProject" class="form-label">Project</label>
+                <select class="form-select" id="taskProject">
+                  <option value="daily-learning" selected>Daily learning</option>
+                  <option value="office-work">Office Work</option>
+                  <option value="house-work">House Work</option>
+                </select>
+              </div>
+
+              <!-- Section -->
+              <div class="mb-3">
+                <label for="taskSection" class="form-label">Section</label>
+                <select class="form-select" id="taskSection">
+                  <option value="in-progress" selected>In Progress</option>
+                  <option value="todo">To Do</option>
+                  <option value="done">Done</option>
+                </select>
+              </div>
+
+              <!-- Category -->
+              <div class="mb-3">
+                <label for="taskCategory" class="form-label">Category</label>
+                <select class="form-select" id="taskCategory">
+                  <option value="software-development" selected>Software Development</option>
+                  <option value="design">Design</option>
+                  <option value="research">Research</option>
+                </select>
+              </div>
+
+              <!-- Status -->
+              <div class="mb-3">
+                <label for="taskStatus" class="form-label">Status</label>
+                <select class="form-select" id="taskStatus">
+                  <option value="new-task" selected>New task</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              <!-- Schedule -->
+              <div class="mb-3">
+                <label for="taskSchedule" class="form-label">Schedule this task for</label>
+                <input type="date" class="form-control" id="taskSchedule" value="2025-07-01">
+              </div>
+
+              <!-- Due Date -->
+              <div class="mb-3">
+                <label for="taskDueDate" class="form-label">Due date</label>
+                <input type="date" class="form-control" id="taskDueDate" value="2025-07-01">
+              </div>
+
+              <!-- Estimated Time -->
+              <div class="mb-3">
+                <label for="taskEstimatedTime" class="form-label">Estimated time</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="taskEstimatedTime" value="0" min="0">
+                  <span class="input-group-text">h</span>
+                </div>
+              </div>
+
+              <!-- Priority -->
+              <div class="mb-3">
+                <label for="taskPriority" class="form-label">Priority</label>
+                <select class="form-select" id="taskPriority">
+                  <option value="none" selected>None</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="very-high">Very High</option>
+                </select>
+              </div>
+
+              <!-- Tags -->
+              <div class="mb-3">
+                <label class="form-label">Tags</label>
+                <div class="tags-container d-flex flex-wrap gap-1 mb-2">
+                  <span *ngFor="let tag of selectedTags" class="badge tag-badge" [style.background-color]="tag.color">
+                    {{ tag.name }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Participants -->
+              <div class="mb-3">
+                <label class="form-label">Participants</label>
+                <div class="task-participants-container">
+                  <div *ngFor="let participant of taskSelectedParticipants" class="task-participant-item d-flex align-items-center gap-2 mb-2">
+                    <img [src]="participant.avatar" class="rounded-circle task-participant-avatar" [alt]="participant.name">
+                    <span class="participant-name">{{ participant.name }}</span>
+                  </div>
+                  
+                  <div class="participant-search-container">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openTaskParticipantSearch()">
+                      <i class="ph ph-plus me-1"></i>Add participants
+                    </button>
+                    
+                    <!-- Task Participant Search Dropdown -->
+                    <div class="participant-search-dropdown" *ngIf="isTaskParticipantSearchOpen">
+                      <div class="participant-search-header">
+                        <input 
+                          type="text" 
+                          class="form-control participant-search-input" 
+                          placeholder="Search participants..."
+                          [value]="taskParticipantSearchQuery"
+                          (input)="onTaskParticipantSearchInput($event)">
+                        <button type="button" class="btn-close-search" (click)="closeTaskParticipantSearch()">
+                          <i class="ph ph-x"></i>
+                        </button>
+                      </div>
+                      <div class="participant-search-results">
+                        <div 
+                          *ngFor="let participant of filteredTaskParticipants" 
+                          class="participant-search-item"
+                          (click)="addTaskParticipant(participant)">
+                          <img [src]="participant.avatar" class="rounded-circle participant-search-avatar" [alt]="participant.name">
+                          <div class="participant-info">
+                            <div class="participant-name">{{ participant.name }}</div>
+                            <div class="participant-email">{{ participant.email }}</div>
+                          </div>
+                        </div>
+                        <div *ngIf="filteredTaskParticipants.length === 0" class="no-participants">
+                          No participants found
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeAddTaskModal()">Cancel</button>
+        <button type="button" class="btn btn-primary">
+          <i class="ph ph-plus-circle me-2"></i>Create task
         </button>
       </div>
     </div>

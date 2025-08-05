@@ -443,7 +443,7 @@ MODAL STYLES
 }
 
 .modal-lg {
-  max-width: 800px;
+  max-width: 1024px;
 }
 
 .modal-header {
@@ -654,4 +654,890 @@ MODAL STYLES
 .modal-footer .btn-primary:hover {
   background-color: #0b5ed7;
   border-color: #0a58ca;
+}
+
+/* Subtask Styles */
+.subtask-item {
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 8px;
+  background-color: #f8f9fa;
+}
+
+.subtask-input {
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+}
+
+.subtask-input:focus {
+  border: 1px solid #0d6efd;
+  background-color: white;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.subtask-participant-avatar {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #dee2e6;
+}
+
+.subtask-item .btn-link {
+  border: none;
+  background: none;
+  padding: 2px;
+  line-height: 1;
+}
+
+.subtask-item .btn-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+.subtask-item .text-danger:hover {
+  color: #dc3545 !important;
+}
+
+.subtask-item .text-success:hover {
+  color: #198754 !important;
+}
+
+/* Responsive subtask styles */
+@media (max-width: 767.98px) {
+  .subtask-item {
+    flex-direction: column;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+  
+  .subtask-input {
+    margin-bottom: 8px;
+  }
+  
+  .subtask-participant-avatar {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Participant Search Styles */
+.participant-item {
+  position: relative;
+  display: inline-block;
+}
+
+.participant-remove-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.participant-remove-btn:hover {
+  background-color: #c82333;
+  transform: scale(1.1);
+}
+
+.participant-search-container {
+  position: relative;
+}
+
+.participant-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.participant-search-header {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.participant-search-input {
+  flex: 1;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+.btn-close-search {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-close-search:hover {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.participant-search-results {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.participant-search-item {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.participant-search-item:hover {
+  background-color: #f8f9fa;
+}
+
+.participant-search-item:last-child {
+  border-bottom: none;
+}
+
+.participant-search-avatar {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dee2e6;
+}
+
+.participant-info {
+  flex: 1;
+}
+
+.participant-name {
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.875rem;
+}
+
+.participant-email {
+  color: #6c757d;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.no-participants {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+/* File Attachments Styles */
+.attached-files-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.attached-file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  min-width: 120px;
+}
+
+.file-icon {
+  width: 32px;
+  height: 32px;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #495057;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.file-size {
+  font-size: 0.625rem;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
+.file-remove-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.file-remove-btn:hover {
+  background-color: #f5c6cb;
+  color: #721c24;
+}
+
+.file-input {
+  display: none;
+}
+
+.attach-file-btn {
+  cursor: pointer;
+}
+
+/* Checklist Styles */
+.checklist-items-container {
+  margin-bottom: 16px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.checklist-item:last-child {
+  border-bottom: none;
+}
+
+.checklist-item .form-check {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.checklist-remove-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  opacity: 0;
+}
+
+.checklist-item:hover .checklist-remove-btn {
+  opacity: 1;
+}
+
+.checklist-remove-btn:hover {
+  background-color: #f5c6cb;
+  color: #721c24;
+}
+
+.checklist-progress-info {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Task Modal Specific Styles */
+.subtask-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.subtask-item:last-child {
+  border-bottom: none;
+}
+
+.subtask-avatar {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #dee2e6;
+}
+
+.task-attached-files-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.task-attached-file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.task-participant-avatar {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #dee2e6;
+}
+
+.task-participant-item {
+  padding: 4px 0;
+}
+
+.participant-name {
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.tags-container {
+  min-height: 32px;
+  padding: 4px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.tag-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 500;
+}
+
+/* Responsive adjustments for new components */
+@media (max-width: 767.98px) {
+  .participant-search-dropdown {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 60vh;
+  }
+  
+  .attached-files-container {
+    flex-direction: column;
+  }
+  
+  .attached-file-item {
+    width: 100%;
+  }
+  
+  .file-name {
+    max-width: none;
+  }
+  
+  .task-attached-files-container {
+    flex-direction: column;
+  }
+  
+  .task-attached-file-item {
+    width: 100%;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .participant-search-header {
+    padding: 8px;
+  }
+  
+  .participant-search-item {
+    padding: 8px;
+  }
+  
+  .participant-search-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .attached-file-item {
+    padding: 6px 8px;
+  }
+  
+  .file-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 9px;
+  }
+}
+
+/* Participant Search Styles */
+.participant-item {
+  position: relative;
+  display: inline-block;
+}
+
+.participant-remove-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.participant-remove-btn:hover {
+  background-color: #c82333;
+  transform: scale(1.1);
+}
+
+.participant-search-container {
+  position: relative;
+}
+
+.participant-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px;
+  background: white;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.participant-search-header {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.participant-search-input {
+  flex: 1;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+}
+
+.participant-search-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+.btn-close-search {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-close-search:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.participant-search-results {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.participant-search-item {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.participant-search-item:hover {
+  background-color: #f8f9fa;
+}
+
+.participant-search-item:last-child {
+  border-bottom: none;
+}
+
+.participant-search-avatar {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dee2e6;
+}
+
+.participant-info {
+  flex: 1;
+}
+
+.participant-name {
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.875rem;
+  margin-bottom: 2px;
+}
+
+.participant-email {
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+.no-participants {
+  padding: 20px 12px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+/* File Attachment Styles */
+.attached-files-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.attached-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  min-width: 200px;
+  position: relative;
+}
+
+.file-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.file-remove-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.file-remove-btn:hover {
+  background-color: #f5c6cb;
+  color: #721c24;
+}
+
+.attach-file-section {
+  margin-top: 8px;
+}
+
+.file-input {
+  display: none;
+}
+
+.attach-file-btn {
+  cursor: pointer;
+}
+
+/* File type specific colors */
+.attached-file-item .file-icon {
+  background-color: #6c757d;
+}
+
+.attached-file-item:has(.file-icon:contains("PDF")) .file-icon {
+  background-color: #dc3545;
+}
+
+.attached-file-item:has(.file-icon:contains("DOC")) .file-icon {
+  background-color: #0d6efd;
+}
+
+.attached-file-item:has(.file-icon:contains("XLS")) .file-icon {
+  background-color: #198754;
+}
+
+.attached-file-item:has(.file-icon:contains("JPG")) .file-icon {
+  background-color: #fd7e14;
+}
+
+.attached-file-item:has(.file-icon:contains("CSV")) .file-icon {
+  background-color: #20c997;
+}
+
+/* Responsive styles for new components */
+@media (max-width: 767.98px) {
+  .participant-search-dropdown {
+    width: 280px;
+    left: -50px;
+  }
+  
+  .attached-files-container {
+    flex-direction: column;
+  }
+  
+  .attached-file-item {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .participant-search-header {
+    padding: 10px;
+  }
+  
+  .participant-search-item {
+    padding: 12px 10px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .participant-search-dropdown {
+    width: 260px;
+    left: -30px;
+  }
+  
+  .participant-search-input {
+    font-size: 0.8rem;
+    padding: 5px 8px;
+  }
+  
+  .attached-file-item {
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .file-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 9px;
+  }
+  
+  .file-name {
+    font-size: 0.8rem;
+  }
+  
+  .file-size {
+    font-size: 0.7rem;
+  }
+}
+
+/* Checklist Styles */
+.checklist-progress-info {
+  font-size: 0.875rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.progress {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+.checklist-items-container {
+  margin-bottom: 16px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+.checklist-item:hover {
+  background-color: #f1f3f4;
+}
+
+.checklist-item .form-check {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.checklist-item .form-check-input {
+  margin-top: 0;
+}
+
+.checklist-item .form-check-label {
+  font-size: 0.875rem;
+  color: #495057;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.checklist-remove-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.checklist-remove-btn:hover {
+  background-color: #f5c6cb;
+  color: #721c24;
+}
+
+.add-checklist-section {
+  margin-top: 12px;
+}
+
+.add-checklist-section .input-group {
+  max-width: 400px;
+}
+
+.add-checklist-section .form-control {
+  border-radius: 4px 0 0 4px;
+}
+
+.add-checklist-section .btn {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+/* Responsive styles for checklist */
+@media (max-width: 767.98px) {
+  .checklist-progress-info {
+    font-size: 0.8rem;
+  }
+  
+  .checklist-item {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+  
+  .checklist-item .form-check-label {
+    font-size: 0.8rem;
+  }
+  
+  .add-checklist-section .input-group {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .checklist-item {
+    padding: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .checklist-remove-btn {
+    align-self: flex-end;
+    margin-left: 0;
+    margin-top: -4px;
+  }
+  
+  .add-checklist-section .input-group {
+    flex-direction: column;
+  }
+  
+  .add-checklist-section .form-control {
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  
+  .add-checklist-section .btn {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+  }
 }
