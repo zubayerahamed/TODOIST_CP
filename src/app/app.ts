@@ -27,7 +27,7 @@ interface Subtask {
   id: number;
   title: string;
   completed: boolean;
-  assignedParticipants: Participant[];
+  assignedParticipant?: Participant;
   order: number;
 }
 
@@ -365,7 +365,7 @@ export class App {
         id: Date.now(),
         title: this.newSubtaskTitle.trim(),
         completed: false,
-        assignedParticipants: [],
+        assignedParticipant: undefined,
         order: this.subtasks.length
       };
       this.subtasks.push(newSubtask);
@@ -430,7 +430,7 @@ export class App {
 
     const query = this.subtaskParticipantSearchQuery[subtaskId] || '';
     let availableParticipants = this.allParticipants.filter(p => 
-      !subtask.assignedParticipants.find(ap => ap.id === p.id)
+      !subtask.assignedParticipant || subtask.assignedParticipant.id !== p.id
     );
 
     if (query.trim()) {
@@ -446,51 +446,44 @@ export class App {
 
   addParticipantToSubtask(subtaskId: number, participant: Participant) {
     const subtask = this.subtasks.find(s => s.id === subtaskId);
-    if (subtask && !subtask.assignedParticipants.find(p => p.id === participant.id)) {
-      subtask.assignedParticipants.push(participant);
+    if (subtask) {
+      subtask.assignedParticipant = participant;
     }
     this.closeSubtaskParticipantSearch(subtaskId);
   }
 
-  removeParticipantFromSubtask(subtaskId: number, participantId: number) {
+  removeParticipantFromSubtask(subtaskId: number) {
     const subtask = this.subtasks.find(s => s.id === subtaskId);
     if (subtask) {
-      subtask.assignedParticipants = subtask.assignedParticipants.filter(p => p.id !== participantId);
+      subtask.assignedParticipant = undefined;
     }
   }
 
-  // Drag and drop functionality
-  onSubtaskDragStart(event: DragEvent, index: number) {
-    this.draggedSubtaskIndex = index;
-    if (event.dataTransfer) {
-      event.dataTransfer.effectAllowed = 'move';
-    }
-  }
-
-  onSubtaskDragOver(event: DragEvent) {
-    event.preventDefault();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'move';
-    }
-  }
-
-  onSubtaskDrop(event: DragEvent, dropIndex: number) {
-    event.preventDefault();
-    if (this.draggedSubtaskIndex !== null && this.draggedSubtaskIndex !== dropIndex) {
-      const draggedSubtask = this.subtasks[this.draggedSubtaskIndex];
-      this.subtasks.splice(this.draggedSubtaskIndex, 1);
-      this.subtasks.splice(dropIndex, 0, draggedSubtask);
+  // Subtask ordering functionality
+  moveSubtaskUp(index: number) {
+    if (index > 0) {
+      const temp = this.subtasks[index];
+      this.subtasks[index] = this.subtasks[index - 1];
+      this.subtasks[index - 1] = temp;
       
       // Update order for all subtasks
-      this.subtasks.forEach((subtask, index) => {
-        subtask.order = index;
+      this.subtasks.forEach((subtask, idx) => {
+        subtask.order = idx;
       });
     }
-    this.draggedSubtaskIndex = null;
   }
 
-  onSubtaskDragEnd() {
-    this.draggedSubtaskIndex = null;
+  moveSubtaskDown(index: number) {
+    if (index < this.subtasks.length - 1) {
+      const temp = this.subtasks[index];
+      this.subtasks[index] = this.subtasks[index + 1];
+      this.subtasks[index + 1] = temp;
+      
+      // Update order for all subtasks
+      this.subtasks.forEach((subtask, idx) => {
+        subtask.order = idx;
+      });
+    }
   }
 
   // Subtask progress calculation

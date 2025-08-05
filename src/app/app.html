@@ -768,27 +768,63 @@
 
                 <!-- Subtask Items -->
                 <div class="subtask-items-container" *ngIf="subtasks.length > 0">
-                  <div *ngFor="let subtask of subtasks; let i = index" 
-                       class="subtask-item"
-                       draggable="true"
-                       (dragstart)="onSubtaskDragStart($event, i)"
-                       (dragover)="onSubtaskDragOver($event)"
-                       (drop)="onSubtaskDrop($event, i)"
-                       (dragend)="onSubtaskDragEnd()">
+                  <div *ngFor="let subtask of subtasks; let i = index" class="subtask-item">
                     
-                    <!-- Drag Handle -->
-                    <div class="subtask-drag-handle">
-                      <i class="ph ph-dots-six-vertical"></i>
-                    </div>
-
                     <!-- Checkbox -->
-                    <div class="form-check">
+                    <div class="form-check subtask-checkbox">
                       <input
                              class="form-check-input"
                              type="checkbox"
                              [id]="'subtask-' + subtask.id"
                              [checked]="subtask.completed"
                              (change)="toggleSubtask(subtask.id)">
+                    </div>
+
+                    <!-- Participant Circle -->
+                    <div class="subtask-participant-circle" 
+                         (click)="openSubtaskParticipantSearch(subtask.id)">
+                      <img *ngIf="subtask.assignedParticipant" 
+                           [src]="subtask.assignedParticipant.avatar" 
+                           class="rounded-circle subtask-participant-avatar" 
+                           [alt]="subtask.assignedParticipant.name">
+                      <div *ngIf="!subtask.assignedParticipant" class="subtask-participant-placeholder">
+                        <i class="ph ph-user"></i>
+                      </div>
+                      
+                      <!-- Participant Search Dropdown -->
+                      <div class="participant-search-dropdown subtask-participant-dropdown" 
+                           *ngIf="isSubtaskParticipantSearchOpen[subtask.id]">
+                        <div class="participant-search-header">
+                          <input
+                                 type="text"
+                                 class="form-control participant-search-input"
+                                 placeholder="Search participants..."
+                                 [value]="subtaskParticipantSearchQuery[subtask.id] || ''"
+                                 (input)="onSubtaskParticipantSearchInput(subtask.id, $event)">
+                          <button type="button" 
+                                  class="btn-close-search" 
+                                  (click)="closeSubtaskParticipantSearch(subtask.id)">
+                            <i class="ph ph-x"></i>
+                          </button>
+                        </div>
+                        <div class="participant-search-results">
+                          <div
+                               *ngFor="let participant of getFilteredSubtaskParticipants(subtask.id)"
+                               class="participant-search-item"
+                               (click)="addParticipantToSubtask(subtask.id, participant)">
+                            <img [src]="participant.avatar" 
+                                 class="rounded-circle participant-search-avatar"
+                                 [alt]="participant.name">
+                            <div class="participant-info">
+                              <div class="participant-name">{{ participant.name }}</div>
+                              <div class="participant-email">{{ participant.email }}</div>
+                            </div>
+                          </div>
+                          <div *ngIf="getFilteredSubtaskParticipants(subtask.id).length === 0" class="no-participants">
+                            No participants found
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- Subtask Title Input -->
@@ -800,76 +836,17 @@
                            placeholder="Subtask title"
                            [class.completed]="subtask.completed">
 
-                    <!-- Assigned Participants -->
-                    <div class="subtask-participants">
-                      <div *ngFor="let participant of subtask.assignedParticipants" class="subtask-participant-item">
-                        <img [src]="participant.avatar" 
-                             class="rounded-circle subtask-participant-avatar" 
-                             [alt]="participant.name"
-                             [title]="participant.name">
-                        <button type="button" 
-                                class="subtask-participant-remove-btn" 
-                                (click)="removeParticipantFromSubtask(subtask.id, participant.id)">
-                          <i class="ph ph-x"></i>
-                        </button>
-                      </div>
-                      
-                      <!-- Add Participant Button -->
-                      <div class="subtask-participant-search-container">
-                        <button type="button" 
-                                class="btn btn-outline-secondary btn-sm subtask-add-participant-btn" 
-                                (click)="openSubtaskParticipantSearch(subtask.id)">
-                          <i class="ph ph-plus"></i>
-                        </button>
-
-                        <!-- Participant Search Dropdown -->
-                        <div class="participant-search-dropdown subtask-participant-dropdown" 
-                             *ngIf="isSubtaskParticipantSearchOpen[subtask.id]">
-                          <div class="participant-search-header">
-                            <input
-                                   type="text"
-                                   class="form-control participant-search-input"
-                                   placeholder="Search participants..."
-                                   [value]="subtaskParticipantSearchQuery[subtask.id] || ''"
-                                   (input)="onSubtaskParticipantSearchInput(subtask.id, $event)">
-                            <button type="button" 
-                                    class="btn-close-search" 
-                                    (click)="closeSubtaskParticipantSearch(subtask.id)">
-                              <i class="ph ph-x"></i>
-                            </button>
-                          </div>
-                          <div class="participant-search-results">
-                            <div
-                                 *ngFor="let participant of getFilteredSubtaskParticipants(subtask.id)"
-                                 class="participant-search-item"
-                                 (click)="addParticipantToSubtask(subtask.id, participant)">
-                              <img [src]="participant.avatar" 
-                                   class="rounded-circle participant-search-avatar"
-                                   [alt]="participant.name">
-                              <div class="participant-info">
-                                <div class="participant-name">{{ participant.name }}</div>
-                                <div class="participant-email">{{ participant.email }}</div>
-                              </div>
-                            </div>
-                            <div *ngIf="getFilteredSubtaskParticipants(subtask.id).length === 0" class="no-participants">
-                              No participants found
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Remove Subtask Button -->
+                    <!-- Delete Button -->
                     <button
                             type="button"
-                            class="subtask-remove-btn"
+                            class="btn btn-link subtask-remove-btn"
                             (click)="removeSubtask(subtask.id)">
                       <i class="ph ph-trash"></i>
                     </button>
                   </div>
                 </div>
 
-                <!-- Add New Subtask -->
+                <!-- 5. Add New Subtask (Add Button) -->
                 <div class="add-subtask-section">
                   <div class="input-group">
                     <input
@@ -878,7 +855,7 @@
                            placeholder="Add subtask..."
                            [value]="newSubtaskTitle"
                            (input)="onNewSubtaskInputChange($event)"
-                           (keypress)="onNewSubtaskKeyPress($event)">
+                           (keypress)="onNewSubtaskKeyPress($event)" />
                     <button
                             type="button"
                             class="btn btn-outline-secondary"
