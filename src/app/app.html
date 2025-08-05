@@ -3,15 +3,60 @@
   <div class="mobile-overlay" [class.overlay-active]="isSidebarOpen" (click)="closeSidebar()"></div>
 
   <div class="sidebar-wrapper vh-100 d-flex flex-column" [class.sidebar-open]="isSidebarOpen">
-    <div class="user-content d-flex justify-content-between align-items-center">
+    <div class="user-content d-flex justify-content-between align-items-center position-relative">
       <img
-           src="/assets/images/zubayer.jpg"
+           [src]="currentWorkspace.avatar"
            class="rounded-circle user-content-user-image"
-           alt="Cinque Terre" />
+           alt="Workspace Avatar" />
       <h5 class="user-content-workspace-title text-truncate fw-bold">
-        Zubayer's Workspace
+        {{ currentWorkspace.name }}
       </h5>
-      <a href="" class="page-link"><i class="ph ph-caret-down fs-4 fw-bold"></i></a>
+      <a href="#" class="page-link workspace-dropdown-link" (click)="toggleWorkspaceDropdown(); $event.preventDefault()">
+        <i class="ph ph-caret-down fs-4 fw-bold"></i>
+      </a>
+      
+      <!-- Workspace Dropdown -->
+      <div class="workspace-dropdown" *ngIf="isWorkspaceDropdownOpen" (click)="onWorkspaceDropdownBackdropClick($event)">
+        <div class="workspace-dropdown-content">
+          <!-- Current Workspace Header -->
+          <div class="workspace-dropdown-header">
+            <img [src]="currentWorkspace.avatar" class="rounded-circle workspace-avatar" [alt]="currentWorkspace.name">
+            <span class="workspace-name">{{ currentWorkspace.name }}</span>
+          </div>
+          
+          <!-- Workspace Settings -->
+          <div class="workspace-dropdown-item d-flex align-items-center" (click)="closeWorkspaceDropdown()">
+            <i class="ph ph-gear fs-5 me-3"></i>
+            <span>Workspace settings</span>
+          </div>
+          
+          <!-- Divider -->
+          <div class="workspace-dropdown-divider"></div>
+          
+          <!-- Switch to Section -->
+          <div class="workspace-dropdown-section-title">
+            <i class="ph ph-arrows-clockwise me-3"></i>
+            <span>Switch to</span>
+          </div>
+          
+          <!-- Available Workspaces -->
+          <div *ngFor="let workspace of availableWorkspaces" 
+               class="workspace-dropdown-item" 
+               (click)="switchWorkspace(workspace)">
+            <i class="ph ph-gps fs-5 me-3"></i>
+            <span>{{ workspace.name }}</span>
+          </div>
+          
+          <!-- Divider -->
+          <div class="workspace-dropdown-divider"></div>
+          
+          <!-- Create Workspace -->
+          <div class="workspace-dropdown-item" (click)="closeWorkspaceDropdown()">
+            <i class="ph ph-plus fs-5 me-3"></i>
+            <span>Create Workspace</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="d-grid gap-2">
       <button class="btn btn-warning d-flex align-items-center justify-content-center" type="button">
@@ -85,7 +130,7 @@
   <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
     <div class="header-area d-flex align-items-center justify-content-between">
       <!-- Mobile Menu Button -->
-      <button class="mobile-menu-btn d-md-none btn btn-link p-0 me-3" (click)="toggleSidebar()">
+      <button class="mobile-menu-btn d-md-none btn p-0 me-3" (click)="toggleSidebar()">
         <i class="ph ph-list fs-2"></i>
       </button>
       <h3 class="p-0 m-0 fw-bold flex-grow-1">Today</h3>
@@ -95,10 +140,44 @@
           <span class="fs-5 timer-text">07 : 06 : 02</span>
         </div>
         <i class="ph ph-bell fs-2 notification-icon"></i>
-        <img
-             src="/assets/images/zubayer.jpg"
-             class="rounded-circle user-content-user-image"
-             alt="Cinque Terre" />
+        <div class="position-relative">
+          <img
+               [src]="currentUser.avatar"
+               class="rounded-circle user-content-user-image user-profile-image"
+               [alt]="currentUser.name"
+               (click)="toggleUserProfileDropdown()"
+               style="cursor: pointer;" />
+          
+          <!-- User Profile Dropdown -->
+          <div class="user-profile-dropdown" *ngIf="isUserProfileDropdownOpen" (click)="onUserProfileDropdownBackdropClick($event)">
+            <div class="user-profile-dropdown-content">
+              <!-- User Profile Header -->
+              <div class="user-profile-dropdown-header">
+                <img [src]="currentUser.avatar" class="rounded-circle user-profile-avatar" [alt]="currentUser.name">
+                <div class="user-profile-info">
+                  <div class="user-profile-name">{{ currentUser.name }}</div>
+                  <div class="user-profile-email">{{ currentUser.email }}</div>
+                </div>
+              </div>
+              
+              
+              <!-- Profile Settings -->
+              <div class="user-profile-dropdown-item" (click)="openProfileSettings()">
+                <i class="ph ph-gear me-3"></i>
+                <span>Profile settings</span>
+              </div>
+              
+              <!-- Divider -->
+              <div class="user-profile-dropdown-divider"></div>
+              
+              <!-- Log out -->
+              <div class="user-profile-dropdown-item" (click)="logout()">
+                <i class="ph ph-sign-out me-3"></i>
+                <span>Log out</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="content-area flex-grow-1 d-flex flex-column gap-5">

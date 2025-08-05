@@ -37,6 +37,12 @@ interface Tag {
   color: string;
 }
 
+interface Workspace {
+  id: number;
+  name: string;
+  avatar: string;
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -53,6 +59,25 @@ export class App {
   isTaskParticipantSearchOpen = false;
   participantSearchQuery = '';
   taskParticipantSearchQuery = '';
+  
+  // Workspace dropdown properties
+  isWorkspaceDropdownOpen = false;
+  currentWorkspace: Workspace = { id: 1, name: "Zubayer's Workspace", avatar: '/assets/images/zubayer.jpg' };
+  
+  // Available workspaces
+  availableWorkspaces: Workspace[] = [
+    { id: 2, name: 'Metatude', avatar: '/assets/images/zubayer.jpg' },
+    { id: 3, name: 'ASL', avatar: '/assets/images/zubayer.jpg' },
+    { id: 4, name: 'LIRA', avatar: '/assets/images/zubayer.jpg' }
+  ];
+
+  // User profile dropdown properties
+  isUserProfileDropdownOpen = false;
+  currentUser = {
+    name: 'Zubayer Ahamed',
+    email: 'zubayer@example.com',
+    avatar: '/assets/images/zubayer.jpg'
+  };
 
   // Dummy participants data
   allParticipants: Participant[] = [
@@ -440,6 +465,26 @@ export class App {
         });
       }
     }
+
+    // Check if workspace dropdown is open and close it if clicking outside
+    if (this.isWorkspaceDropdownOpen) {
+      const isClickInsideWorkspaceDropdown = target.closest('.workspace-dropdown');
+      const isClickOnWorkspaceLink = target.closest('.workspace-dropdown-link');
+      
+      if (!isClickInsideWorkspaceDropdown && !isClickOnWorkspaceLink) {
+        this.closeWorkspaceDropdown();
+      }
+    }
+
+    // Check if user profile dropdown is open and close it if clicking outside
+    if (this.isUserProfileDropdownOpen) {
+      const isClickInsideUserProfileDropdown = target.closest('.user-profile-dropdown');
+      const isClickOnUserProfileImage = target.closest('.user-profile-image');
+      
+      if (!isClickInsideUserProfileDropdown && !isClickOnUserProfileImage) {
+        this.closeUserProfileDropdown();
+      }
+    }
   }
 
   onSubtaskParticipantSearchBackdropClick(event: Event, subtaskId: number) {
@@ -525,5 +570,52 @@ export class App {
 
   get completedSubtaskCount(): number {
     return this.subtasks.filter(subtask => subtask.completed).length;
+  }
+
+  // Workspace dropdown methods
+  toggleWorkspaceDropdown() {
+    this.isWorkspaceDropdownOpen = !this.isWorkspaceDropdownOpen;
+  }
+
+  closeWorkspaceDropdown() {
+    this.isWorkspaceDropdownOpen = false;
+  }
+
+  switchWorkspace(workspace: Workspace) {
+    this.currentWorkspace = workspace;
+    this.closeWorkspaceDropdown();
+  }
+
+  onWorkspaceDropdownBackdropClick(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.closeWorkspaceDropdown();
+    }
+  }
+
+  // User profile dropdown methods
+  toggleUserProfileDropdown() {
+    this.isUserProfileDropdownOpen = !this.isUserProfileDropdownOpen;
+  }
+
+  closeUserProfileDropdown() {
+    this.isUserProfileDropdownOpen = false;
+  }
+
+  onUserProfileDropdownBackdropClick(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.closeUserProfileDropdown();
+    }
+  }
+
+  openProfileSettings() {
+    this.closeUserProfileDropdown();
+    // Add profile settings logic here
+    console.log('Opening profile settings...');
+  }
+
+  logout() {
+    this.closeUserProfileDropdown();
+    // Add logout logic here
+    console.log('Logging out...');
   }
 }
