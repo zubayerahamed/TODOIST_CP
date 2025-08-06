@@ -1,1 +1,1049 @@
-<router-outlet></router-outlet>
+<div class="wrapper bg-white vh-100 d-flex">
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" [class.overlay-active]="isSidebarOpen" (click)="closeSidebar()"></div>
+  
+    <div class="sidebar-wrapper vh-100 d-flex flex-column" [class.sidebar-open]="isSidebarOpen">
+      <div class="user-content d-flex justify-content-between align-items-center position-relative">
+        <img
+             [src]="currentWorkspace.avatar"
+             class="rounded-circle user-content-user-image"
+             alt="Workspace Avatar" />
+        <h5 class="user-content-workspace-title text-truncate fw-bold">
+          {{ currentWorkspace.name }}
+        </h5>
+        <a href="#" class="page-link workspace-dropdown-link" (click)="toggleWorkspaceDropdown(); $event.preventDefault()">
+          <i class="ph ph-caret-down fs-4 fw-bold"></i>
+        </a>
+        
+        <!-- Workspace Dropdown -->
+        <div class="workspace-dropdown" *ngIf="isWorkspaceDropdownOpen" (click)="onWorkspaceDropdownBackdropClick($event)">
+          <div class="workspace-dropdown-content">
+            <!-- Current Workspace Header -->
+            <div class="workspace-dropdown-header">
+              <img [src]="currentWorkspace.avatar" class="rounded-circle workspace-avatar" [alt]="currentWorkspace.name">
+              <span class="workspace-name">{{ currentWorkspace.name }}</span>
+            </div>
+            
+            <!-- Workspace Settings -->
+            <div class="workspace-dropdown-item d-flex align-items-center" (click)="closeWorkspaceDropdown()">
+              <i class="ph ph-gear fs-5 me-3"></i>
+              <span>Workspace settings</span>
+            </div>
+            
+            <!-- Divider -->
+            <div class="workspace-dropdown-divider"></div>
+            
+            <!-- Switch to Section -->
+            <div class="workspace-dropdown-section-title">
+              <i class="ph ph-arrows-clockwise me-3"></i>
+              <span>Switch to</span>
+            </div>
+            
+            <!-- Available Workspaces -->
+            <div *ngFor="let workspace of availableWorkspaces" 
+                 class="workspace-dropdown-item" 
+                 (click)="switchWorkspace(workspace)">
+              <i class="ph ph-gps fs-5 me-3"></i>
+              <span>{{ workspace.name }}</span>
+            </div>
+            
+            <!-- Divider -->
+            <div class="workspace-dropdown-divider"></div>
+            
+            <!-- Create Workspace -->
+            <div class="workspace-dropdown-item" (click)="openCreateWorkspaceModal(); $event.stopPropagation()">
+              <i class="ph ph-plus fs-5 me-3"></i>
+              <span>Create Workspace</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-grid gap-2">
+        <button class="btn btn-warning d-flex align-items-center justify-content-center" type="button">
+          <i class="ph ph-user-sound fs-5 me-2"></i><span>Voice Command</span>
+        </button>
+        <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button"
+                (click)="openAddTaskModal()">
+          <i class="ph ph-plus-circle fs-5 me-2"></i><span>Add Task</span>
+        </button>
+        <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button"
+                (click)="openAddEventModal()">
+          <i class="ph ph-calendar-plus fs-5 me-2"></i><span>Add Event</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="d-flex align-items-center">
+        <i class="ph ph-tray fs-4 me-2"></i>
+        <a href="" class="page-link flex-grow-1">Inbox</a>
+      </div>
+      <div class="d-flex align-items-center">
+        <i class="ph ph-calendar-dot fs-4 me-2"></i>
+        <a routerLink="/today" class="page-link page-active flex-grow-1">Today</a>
+        <span class="ms-2 me-2">3</span>
+      </div>
+      <div class="d-flex align-items-center">
+        <i class="ph ph-calendar-dots fs-4 me-2"></i>
+        <a href="" class="page-link flex-grow-1">Upcoming</a>
+      </div>
+      <div class="divider"></div>
+      <div class="d-flex align-items-center">
+        <i class="ph ph-check-circle fs-4 me-2"></i>
+        <a href="" class="page-link flex-grow-1">Completed</a>
+        <span class="ms-2 me-2">2</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="d-flex align-items-center section-favourites">
+        <i class="ph ph-star fs-4 fw-bold me-2"></i>
+        <span class="page-link fw-bold flex-grow-1">Favourites</span>
+        <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
+      </div>
+      <div class="d-flex align-items-center text-muted project-item">
+        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <a href="" class="page-link flex-grow-1">Office work</a>
+        <span class="ms-2 me-2">2</span>
+        <a href="" class="page-link align-items-center btn-edit-project"><i
+             class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      </div>
+      <div class="spacer"></div>
+      <div class="d-flex align-items-center section-my-projects">
+        <i class="ph ph-briefcase fs-4 fw-bold me-2"></i>
+        <span class="page-link fw-bold flex-grow-1">My Projects</span>
+        <a href="" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
+        <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
+      </div>
+      <div class="d-flex align-items-center text-muted project-item">
+        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <a href="" class="page-link flex-grow-1">Office work</a>
+        <span class="ms-2 me-2">2</span>
+        <a href="" class="page-link align-items-center btn-edit-project"><i
+             class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      </div>
+      <div class="d-flex align-items-center text-muted project-item">
+        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <a href="" class="page-link flex-grow-1">Hous work</a>
+        <span class="ms-2 me-2">1</span>
+        <a href="" class="page-link align-items-center btn-edit-project"><i
+             class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      </div>
+  
+    </div>
+    <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
+      <div class="header-area d-flex align-items-center justify-content-between">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn d-md-none btn p-0 me-3" (click)="toggleSidebar()">
+          <i class="ph ph-list fs-2"></i>
+        </button>
+        <h3 class="p-0 m-0 fw-bold flex-grow-1">Today</h3>
+        <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center gap-2 p-1 ps-4 pe-4 bg-dark text-white rounded timer-display">
+            <i class="ph ph-timer fs-5"></i>
+            <span class="fs-5 timer-text">07 : 06 : 02</span>
+          </div>
+          <i class="ph ph-bell fs-2 notification-icon"></i>
+          <div class="position-relative">
+            <img
+                 [src]="currentUser.avatar"
+                 class="rounded-circle user-content-user-image user-profile-image"
+                 [alt]="currentUser.name"
+                 (click)="toggleUserProfileDropdown()"
+                 style="cursor: pointer;" />
+            
+            <!-- User Profile Dropdown -->
+            <div class="user-profile-dropdown" *ngIf="isUserProfileDropdownOpen" (click)="onUserProfileDropdownBackdropClick($event)">
+              <div class="user-profile-dropdown-content">
+                <!-- User Profile Header -->
+                <div class="user-profile-dropdown-header">
+                  <img [src]="currentUser.avatar" class="rounded-circle user-profile-avatar" [alt]="currentUser.name">
+                  <div class="user-profile-info">
+                    <div class="user-profile-name">{{ currentUser.name }}</div>
+                    <div class="user-profile-email">{{ currentUser.email }}</div>
+                  </div>
+                </div>
+                
+                
+                <!-- Profile Settings -->
+                <div class="user-profile-dropdown-item" (click)="openProfileSettings()">
+                  <i class="ph ph-gear me-3"></i>
+                  <span>Profile settings</span>
+                </div>
+                
+                <!-- Divider -->
+                <div class="user-profile-dropdown-divider"></div>
+                
+                <!-- Log out -->
+                <div class="user-profile-dropdown-item" (click)="logout()">
+                  <i class="ph ph-sign-out me-3"></i>
+                  <span>Log out</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-area flex-grow-1 d-flex flex-column gap-5">
+        <div class="project-box d-flex gap-3 flex-column">
+          <div class="d-flex align-items-center project-box-header">
+            <i class="ph ph-hash fs-5 me-2"></i>
+            <h5 class="m-0 p-0 fw-bold">Office Work</h5>
+          </div>
+          <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+            <div class="task-status-check-icons-container">
+              <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+              <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+            </div>
+            <div class="flex-grow-1 d-flex flex-column gap-1">
+              <div class="d-flex align-items-center gap-3 task-header">
+                <span class="badge bg-dark ps-3 pe-3">Task</span>
+                <h5 class="m-0">Learn Angular</h5>
+              </div>
+              <span class="mt-2 mb-2">Some task description here</span>
+              <div class="d-flex align-items-center gap-4 task-metadata">
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-calendar-dot"></i>
+                  <span class="text-muted text-sm">Today: 9:00am</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-chat-teardrop-dots"></i>
+                  <span class="text-muted text-sm">2</span>
+                </div>
+  
+                <span class="badge bg-info fw-normal">In Progress</span>
+  
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-tag"></i>
+                  <span class="text-muted text-sm">Softwae Development</span>
+                </div>
+  
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-arrow-fat-lines-up text-danger"></i>
+                  <span class="text-muted text-sm">Very High</span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-4 task-metadata">
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-calendar-slash"></i>
+                  <span class="text-muted text-sm">Due date: Aug 29, 2025</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-clock"></i>
+                  <span class="text-muted text-sm">Estimated time: 8 hour</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-clock-countdown"></i>
+                  <span class="text-muted text-sm">Spent time: 2 hour</span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center mt-2 gap-2">
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+              </div>
+            </div>
+          </div>
+  
+          <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+            <div class="task-status-check-icons-container">
+              <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+              <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+            </div>
+            <div class="flex-grow-1 d-flex flex-column gap-1">
+              <div class="d-flex align-items-center gap-3 task-header">
+                <span class="badge bg-primary ps-3 pe-3">Event</span>
+                <h5 class="m-0">Meeting with Arafat</h5>
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+              </div>
+              <span class="mt-2 mb-2">Some event description here</span>
+              <div class="d-flex align-items-center gap-4 task-metadata">
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-calendar-dot"></i>
+                  <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-chat-teardrop-dots"></i>
+                  <span class="text-muted text-sm">2</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-tag"></i>
+                  <span class="text-muted text-sm">Project Management</span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-4 task-metadata">
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-map-pin"></i>
+                  <span class="text-muted text-sm">Location: Online Zoom Meeting</span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center mt-2 gap-2">
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="project-box d-flex gap-3 flex-column">
+          <div class="d-flex align-items-center project-box-header">
+            <i class="ph ph-hash fs-5 me-2"></i>
+            <h5 class="m-0 p-0 fw-bold">House Work</h5>
+          </div>
+          <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+            <div class="task-status-check-icons-container">
+              <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+              <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+            </div>
+            <div class="flex-grow-1 d-flex flex-column gap-1">
+              <div class="d-flex align-items-center gap-3 task-header">
+                <span class="badge bg-primary ps-3 pe-3">Event</span>
+                <h5 class="m-0">Bazar</h5>
+                <img
+                     src="/assets/images/zubayer.jpg"
+                     class="rounded-circle task-participants-image"
+                     alt="Cinque Terre" />
+              </div>
+              <span class="mt-2 mb-2">
+                <span class="fw-bold">Checklist</span>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" checked>
+                  <label class="form-check-label text-deleted" for="defaultCheck1">
+                    Fish
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
+                  <label class="form-check-label" for="defaultCheck2">
+                    Meat
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck3">
+                  <label class="form-check-label" for="defaultCheck3">
+                    Vegetables
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck4">
+                  <label class="form-check-label" for="defaultCheck4">
+                    Rice
+                  </label>
+                </div>
+              </span>
+              <div class="d-flex align-items-center gap-4 task-metadata">
+                <div class="d-flex align-items-center gap-1">
+                  <i class="ph ph-calendar-dot"></i>
+                  <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Add Event Modal -->
+    <div class="modal-backdrop" *ngIf="isAddEventModalOpen" (click)="onEventModalBackdropClick($event)">
+      <div class="modal-container modal-lg d-flex flex-column">
+        <div class="modal-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="ph ph-calendar-plus me-2 fs-4"></i>
+            <h4 class="modal-title">Create New Event</h4>
+          </div>
+          <button type="button" class="btn-close d-flex align-items-center justify-content-center"
+                  (click)="closeAddEventModal()">
+            <i class="ph ph-x fs-4"></i>
+          </button>
+        </div>
+        <div class="modal-body flex-grow-1">
+          <form>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="eventDate" class="form-label">Date *</label>
+                  <input type="date" class="form-control" id="eventDate">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-3">
+                  <label for="eventStartTime" class="form-label">Start Time *</label>
+                  <input type="time" class="form-control" id="eventStartTime">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-3">
+                  <label for="eventEndTime" class="form-label">End Time *</label>
+                  <input type="time" class="form-control" id="eventEndTime">
+                </div>
+              </div>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="eventTitle" class="form-label">Event Title *</label>
+                  <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
+                  <select class="form-select" id="eventProject">
+                    <option value="">-- Select Project --</option>
+                    <option value="office">Office Work</option>
+                    <option value="house">House Work</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label for="eventCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
+                  <select class="form-select" id="eventCategory">
+                    <option value="">-- Select Category --</option>
+                    <option value="Software Development">Software Development</option>
+                    <option value="Iterview">Interview</option>
+                    <option value="Exam">Exam</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+  
+            <div class="mb-3">
+              <label for="eventDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="eventDescription" rows="3"
+                        placeholder="Enter event description"></textarea>
+            </div>
+  
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="eventLocation" class="form-label"><i class="ph ph-map-pin me-2"></i>Location</label>
+                  <input type="text" class="form-control" id="eventLocation" placeholder="Enter location">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="reminder" class="form-label d-flex align-items-center">
+                    <i class="ph ph-bell me-2"></i>Reminder
+                  </label>
+                  <select class="form-select" id="reminder">
+                    <option value="">-- Select Reminder --</option>
+                    <option value="0">At the time of event</option>
+                    <option value="5">5 minute before</option>
+                    <option value="10">10 minute before</option>
+                    <option value="15">15 minute before</option>
+                    <option value="30">30 minute before</option>
+                    <option value="60">1 hour before</option>
+                    <option value="120">2 hour before</option>
+                    <option value="360">6 hour before</option>
+                    <option value="720">12 hour before</option>
+                    <option value="1440">1 day before</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+  
+            <div class="mb-3">
+              <label class="form-label"><i class="ph ph-users-three me-2"></i>Participants</label>
+              <div class="d-flex align-items-center gap-3 flex-wrap">
+                <div *ngFor="let participant of selectedParticipants" class="participant-item">
+                  <img
+                       [src]="participant.avatar"
+                       class="rounded-circle participant-avatar"
+                       [alt]="participant.name"
+                       [title]="participant.name + ' - ' + participant.email"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top">
+                  <button type="button" class="participant-remove-btn" (click)="removeParticipant(participant.id)">
+                    <i class="ph ph-x"></i>
+                  </button>
+                </div>
+                <div class="participant-search-container">
+                  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="openParticipantSearch()">
+                    <i class="ph ph-plus me-1"></i><span>Add Participant</span>
+                  </button>
+  
+                  <!-- Participant Search Dropdown -->
+                  <div class="participant-search-dropdown" *ngIf="isParticipantSearchOpen">
+                    <div class="participant-search-header">
+                      <input
+                             type="text"
+                             class="form-control participant-search-input"
+                             placeholder="Search participants..."
+                             [value]="participantSearchQuery"
+                             (input)="onParticipantSearchInput($event)"
+                             #searchInput>
+                      <button type="button" class="btn-close-search" (click)="closeParticipantSearch()">
+                        <i class="ph ph-x"></i>
+                      </button>
+                    </div>
+                    <div class="participant-search-results">
+                      <div
+                           *ngFor="let participant of filteredParticipants"
+                           class="participant-search-item"
+                           (click)="addParticipant(participant)">
+                        <img [src]="participant.avatar" class="rounded-circle participant-search-avatar"
+                             [alt]="participant.name">
+                        <div class="participant-info">
+                          <div class="participant-name">{{ participant.name }}</div>
+                          <div class="participant-email">{{ participant.email }}</div>
+                        </div>
+                      </div>
+                      <div *ngIf="filteredParticipants.length === 0" class="no-participants">
+                        No participants found
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Divider -->
+            <div class="divider mb-3"></div>
+  
+            <!-- Checklist Section -->
+            <div class="mb-3">
+              <label class="form-label d-flex align-items-center justify-content-between">
+                <span class="d-flex align-items-center">
+                  <i class="ph ph-list-checks me-2"></i>Checklist
+                </span>
+                <span class="checklist-progress-info" *ngIf="checklistItems.length > 0">
+                  {{ completedChecklistCount }}/{{ checklistItems.length }} completed ({{ checklistProgress }}%)
+                </span>
+              </label>
+  
+              <!-- Progress Bar -->
+              <div class="progress mb-3" *ngIf="checklistItems.length > 0">
+                <div
+                     class="progress-bar bg-success"
+                     role="progressbar"
+                     [style.width.%]="checklistProgress"
+                     [attr.aria-valuenow]="checklistProgress"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+              </div>
+  
+              <!-- Add New Checklist Item -->
+              <div class="add-checklist-section mb-3">
+                <div class="input-group">
+                  <input
+                         type="text"
+                         class="form-control"
+                         placeholder="Add checklist item..."
+                         [value]="newChecklistItem"
+                         (input)="onChecklistInputChange($event)"
+                         (keypress)="onChecklistInputKeyPress($event)">
+                  <button
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          (click)="addChecklistItem()"
+                          [disabled]="!newChecklistItem.trim()">
+                    <i class="ph ph-plus"></i>
+                  </button>
+                </div>
+              </div>
+  
+              <!-- Checklist Items -->
+              <div class="checklist-items-container" *ngIf="checklistItems.length > 0">
+                <div *ngFor="let item of checklistItems" class="checklist-item d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center fex-grow-1">
+                    <input
+                           class="form-check-input me-2"
+                           type="checkbox"
+                           [id]="'checklist-' + item.id"
+                           [checked]="item.completed"
+                           (change)="toggleChecklistItem(item.id)">
+                    <label
+                           class="form-check-label"
+                           [for]="'checklist-' + item.id"
+                           [class.text-decoration-line-through]="item.completed"
+                           [class.text-muted]="item.completed">
+                      {{ item.text }}
+                    </label>
+                  </div>
+                  <button
+                          type="button"
+                          class="checklist-remove-btn"
+                          (click)="removeChecklistItem(item.id)">
+                    <i class="ph ph-x"></i>
+                  </button>
+                </div>
+              </div>
+  
+              
+            </div>
+  
+            <!-- Divider -->
+            <div class="divider mb-3"></div>
+  
+            <!-- File Attachments Section -->
+            <div class="mb-3">
+              <label class="form-label d-flex align-items-center">
+                <i class="ph ph-paperclip me-2"></i>Attachments
+              </label>
+  
+              <!-- Attached Files Display -->
+              <div class="attached-files-container" *ngIf="attachedFiles.length > 0">
+                <div *ngFor="let file of attachedFiles" class="attached-file-item">
+                  <div class="file-icon">
+                    {{ file.icon }}
+                  </div>
+                  <div class="file-info">
+                    <div class="file-name">{{ file.name }}</div>
+                    <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                  </div>
+                  <button type="button" class="file-remove-btn" (click)="removeFile(file.id)">
+                    <i class="ph ph-trash"></i>
+                  </button>
+                </div>
+              </div>
+  
+              <!-- Add File Button -->
+              <div class="attach-file-section">
+                <input
+                       type="file"
+                       id="fileInput"
+                       class="file-input"
+                       multiple
+                       (change)="onFileSelect($event)"
+                       #fileInput>
+                <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
+                        (click)="fileInput.click()">
+                  <i class="ph ph-plus me-1"></i><span>Attach file</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
+          <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+            <i class="ph ph-calendar-plus me-2"></i><span>Create Event</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Add Task Modal -->
+    <div class="modal-backdrop" *ngIf="isAddTaskModalOpen" (click)="onTaskModalBackdropClick($event)">
+      <div class="modal-container modal-lg d-flex flex-column">
+        <div class="modal-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="ph ph-plus-circle me-2 fs-4"></i>
+            <h4 class="modal-title m-0 p-0">Create Task</h4>
+          </div>
+          <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeAddTaskModal()">
+            <i class="ph ph-x fs-4"></i>
+          </button>
+        </div>
+        <div class="modal-body flex-grow-1">
+          <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-12">
+              <form>
+                <!-- Task Name -->
+                <div class="mb-3">
+                  <label for="taskName" class="form-label">Task Name</label>
+                  <input type="text" class="form-control" placeholder="Task name" id="taskName">
+                </div>
+  
+                <!-- Task Description -->
+                <div class="mb-3">
+                  <label for="taskDescription" class="form-label">Description</label>
+                  <textarea class="form-control" rows="4" placeholder="Task description" id="taskDescription"></textarea>
+                </div>
+  
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="mb-3">
+                      <label for="taskProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
+                      <select class="form-select" id="taskProject">
+                        <option value="">-- Select Project --</option>
+                        <option value="daily-learning">Daily learning</option>
+                        <option value="office-work">Office Work</option>
+                        <option value="house-work">House Work</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <!-- Section -->
+                    <div class="mb-3">
+                      <label for="taskSection" class="form-label"><i class="ph ph-arrows-out-cardinal me-2"></i>Section</label>
+                      <select class="form-select" id="taskSection">
+                        <option value="">-- Select Section --</option>
+                        <option value="todo">To Do</option>
+                        <option value="done">Done</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <!-- Category -->
+                    <div class="mb-3">
+                      <label for="taskCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
+                      <select class="form-select" id="taskCategory">
+                        <option value="">-- Select Category --</option>
+                        <option value="design">Design</option>
+                        <option value="research">Research</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <!-- Status -->
+                    <div class="mb-3">
+                      <label for="taskStatus" class="form-label">Status</label>
+                      <select class="form-select" id="taskStatus">
+                        <option value="">-- Select Status --</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <!-- Schedule -->
+                    <div class="mb-3">
+                      <label for="taskSchedule" class="form-label">Schedule this task for</label>
+                      <input type="date" class="form-control" id="taskSchedule" value="2025-07-01">
+                    </div>
+  
+  
+                  </div>
+                  <div class="col-md-3">
+                    <!-- Due Date -->
+                    <div class="mb-3">
+                      <label for="taskDueDate" class="form-label">Due date</label>
+                      <input type="date" class="form-control" id="taskDueDate" value="2025-07-01">
+                    </div>
+  
+  
+                  </div>
+                  <div class="col-md-3">
+                    <!-- Estimated Time -->
+                    <div class="mb-3">
+                      <label for="taskEstimatedTime" class="form-label">Estimated time</label>
+                      <div class="input-group">
+                        <input type="number" class="form-control" id="taskEstimatedTime" value="0" min="0">
+                        <span class="input-group-text">h</span>
+                      </div>
+                    </div>
+  
+  
+                  </div>
+                  <div class="col-md-3">
+                    <!-- Priority -->
+                    <div class="mb-3">
+                      <label for="taskPriority" class="form-label">Priority</label>
+                      <select class="form-select" id="taskPriority">
+                        <option value="none" selected>None</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="very-high">Very High</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+  
+                <!-- Participants -->
+                <div class="mb-3">
+                  <label class="form-label"><i class="ph ph-users-three me-2"></i>Participants</label>
+                  <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div *ngFor="let participant of taskSelectedParticipants" class="participant-item">
+                      <img 
+                        [src]="participant.avatar" 
+                        class="rounded-circle participant-avatar" 
+                        [alt]="participant.name"
+                        [title]="participant.name + ' - ' + participant.email"
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top">
+                      <button type="button" class="participant-remove-btn" (click)="removeTaskParticipant(participant.id)">
+                        <i class="ph ph-x"></i>
+                      </button>
+                    </div>
+                    <div class="participant-search-container">
+                      <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="openTaskParticipantSearch()">
+                        <i class="ph ph-plus me-1"></i><span>Add Participant</span>
+                      </button>
+                      
+                      <!-- Task Participant Search Dropdown -->
+                      <div class="participant-search-dropdown" *ngIf="isTaskParticipantSearchOpen">
+                        <div class="participant-search-header">
+                          <input 
+                            type="text" 
+                            class="form-control participant-search-input" 
+                            placeholder="Search participants..."
+                            [value]="taskParticipantSearchQuery"
+                            (input)="onTaskParticipantSearchInput($event)">
+                          <button type="button" class="btn-close-search" (click)="closeTaskParticipantSearch()">
+                            <i class="ph ph-x"></i>
+                          </button>
+                        </div>
+                        <div class="participant-search-results">
+                          <div 
+                            *ngFor="let participant of filteredTaskParticipants" 
+                            class="participant-search-item"
+                            (click)="addTaskParticipant(participant)">
+                            <img [src]="participant.avatar" class="rounded-circle participant-search-avatar" [alt]="participant.name">
+                            <div class="participant-info">
+                              <div class="participant-name">{{ participant.name }}</div>
+                              <div class="participant-email">{{ participant.email }}</div>
+                            </div>
+                          </div>
+                          <div *ngIf="filteredTaskParticipants.length === 0" class="no-participants">
+                            No participants found
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                <!-- Divider -->
+                <div class="divider mb-3"></div>
+  
+                <!-- Subtasks Section -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center justify-content-between">
+                    <span class="d-flex align-items-center">
+                      <i class="ph ph-check-square me-2"></i>Subtasks
+                    </span>
+                    <span class="subtask-progress-info" *ngIf="subtasks.length > 0">
+                      {{ completedSubtaskCount }}/{{ subtasks.length }} completed ({{ subtaskProgress }}%)
+                    </span>
+                  </label>
+  
+                  <!-- Progress Bar -->
+                  <div class="progress mb-3" *ngIf="subtasks.length > 0">
+                    <div
+                         class="progress-bar bg-success"
+                         role="progressbar"
+                         [style.width.%]="subtaskProgress"
+                         [attr.aria-valuenow]="subtaskProgress"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                    </div>
+                  </div>
+  
+                  <!-- 5. Add New Subtask (Add Button) -->
+                  <div class="add-subtask-section mb-3">
+                    <div class="input-group">
+                      <input
+                             type="text"
+                             class="form-control"
+                             placeholder="Add subtask..."
+                             [value]="newSubtaskTitle"
+                             (input)="onNewSubtaskInputChange($event)"
+                             (keypress)="onNewSubtaskKeyPress($event)" />
+                      <button
+                              type="button"
+                              class="btn btn-outline-secondary"
+                              (click)="addSubtask()"
+                              [disabled]="!newSubtaskTitle.trim()">
+                        <i class="ph ph-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+  
+                  <!-- Subtask Items -->
+                  <div class="subtask-items-container" *ngIf="subtasks.length > 0">
+                    <div *ngFor="let subtask of subtasks; let i = index" class="subtask-item d-flex align-items-center gap-3 mb-2">
+                      
+                      <!-- Checkbox -->
+                      <div class="form-check subtask-checkbox mb-0">
+                        <input
+                               class="form-check-input"
+                               type="checkbox"
+                               [id]="'subtask-' + subtask.id"
+                               [checked]="subtask.completed"
+                               (change)="toggleSubtask(subtask.id)">
+                      </div>
+  
+                      <!-- Participant Circle -->
+                      <div class="subtask-participant-circle" 
+                           (click)="openSubtaskParticipantSearch(subtask.id)">
+                        <img *ngIf="subtask.assignedParticipant" 
+                             [src]="subtask.assignedParticipant.avatar" 
+                             class="rounded-circle subtask-participant-avatar" 
+                             [alt]="subtask.assignedParticipant.name">
+                        <div *ngIf="!subtask.assignedParticipant" class="subtask-participant-placeholder">
+                          <i class="ph ph-user"></i>
+                        </div>
+                        
+                        <!-- Participant Search Dropdown -->
+                        <div class="participant-search-dropdown subtask-participant-dropdown" 
+                             *ngIf="isSubtaskParticipantSearchOpen[subtask.id]"
+                             (click)="$event.stopPropagation()">
+                          <div class="participant-search-header">
+                            <input
+                                   type="text"
+                                   class="form-control participant-search-input"
+                                   placeholder="Search participants..."
+                                   [value]="subtaskParticipantSearchQuery[subtask.id] || ''"
+                                   (input)="onSubtaskParticipantSearchInput(subtask.id, $event)">
+                            <button type="button" 
+                                    class="btn-close-search" 
+                                    (click)="closeSubtaskParticipantSearch(subtask.id); $event.stopPropagation()">
+                              <i class="ph ph-x"></i>
+                            </button>
+                          </div>
+                          <div class="participant-search-results">
+                            <div
+                                 *ngFor="let participant of getFilteredSubtaskParticipants(subtask.id)"
+                                 class="participant-search-item"
+                                 (click)="addParticipantToSubtask(subtask.id, participant); $event.stopPropagation()">
+                              <img [src]="participant.avatar" 
+                                   class="rounded-circle participant-search-avatar"
+                                   [alt]="participant.name">
+                              <div class="participant-info">
+                                <div class="participant-name">{{ participant.name }}</div>
+                                <div class="participant-email">{{ participant.email }}</div>
+                              </div>
+                            </div>
+                            <div *ngIf="getFilteredSubtaskParticipants(subtask.id).length === 0" class="no-participants">
+                              No participants found
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+  
+                      <!-- Subtask Title Input -->
+                      <input
+                             type="text"
+                             class="form-control subtask-title-input"
+                             [value]="subtask.title"
+                             (input)="onSubtaskTitleChange(subtask.id, $event)"
+                             placeholder="Subtask title"
+                             [class.completed]="subtask.completed">
+  
+                      <!-- Delete Button -->
+                      <button
+                              type="button"
+                              class="btn subtask-remove-btn"
+                              (click)="removeSubtask(subtask.id)">
+                        <i class="ph ph-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+  
+                  
+                </div>
+  
+                <!-- Divider -->
+                <div class="divider mb-3"></div>
+  
+                <!-- File Attachments Section -->
+                <div class="mb-3">
+                  <label class="form-label d-flex align-items-center">
+                    <i class="ph ph-paperclip me-2"></i>Attachments
+                  </label>
+                  
+                  <!-- Attached Files Display -->
+                  <div class="attached-files-container" *ngIf="taskAttachedFiles.length > 0">
+                    <div *ngFor="let file of taskAttachedFiles" class="attached-file-item">
+                      <div class="file-icon">
+                        {{ file.icon }}
+                      </div>
+                      <div class="file-info">
+                        <div class="file-name">{{ file.name }}</div>
+                        <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                      </div>
+                      <button type="button" class="file-remove-btn" (click)="removeTaskFile(file.id)">
+                        <i class="ph ph-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+  
+                  <!-- Add File Button -->
+                  <div class="attach-file-section">
+                    <input 
+                      type="file" 
+                      id="taskFileInput" 
+                      class="file-input" 
+                      multiple 
+                      (change)="onTaskFileSelect($event)"
+                      #taskFileInput>
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
+                      (click)="taskFileInput.click()">
+                      <i class="ph ph-plus me-1"></i><span>Attach file</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+  
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeAddTaskModal()">Cancel</button>
+          <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+            <i class="ph ph-plus-circle me-2"></i><span>Create task</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Create Workspace Modal -->
+    <div class="modal-backdrop" *ngIf="isCreateWorkspaceModalOpen" (click)="onCreateWorkspaceModalBackdropClick($event)">
+      <div class="modal-container workspace-modal d-flex flex-column" style="max-width: 500px;">
+        <div class="modal-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <h4 class="modal-title m-0 p-0">Create Workspace</h4>
+          </div>
+          <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeCreateWorkspaceModal()">
+            <i class="ph ph-x fs-4"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Workspace name" 
+                [value]="newWorkspaceName"
+                (input)="onWorkspaceNameInputChange($event)"
+                (keypress)="onWorkspaceNameKeyPress($event)"
+                #workspaceNameInput>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCreateWorkspaceModal()">Cancel</button>
+          <button 
+            type="button" 
+            class="btn btn-primary"
+            (click)="createWorkspace()"
+            [disabled]="!newWorkspaceName.trim()">
+            Create Workspace
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
