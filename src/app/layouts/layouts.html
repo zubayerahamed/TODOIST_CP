@@ -1,132 +1,25 @@
 <div class="wrapper bg-white vh-100 d-flex">
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-overlay" [class.overlay-active]="isSidebarOpen" (click)="closeSidebar()"></div>
-  
-    <div class="sidebar-wrapper vh-100 d-flex flex-column" [class.sidebar-open]="isSidebarOpen">
-      <div class="user-content d-flex justify-content-between align-items-center position-relative">
-        <img
-             [src]="currentWorkspace.avatar"
-             class="rounded-circle user-content-user-image"
-             alt="Workspace Avatar" />
-        <h5 class="user-content-workspace-title text-truncate fw-bold">
-          {{ currentWorkspace.name }}
-        </h5>
-        <a href="#" class="page-link workspace-dropdown-link" (click)="toggleWorkspaceDropdown(); $event.preventDefault()">
-          <i class="ph ph-caret-down fs-4 fw-bold"></i>
-        </a>
-        
-        <!-- Workspace Dropdown -->
-        <div class="workspace-dropdown" *ngIf="isWorkspaceDropdownOpen" (click)="onWorkspaceDropdownBackdropClick($event)">
-          <div class="workspace-dropdown-content">
-            <!-- Current Workspace Header -->
-            <div class="workspace-dropdown-header">
-              <img [src]="currentWorkspace.avatar" class="rounded-circle workspace-avatar" [alt]="currentWorkspace.name">
-              <span class="workspace-name">{{ currentWorkspace.name }}</span>
-            </div>
-            
-            <!-- Workspace Settings -->
-            <div class="workspace-dropdown-item d-flex align-items-center" (click)="closeWorkspaceDropdown()">
-              <i class="ph ph-gear fs-5 me-3"></i>
-              <span>Workspace settings</span>
-            </div>
-            
-            <!-- Divider -->
-            <div class="workspace-dropdown-divider"></div>
-            
-            <!-- Switch to Section -->
-            <div class="workspace-dropdown-section-title">
-              <i class="ph ph-arrows-clockwise me-3"></i>
-              <span>Switch to</span>
-            </div>
-            
-            <!-- Available Workspaces -->
-            <div *ngFor="let workspace of availableWorkspaces" 
-                 class="workspace-dropdown-item" 
-                 (click)="switchWorkspace(workspace)">
-              <i class="ph ph-gps fs-5 me-3"></i>
-              <span>{{ workspace.name }}</span>
-            </div>
-            
-            <!-- Divider -->
-            <div class="workspace-dropdown-divider"></div>
-            
-            <!-- Create Workspace -->
-            <div class="workspace-dropdown-item" (click)="openCreateWorkspaceModal(); $event.stopPropagation()">
-              <i class="ph ph-plus fs-5 me-3"></i>
-              <span>Create Workspace</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="d-grid gap-2">
-        <button class="btn btn-warning d-flex align-items-center justify-content-center" type="button">
-          <i class="ph ph-user-sound fs-5 me-2"></i><span>Voice Command</span>
-        </button>
-        <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button"
-                (click)="openAddTaskModal()">
-          <i class="ph ph-plus-circle fs-5 me-2"></i><span>Add Task</span>
-        </button>
-        <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button"
-                (click)="openAddEventModal()">
-          <i class="ph ph-calendar-plus fs-5 me-2"></i><span>Add Event</span>
-        </button>
-      </div>
-      <div class="divider"></div>
-      <div class="d-flex align-items-center">
-        <i class="ph ph-tray fs-4 me-2"></i>
-        <a href="" class="page-link flex-grow-1">Inbox</a>
-      </div>
-      <div class="d-flex align-items-center">
-        <i class="ph ph-calendar-dot fs-4 me-2"></i>
-        <a routerLink="/today" class="page-link page-active flex-grow-1">Today</a>
-        <span class="ms-2 me-2">3</span>
-      </div>
-      <div class="d-flex align-items-center">
-        <i class="ph ph-calendar-dots fs-4 me-2"></i>
-        <a href="" class="page-link flex-grow-1">Upcoming</a>
-      </div>
-      <div class="divider"></div>
-      <div class="d-flex align-items-center">
-        <i class="ph ph-check-circle fs-4 me-2"></i>
-        <a href="" class="page-link flex-grow-1">Completed</a>
-        <span class="ms-2 me-2">2</span>
-      </div>
-      <div class="spacer"></div>
-      <div class="d-flex align-items-center section-favourites">
-        <i class="ph ph-star fs-4 fw-bold me-2"></i>
-        <span class="page-link fw-bold flex-grow-1">Favourites</span>
-        <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
-      </div>
-      <div class="d-flex align-items-center text-muted project-item">
-        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-        <a href="" class="page-link flex-grow-1">Office work</a>
-        <span class="ms-2 me-2">2</span>
-        <a href="" class="page-link align-items-center btn-edit-project"><i
-             class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-      </div>
-      <div class="spacer"></div>
-      <div class="d-flex align-items-center section-my-projects">
-        <i class="ph ph-briefcase fs-4 fw-bold me-2"></i>
-        <span class="page-link fw-bold flex-grow-1">My Projects</span>
-        <a href="" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
-        <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
-      </div>
-      <div class="d-flex align-items-center text-muted project-item">
-        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-        <a href="" class="page-link flex-grow-1">Office work</a>
-        <span class="ms-2 me-2">2</span>
-        <a href="" class="page-link align-items-center btn-edit-project"><i
-             class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-      </div>
-      <div class="d-flex align-items-center text-muted project-item">
-        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-        <a href="" class="page-link flex-grow-1">Hous work</a>
-        <span class="ms-2 me-2">1</span>
-        <a href="" class="page-link align-items-center btn-edit-project"><i
-             class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-      </div>
-  
-    </div>
+
+    <app-left-sidebar 
+      [isSidebarOpen]="isSidebarOpen"
+      [currentWorkspace]="currentWorkspace"
+      [availableWorkspaces]="availableWorkspaces"
+      [isWorkspaceDropdownOpen]="isWorkspaceDropdownOpen"
+      [isCreateWorkspaceModalOpen]="isCreateWorkspaceModalOpen"
+      [newWorkspaceName]="newWorkspaceName"
+      (sidebarToggle)="onSidebarToggle()"
+      (sidebarClose)="onSidebarClose()"
+      (workspaceDropdownToggle)="onWorkspaceDropdownToggle()"
+      (workspaceDropdownClose)="onWorkspaceDropdownClose()"
+      (workspaceSwitch)="onWorkspaceSwitch($event)"
+      (createWorkspaceModalOpen)="onCreateWorkspaceModalOpen()"
+      (createWorkspaceModalClose)="onCreateWorkspaceModalClose()"
+      (workspaceCreate)="onWorkspaceCreate($event)"
+      (workspaceNameChange)="onWorkspaceNameChange($event)"
+      (addTaskModalOpen)="onAddTaskModalOpen()"
+      (addEventModalOpen)="onAddEventModalOpen()"
+    />
+
     <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
       <div class="header-area d-flex align-items-center justify-content-between">
         <!-- Mobile Menu Button -->
@@ -180,185 +73,9 @@
           </div>
         </div>
       </div>
-      <div class="content-area flex-grow-1 d-flex flex-column gap-5">
-        <div class="project-box d-flex gap-3 flex-column">
-          <div class="d-flex align-items-center project-box-header">
-            <i class="ph ph-hash fs-5 me-2"></i>
-            <h5 class="m-0 p-0 fw-bold">Office Work</h5>
-          </div>
-          <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
-            <div class="task-status-check-icons-container">
-              <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
-              <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
-            </div>
-            <div class="flex-grow-1 d-flex flex-column gap-1">
-              <div class="d-flex align-items-center gap-3 task-header">
-                <span class="badge bg-dark ps-3 pe-3">Task</span>
-                <h5 class="m-0">Learn Angular</h5>
-              </div>
-              <span class="mt-2 mb-2">Some task description here</span>
-              <div class="d-flex align-items-center gap-4 task-metadata">
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-calendar-dot"></i>
-                  <span class="text-muted text-sm">Today: 9:00am</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-chat-teardrop-dots"></i>
-                  <span class="text-muted text-sm">2</span>
-                </div>
-  
-                <span class="badge bg-info fw-normal">In Progress</span>
-  
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-tag"></i>
-                  <span class="text-muted text-sm">Softwae Development</span>
-                </div>
-  
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-arrow-fat-lines-up text-danger"></i>
-                  <span class="text-muted text-sm">Very High</span>
-                </div>
-              </div>
-              <div class="d-flex align-items-center gap-4 task-metadata">
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-calendar-slash"></i>
-                  <span class="text-muted text-sm">Due date: Aug 29, 2025</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-clock"></i>
-                  <span class="text-muted text-sm">Estimated time: 8 hour</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-clock-countdown"></i>
-                  <span class="text-muted text-sm">Spent time: 2 hour</span>
-                </div>
-              </div>
-              <div class="d-flex align-items-center mt-2 gap-2">
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-              </div>
-            </div>
-          </div>
-  
-          <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
-            <div class="task-status-check-icons-container">
-              <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
-              <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
-            </div>
-            <div class="flex-grow-1 d-flex flex-column gap-1">
-              <div class="d-flex align-items-center gap-3 task-header">
-                <span class="badge bg-primary ps-3 pe-3">Event</span>
-                <h5 class="m-0">Meeting with Arafat</h5>
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-              </div>
-              <span class="mt-2 mb-2">Some event description here</span>
-              <div class="d-flex align-items-center gap-4 task-metadata">
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-calendar-dot"></i>
-                  <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-chat-teardrop-dots"></i>
-                  <span class="text-muted text-sm">2</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-tag"></i>
-                  <span class="text-muted text-sm">Project Management</span>
-                </div>
-              </div>
-              <div class="d-flex align-items-center gap-4 task-metadata">
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-map-pin"></i>
-                  <span class="text-muted text-sm">Location: Online Zoom Meeting</span>
-                </div>
-              </div>
-              <div class="d-flex align-items-center mt-2 gap-2">
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        <div class="project-box d-flex gap-3 flex-column">
-          <div class="d-flex align-items-center project-box-header">
-            <i class="ph ph-hash fs-5 me-2"></i>
-            <h5 class="m-0 p-0 fw-bold">House Work</h5>
-          </div>
-          <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
-            <div class="task-status-check-icons-container">
-              <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
-              <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
-            </div>
-            <div class="flex-grow-1 d-flex flex-column gap-1">
-              <div class="d-flex align-items-center gap-3 task-header">
-                <span class="badge bg-primary ps-3 pe-3">Event</span>
-                <h5 class="m-0">Bazar</h5>
-                <img
-                     src="/assets/images/zubayer.jpg"
-                     class="rounded-circle task-participants-image"
-                     alt="Cinque Terre" />
-              </div>
-              <span class="mt-2 mb-2">
-                <span class="fw-bold">Checklist</span>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" checked>
-                  <label class="form-check-label text-deleted" for="defaultCheck1">
-                    Fish
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
-                  <label class="form-check-label" for="defaultCheck2">
-                    Meat
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck3">
-                  <label class="form-check-label" for="defaultCheck3">
-                    Vegetables
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck4">
-                  <label class="form-check-label" for="defaultCheck4">
-                    Rice
-                  </label>
-                </div>
-              </span>
-              <div class="d-flex align-items-center gap-4 task-metadata">
-                <div class="d-flex align-items-center gap-1">
-                  <i class="ph ph-calendar-dot"></i>
-                  <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+      <!-- Content Area -->
+      <router-outlet></router-outlet>
     </div>
   
     <!-- Add Event Modal -->

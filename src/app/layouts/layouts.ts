@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthHelper } from '../core/helpers/auth.helper';
 import { AttachedFile } from '../core/models/attached-file.model';
 import { ChecklistItem } from '../core/models/checklist-item.model';
@@ -10,21 +10,16 @@ import { Subtask } from '../core/models/subtask.model';
 import { Tag } from '../core/models/tag.model';
 import { Workspace } from '../core/models/workspace.model';
 import { AuthService } from '../core/services/auth.service';
+import { LeftSidebar } from './left-sidebar/left-sidebar';
 
 @Component({
   selector: 'app-layouts',
   standalone: true,
   templateUrl: './layouts.html',
   styleUrl: './layouts.css',
-  imports: [CommonModule, FormsModule, RouterLink]
+  imports: [CommonModule, FormsModule, LeftSidebar, RouterOutlet]
 })
 export class Layouts {
-
-  // constructor(private router: Router) {
-  //   // Example condition: redirect to dashboard
-  //   const defaultPage = 'today'; // or get from service or storage
-  //   this.router.navigate([defaultPage]);
-  // }
 
   protected title = 'TODOIST';
   isSidebarOpen = false;
@@ -35,7 +30,11 @@ export class Layouts {
   participantSearchQuery = '';
   taskParticipantSearchQuery = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+    // Example condition: redirect to dashboard
+    const defaultPage = 'today'; // or get from service or storage
+    this.router.navigate([defaultPage]);
+  }
 
   // Workspace dropdown properties
   isWorkspaceDropdownOpen = false;
@@ -772,5 +771,51 @@ export class Layouts {
 
       console.log('Created new workspace:', newWorkspace.name);
     }
+  }
+
+  // Left sidebar event handlers
+  onSidebarToggle() {
+    this.toggleSidebar();
+  }
+
+  onSidebarClose() {
+    this.closeSidebar();
+  }
+
+  onWorkspaceDropdownToggle() {
+    this.toggleWorkspaceDropdown();
+  }
+
+  onWorkspaceDropdownClose() {
+    this.closeWorkspaceDropdown();
+  }
+
+  onWorkspaceSwitch(workspace: Workspace) {
+    this.switchWorkspace(workspace);
+  }
+
+  onCreateWorkspaceModalOpen() {
+    this.openCreateWorkspaceModal();
+  }
+
+  onCreateWorkspaceModalClose() {
+    this.closeCreateWorkspaceModal();
+  }
+
+  onWorkspaceCreate(workspaceName: string) {
+    this.newWorkspaceName = workspaceName;
+    this.createWorkspace();
+  }
+
+  onWorkspaceNameChange(name: string) {
+    this.newWorkspaceName = name;
+  }
+
+  onAddTaskModalOpen() {
+    this.openAddTaskModal();
+  }
+
+  onAddEventModalOpen() {
+    this.openAddEventModal();
   }
 }
