@@ -1,12 +1,30 @@
-
-<i class="ph ph-camera"></i>
-<i class="ph ph-house-simple"></i>
-<i class="ph ph-user-circle"></i>
-
-Login
-
-
-<div>
-    <label class="form-label mb-0">Basic</label>
-    <input class="form-control flatpickr-input" type="text" mwlFlatpickr [altInput]="true" [convertModelValue]="true">
+<div class="d-flex flex-column justify-content-center align-items-center vh-100">
+    <h1 class="mb-3">TaskNest</h1>
+    <div class="card" style="width: 400px;">
+    <div class="card-header text-center">
+      <h5 class="card-title">Login</h5>
+      <p class="card-text">Please enter your credentials to login.</p>
+      @if (loginErrorMessage) {
+        <div class="text-danger text-center">
+          {{ loginErrorMessage }}
+        </div>
+      }
+    </div>
+    <div class="card-body">
+      <form class="mb-3" (ngSubmit)="onLogin(enteredEmail.value, enteredPassword.value)">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email" #enteredEmail>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" #enteredPassword>
+          <a routerLink="/forgot-password">Forgot password?</a>
+        </div>
+        
+        <button type="submit" class="btn btn-primary col-12">Login</button>
+      </form>
+      <p class="text-center">Don't have account? <a routerLink="/register" class="">Register here</a></p>
+    </div>
+  </div>
 </div>
