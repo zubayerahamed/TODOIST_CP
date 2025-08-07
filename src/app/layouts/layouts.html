@@ -1,6 +1,7 @@
 <div class="wrapper bg-white vh-100 d-flex">
 
     <app-left-sidebar 
+      [triggeRrefreshProjectsOfSidebar]="triggeRrefreshProjectsOfSidebar"
       [isSidebarOpen]="isSidebarOpen"
       [currentWorkspace]="currentWorkspace"
       [availableWorkspaces]="availableWorkspaces"
@@ -18,6 +19,7 @@
       (workspaceNameChange)="onWorkspaceNameChange($event)"
       (addTaskModalOpen)="openAddTaskModal()"
       (addEventModalOpen)="openAddEventModal()"
+      (addProjectModalOpen)="openAddProjectModal()"
     />
 
     <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
@@ -59,5 +61,11 @@
       [newWorkspaceName]="newWorkspaceName"
       (closeWorkspaceModal)="closeWorkspaceDropdown()"
     />
+
+    <!-- Create Project Modal -->
+    <app-create-project
+      [isAddProjectModalOpen]="isAddProjectModalOpen"
+      (addProjectModalClose)="onCloseAddProjectModal()"
+      (refreshProjectsOfSidebar)="onTriggeRrefreshProjectsOfSidebar()"
+    />
   </div>
-  

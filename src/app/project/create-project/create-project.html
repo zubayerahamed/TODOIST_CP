@@ -1,0 +1,39 @@
+<div class="modal-backdrop" *ngIf="isAddProjectModalOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container project-modal d-flex flex-column" style="max-width: 500px;">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <h4 class="modal-title m-0 p-0">Add Project</h4>
+      </div>
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="onCloseAddProjectModal(); $event.preventDefault()">
+        <i class="ph ph-x fs-4"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Project name" name="name" [(ngModel)]="enteredName"/>
+            <div class="text-danger text-sm" *ngIf="enteredNameError">{{ enteredNameError }}</div>
+        </div>
+        <div class="mb-3">
+          <input type="text" class="form-control" placeholder="Color" name="color" [(ngModel)]="enteredColor" />
+        </div>
+        <div class="mb-3">
+            <select name="layoutType" id="layoutType" class="form-select" [(ngModel)]="enteredLayoutType">
+                <option value="">-- Select Layout --</option>
+                <option value="LIST">List</option>
+                <option value="BOARD">Board</option>
+            </select>
+            <div class="text-danger text-sm" *ngIf="enteredLayoutTypeError">{{ enteredLayoutTypeError }}</div>
+        </div>
+        <div class="mb-3">
+          <input type="checkbox" class="me-2" id="isFavourite" name="isFavourite" [(ngModel)]="enteredIsFavourite"/>
+          <label for="isFavourite">Add to Favourite</label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onCloseAddProjectModal()">Cancel</button>
+      <button type="submit" class="btn btn-primary" (click)="addProject()">Add</button>
+    </div>
+  </div>
+</div>

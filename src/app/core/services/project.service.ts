@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { BaseService } from './base.service';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Project } from '../models/project.model';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AddProject, Project } from '../models/project.model';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +17,11 @@ export class ProjectService extends BaseService {
     return this.http.get(`${this.baseUrl}/projects`);
   }
 
+  createProject(data: AddProject): Observable<any> {
+    return this.http.post(`${this.baseUrl}/projects`, data);
+  }
+
+  // Helper Methods
   getFilteredSystemDefinedProjects(projects: Project[]): Project[] {
     return projects.filter((project: Project) => project.isSystemDefined);
   }
@@ -24,7 +29,6 @@ export class ProjectService extends BaseService {
   getFilteredfavouriteProjects(projects: Project[]): Project[] {
     console.log(projects);
     return projects.filter((project) => project.isFavourite && !project.isSystemDefined)
-
   }
 
   getFilteredallProjects(projects: Project[]){

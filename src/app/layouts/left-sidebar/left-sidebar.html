@@ -115,7 +115,7 @@
   <div class="d-flex align-items-center section-my-projects">
     <i class="ph ph-briefcase fs-4 fw-bold me-2"></i>
     <span class="page-link fw-bold flex-grow-1">My Projects</span>
-    <a href="" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
+    <a href="#" (click)="addProject(); $event.preventDefault()" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
     <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
   </div>
   @for (project of allProjects; track project.id) {

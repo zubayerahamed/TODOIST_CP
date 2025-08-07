@@ -9,3 +9,10 @@ export interface Project{
     isInheritSettings: boolean;
     layoutType: string;
 }
+
+export interface AddProject{
+    name: string;
+    color: string;
+    layoutType: string;
+    isFavourite: boolean;
+}

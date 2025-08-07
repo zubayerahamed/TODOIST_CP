@@ -12,6 +12,7 @@ import { Workspace } from '../core/models/workspace.model';
 import { Participant } from '../core/models/participant.model';
 import { Tag } from '../core/models/tag.model';
 import { AuthHelper } from '../core/helpers/auth.helper';
+import { CreateProject } from "../project/create-project/create-project";
 
 @Component({
   selector: 'app-layouts',
@@ -20,14 +21,15 @@ import { AuthHelper } from '../core/helpers/auth.helper';
   styleUrl: './layouts.css',
   imports: [
     RouterOutlet,
-    CommonModule, 
-    FormsModule, 
-    LeftSidebar,  
-    Header, 
-    CreateEvent, 
-    CreateTask, 
-    CreateWorkspace
-  ]
+    CommonModule,
+    FormsModule,
+    LeftSidebar,
+    Header,
+    CreateEvent,
+    CreateTask,
+    CreateWorkspace,
+    CreateProject
+]
 })
 export class Layouts implements OnInit {
 
@@ -187,8 +189,18 @@ export class Layouts implements OnInit {
     this.isAddTaskModalOpen = false;
   }
 
-
-
+  // Project Modal Methods
+  isAddProjectModalOpen = false;
+  triggeRrefreshProjectsOfSidebar = 0;
+  openAddProjectModal(){
+    this.isAddProjectModalOpen = true;
+  }
+  onCloseAddProjectModal(){
+    this.isAddProjectModalOpen = false;
+  }
+  onTriggeRrefreshProjectsOfSidebar(){
+    this.triggeRrefreshProjectsOfSidebar++;
+  }
 
 
  

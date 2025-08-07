@@ -5,13 +5,15 @@ import {
   HostListener,
   inject,
   Input,
-  Output,
+  OnChanges,
+  OnInit,
+  Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Project } from '../../core/models/project.model';
 import { Workspace } from '../../core/models/workspace.model';
 import { ProjectService } from '../../core/services/project.service';
-import { Project } from '../../core/models/project.model';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -20,7 +22,8 @@ import { Project } from '../../core/models/project.model';
   templateUrl: './left-sidebar.html',
   styleUrl: './left-sidebar.css',
 })
-export class LeftSidebar {
+export class LeftSidebar implements OnInit, OnChanges {
+  @Input() triggeRrefreshProjectsOfSidebar?: number;
   @Input() isSidebarOpen = false;
   @Input() currentWorkspace: Workspace = {
     id: 1,
@@ -43,6 +46,7 @@ export class LeftSidebar {
   @Output() workspaceNameChange = new EventEmitter<string>();
   @Output() addTaskModalOpen = new EventEmitter<void>();
   @Output() addEventModalOpen = new EventEmitter<void>();
+  @Output() addProjectModalOpen = new EventEmitter<void>();
 
   public projectService = inject(ProjectService);
   public projects: Project[] = [];
@@ -52,6 +56,13 @@ export class LeftSidebar {
 
   ngOnInit() {
     this.loadProjects();
+  }
+
+  ngOnChanges(){
+    console.log("Refresh trigger count: " + this.triggeRrefreshProjectsOfSidebar);
+    if(this.triggeRrefreshProjectsOfSidebar && this.triggeRrefreshProjectsOfSidebar > 0){
+      this.loadProjects();
+    }
   }
 
   private loadProjects(){
@@ -165,5 +176,12 @@ export class LeftSidebar {
         this.closeCreateWorkspaceModal();
       }
     }
+  }
+
+
+  // Add Project Method
+  addProject(){
+    console.log('Add Project clicked');
+    this.addProjectModalOpen.emit();
   }
 }
