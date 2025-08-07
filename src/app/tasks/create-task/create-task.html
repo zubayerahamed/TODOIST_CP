@@ -1,0 +1,365 @@
+<div class="modal-backdrop" *ngIf="isAddTaskModalOpen" (click)="onTaskModalBackdropClick($event)">
+  <div class="modal-container modal-lg d-flex flex-column">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <i class="ph ph-plus-circle me-2 fs-4"></i>
+        <h4 class="modal-title m-0 p-0">Create Task</h4>
+      </div>
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center"
+              (click)="closeAddTaskModal()">
+        <i class="ph ph-x fs-4"></i>
+      </button>
+    </div>
+    <div class="modal-body flex-grow-1">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-12">
+          <form>
+            <!-- Task Name -->
+            <div class="mb-3">
+              <label for="taskName" class="form-label">Task Name</label>
+              <input type="text" class="form-control" placeholder="Task name" id="taskName">
+            </div>
+
+            <!-- Task Description -->
+            <div class="mb-3">
+              <label for="taskDescription" class="form-label">Description</label>
+              <textarea class="form-control" rows="4" placeholder="Task description" id="taskDescription"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3">
+                <div class="mb-3">
+                  <label for="taskProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
+                  <select class="form-select" id="taskProject">
+                    <option value="">-- Select Project --</option>
+                    <option value="daily-learning">Daily learning</option>
+                    <option value="office-work">Office Work</option>
+                    <option value="house-work">House Work</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <!-- Section -->
+                <div class="mb-3">
+                  <label for="taskSection" class="form-label"><i
+                       class="ph ph-arrows-out-cardinal me-2"></i>Section</label>
+                  <select class="form-select" id="taskSection">
+                    <option value="">-- Select Section --</option>
+                    <option value="todo">To Do</option>
+                    <option value="done">Done</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <!-- Category -->
+                <div class="mb-3">
+                  <label for="taskCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
+                  <select class="form-select" id="taskCategory">
+                    <option value="">-- Select Category --</option>
+                    <option value="design">Design</option>
+                    <option value="research">Research</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <!-- Status -->
+                <div class="mb-3">
+                  <label for="taskStatus" class="form-label">Status</label>
+                  <select class="form-select" id="taskStatus">
+                    <option value="">-- Select Status --</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <!-- Schedule -->
+                <div class="mb-3">
+                  <label for="taskSchedule" class="form-label">Schedule this task for</label>
+                  <input type="date" class="form-control" id="taskSchedule" value="2025-07-01">
+                </div>
+
+
+              </div>
+              <div class="col-md-3">
+                <!-- Due Date -->
+                <div class="mb-3">
+                  <label for="taskDueDate" class="form-label">Due date</label>
+                  <input type="date" class="form-control" id="taskDueDate" value="2025-07-01">
+                </div>
+
+
+              </div>
+              <div class="col-md-3">
+                <!-- Estimated Time -->
+                <div class="mb-3">
+                  <label for="taskEstimatedTime" class="form-label">Estimated time</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" id="taskEstimatedTime" value="0" min="0">
+                    <span class="input-group-text">h</span>
+                  </div>
+                </div>
+
+
+              </div>
+              <div class="col-md-3">
+                <!-- Priority -->
+                <div class="mb-3">
+                  <label for="taskPriority" class="form-label">Priority</label>
+                  <select class="form-select" id="taskPriority">
+                    <option value="none" selected>None</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="very-high">Very High</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="mb-3">
+              <label class="form-label"><i class="ph ph-users-three me-2"></i>Participants</label>
+              <div class="d-flex align-items-center gap-3 flex-wrap">
+                <div *ngFor="let participant of taskSelectedParticipants" class="participant-item">
+                  <img
+                       [src]="participant.avatar"
+                       class="rounded-circle participant-avatar"
+                       [alt]="participant.name"
+                       [title]="participant.name + ' - ' + participant.email"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top">
+                  <button type="button" class="participant-remove-btn" (click)="removeTaskParticipant(participant.id)">
+                    <i class="ph ph-x"></i>
+                  </button>
+                </div>
+                <div class="participant-search-container">
+                  <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center"
+                          (click)="openTaskParticipantSearch()">
+                    <i class="ph ph-plus me-1"></i><span>Add Participant</span>
+                  </button>
+
+                  <!-- Task Participant Search Dropdown -->
+                  <div class="participant-search-dropdown" *ngIf="isTaskParticipantSearchOpen">
+                    <div class="participant-search-header">
+                      <input
+                             type="text"
+                             class="form-control participant-search-input"
+                             placeholder="Search participants..."
+                             [value]="taskParticipantSearchQuery"
+                             (input)="onTaskParticipantSearchInput($event)">
+                      <button type="button" class="btn-close-search" (click)="closeTaskParticipantSearch()">
+                        <i class="ph ph-x"></i>
+                      </button>
+                    </div>
+                    <div class="participant-search-results">
+                      <div
+                           *ngFor="let participant of filteredTaskParticipants"
+                           class="participant-search-item"
+                           (click)="addTaskParticipant(participant)">
+                        <img [src]="participant.avatar" class="rounded-circle participant-search-avatar"
+                             [alt]="participant.name">
+                        <div class="participant-info">
+                          <div class="participant-name">{{ participant.name }}</div>
+                          <div class="participant-email">{{ participant.email }}</div>
+                        </div>
+                      </div>
+                      <div *ngIf="filteredTaskParticipants.length === 0" class="no-participants">
+                        No participants found
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider mb-3"></div>
+
+            <!-- Subtasks Section -->
+            <div class="mb-3">
+              <label class="form-label d-flex align-items-center justify-content-between">
+                <span class="d-flex align-items-center">
+                  <i class="ph ph-check-square me-2"></i>Subtasks
+                </span>
+                <span class="subtask-progress-info" *ngIf="subtasks.length > 0">
+                  {{ completedSubtaskCount }}/{{ subtasks.length }} completed ({{ subtaskProgress }}%)
+                </span>
+              </label>
+
+              <!-- Progress Bar -->
+              <div class="progress mb-3" *ngIf="subtasks.length > 0">
+                <div
+                     class="progress-bar bg-success"
+                     role="progressbar"
+                     [style.width.%]="subtaskProgress"
+                     [attr.aria-valuenow]="subtaskProgress"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+              </div>
+
+              <!-- 5. Add New Subtask (Add Button) -->
+              <div class="add-subtask-section mb-3">
+                <div class="input-group">
+                  <input
+                         type="text"
+                         class="form-control"
+                         placeholder="Add subtask..."
+                         [value]="newSubtaskTitle"
+                         (input)="onNewSubtaskInputChange($event)"
+                         (keypress)="onNewSubtaskKeyPress($event)" />
+                  <button
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          (click)="addSubtask()"
+                          [disabled]="!newSubtaskTitle.trim()">
+                    <i class="ph ph-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Subtask Items -->
+              <div class="subtask-items-container" *ngIf="subtasks.length > 0">
+                <div *ngFor="let subtask of subtasks; let i = index"
+                     class="subtask-item d-flex align-items-center gap-3 mb-2">
+
+                  <!-- Checkbox -->
+                  <div class="form-check subtask-checkbox mb-0">
+                    <input
+                           class="form-check-input"
+                           type="checkbox"
+                           [id]="'subtask-' + subtask.id"
+                           [checked]="subtask.completed"
+                           (change)="toggleSubtask(subtask.id)">
+                  </div>
+
+                  <!-- Participant Circle -->
+                  <div class="subtask-participant-circle"
+                       (click)="openSubtaskParticipantSearch(subtask.id)">
+                    <img *ngIf="subtask.assignedParticipant"
+                         [src]="subtask.assignedParticipant.avatar"
+                         class="rounded-circle subtask-participant-avatar"
+                         [alt]="subtask.assignedParticipant.name">
+                    <div *ngIf="!subtask.assignedParticipant" class="subtask-participant-placeholder">
+                      <i class="ph ph-user"></i>
+                    </div>
+
+                    <!-- Participant Search Dropdown -->
+                    <div class="participant-search-dropdown subtask-participant-dropdown"
+                         *ngIf="isSubtaskParticipantSearchOpen[subtask.id]"
+                         (click)="$event.stopPropagation()">
+                      <div class="participant-search-header">
+                        <input
+                               type="text"
+                               class="form-control participant-search-input"
+                               placeholder="Search participants..."
+                               [value]="subtaskParticipantSearchQuery[subtask.id] || ''"
+                               (input)="onSubtaskParticipantSearchInput(subtask.id, $event)">
+                        <button type="button"
+                                class="btn-close-search"
+                                (click)="closeSubtaskParticipantSearch(subtask.id); $event.stopPropagation()">
+                          <i class="ph ph-x"></i>
+                        </button>
+                      </div>
+                      <div class="participant-search-results">
+                        <div
+                             *ngFor="let participant of getFilteredSubtaskParticipants(subtask.id)"
+                             class="participant-search-item"
+                             (click)="addParticipantToSubtask(subtask.id, participant); $event.stopPropagation()">
+                          <img [src]="participant.avatar"
+                               class="rounded-circle participant-search-avatar"
+                               [alt]="participant.name">
+                          <div class="participant-info">
+                            <div class="participant-name">{{ participant.name }}</div>
+                            <div class="participant-email">{{ participant.email }}</div>
+                          </div>
+                        </div>
+                        <div *ngIf="getFilteredSubtaskParticipants(subtask.id).length === 0" class="no-participants">
+                          No participants found
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Subtask Title Input -->
+                  <input
+                         type="text"
+                         class="form-control subtask-title-input"
+                         [value]="subtask.title"
+                         (input)="onSubtaskTitleChange(subtask.id, $event)"
+                         placeholder="Subtask title"
+                         [class.completed]="subtask.completed">
+
+                  <!-- Delete Button -->
+                  <button
+                          type="button"
+                          class="btn subtask-remove-btn"
+                          (click)="removeSubtask(subtask.id)">
+                    <i class="ph ph-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+
+            </div>
+
+            <!-- Divider -->
+            <div class="divider mb-3"></div>
+
+            <!-- File Attachments Section -->
+            <div class="mb-3">
+              <label class="form-label d-flex align-items-center">
+                <i class="ph ph-paperclip me-2"></i>Attachments
+              </label>
+
+              <!-- Attached Files Display -->
+              <div class="attached-files-container" *ngIf="taskAttachedFiles.length > 0">
+                <div *ngFor="let file of taskAttachedFiles" class="attached-file-item">
+                  <div class="file-icon">
+                    {{ file.icon }}
+                  </div>
+                  <div class="file-info">
+                    <div class="file-name">{{ file.name }}</div>
+                    <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                  </div>
+                  <button type="button" class="file-remove-btn" (click)="removeTaskFile(file.id)">
+                    <i class="ph ph-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Add File Button -->
+              <div class="attach-file-section">
+                <input
+                       type="file"
+                       id="taskFileInput"
+                       class="file-input"
+                       multiple
+                       (change)="onTaskFileSelect($event)"
+                       #taskFileInput>
+                <button
+                        type="button"
+                        class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
+                        (click)="taskFileInput.click()">
+                  <i class="ph ph-plus me-1"></i><span>Attach file</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeAddTaskModal()">Cancel</button>
+      <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+        <i class="ph ph-plus-circle me-2"></i><span>Create task</span>
+      </button>
+    </div>
+  </div>
+</div>

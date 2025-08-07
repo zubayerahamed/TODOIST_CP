@@ -11,24 +11,24 @@ import { Tag } from '../core/models/tag.model';
 import { Workspace } from '../core/models/workspace.model';
 import { AuthService } from '../core/services/auth.service';
 import { LeftSidebar } from './left-sidebar/left-sidebar';
+import { Header } from "./header/header";
+import { CreateEvent } from "../events/create-event/create-event";
+import { CreateTask } from "../tasks/create-task/create-task";
+import { CreateWorkspace } from "../workspaces/create-workspace/create-workspace";
 
 @Component({
   selector: 'app-layouts',
   standalone: true,
   templateUrl: './layouts.html',
   styleUrl: './layouts.css',
-  imports: [CommonModule, FormsModule, LeftSidebar, RouterOutlet]
+  imports: [CommonModule, FormsModule, LeftSidebar, RouterOutlet, Header, CreateEvent, CreateTask, CreateWorkspace]
 })
 export class Layouts {
 
   protected title = 'TODOIST';
   isSidebarOpen = false;
-  isAddEventModalOpen = false;
-  isAddTaskModalOpen = false;
-  isParticipantSearchOpen = false;
-  isTaskParticipantSearchOpen = false;
-  participantSearchQuery = '';
-  taskParticipantSearchQuery = '';
+  
+  
 
   constructor(private authService: AuthService, private router: Router) {
     // Example condition: redirect to dashboard
@@ -38,13 +38,15 @@ export class Layouts {
 
   // Workspace dropdown properties
   isWorkspaceDropdownOpen = false;
+
+
+  // Available workspaces
+  newWorkspaceName: string = '';
   currentWorkspace: Workspace = {
     id: 1,
     name: "Zubayer's Workspace",
     avatar: '/assets/images/zubayer.jpg',
   };
-
-  // Available workspaces
   availableWorkspaces: Workspace[] = [
     { id: 2, name: 'Metatude', avatar: '/assets/images/zubayer.jpg' },
     { id: 3, name: 'ASL', avatar: '/assets/images/zubayer.jpg' },
@@ -61,7 +63,6 @@ export class Layouts {
 
   // Create Workspace modal properties
   isCreateWorkspaceModalOpen: boolean = false;
-  newWorkspaceName = '';
 
   // Dummy participants data
   allParticipants: Participant[] = [
@@ -115,54 +116,22 @@ export class Layouts {
     },
   ];
 
-  selectedParticipants: Participant[] = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      avatar: '/assets/images/zubayer.jpg',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      avatar: '/assets/images/zubayer.jpg',
-    },
-  ];
 
-  attachedFiles: AttachedFile[] = [];
-  checklistItems: ChecklistItem[] = [];
-  newChecklistItem = '';
+
+
+  
+  
 
   // Task-specific properties
-  taskSelectedParticipants: Participant[] = [
-    {
-      id: 1,
-      name: 'Me',
-      email: 'me@example.com',
-      avatar: '/assets/images/zubayer.jpg',
-    },
-    {
-      id: 2,
-      name: 'Azmee',
-      email: 'azmee@example.com',
-      avatar: '/assets/images/zubayer.jpg',
-    },
-    {
-      id: 3,
-      name: 'Shamim',
-      email: 'shamim@example.com',
-      avatar: '/assets/images/zubayer.jpg',
-    },
-  ];
 
-  taskAttachedFiles: AttachedFile[] = [];
+
+  
 
   // Subtask properties
-  subtasks: Subtask[] = [];
-  newSubtaskTitle = '';
-  isSubtaskParticipantSearchOpen: { [key: number]: boolean } = {};
-  subtaskParticipantSearchQuery: { [key: number]: string } = {};
+  
+  
+  
+  
   draggedSubtaskIndex: number | null = null;
 
   availableTags: Tag[] = [
@@ -179,37 +148,9 @@ export class Layouts {
     { id: 4, name: 'AWS', color: '#fd7e14' },
   ];
 
-  get filteredParticipants(): Participant[] {
-    if (!this.participantSearchQuery.trim()) {
-      return this.allParticipants.filter(
-        (p) => !this.selectedParticipants.find((sp) => sp.id === p.id)
-      );
-    }
 
-    const query = this.participantSearchQuery.toLowerCase();
-    return this.allParticipants.filter(
-      (participant) =>
-        !this.selectedParticipants.find((sp) => sp.id === participant.id) &&
-        (participant.name.toLowerCase().includes(query) ||
-          participant.email.toLowerCase().includes(query))
-    );
-  }
 
-  get filteredTaskParticipants(): Participant[] {
-    if (!this.taskParticipantSearchQuery.trim()) {
-      return this.allParticipants.filter(
-        (p) => !this.taskSelectedParticipants.find((sp) => sp.id === p.id)
-      );
-    }
-
-    const query = this.taskParticipantSearchQuery.toLowerCase();
-    return this.allParticipants.filter(
-      (participant) =>
-        !this.taskSelectedParticipants.find((sp) => sp.id === participant.id) &&
-        (participant.name.toLowerCase().includes(query) ||
-          participant.email.toLowerCase().includes(query))
-    );
-  }
+  
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -220,323 +161,98 @@ export class Layouts {
   }
 
   // Event Modal Methods
+  isAddEventModalOpen = false;
   openAddEventModal() {
     this.isAddEventModalOpen = true;
   }
-
-  closeAddEventModal() {
+  onCloseAddEventModal(){
     this.isAddEventModalOpen = false;
-    this.isParticipantSearchOpen = false;
-    this.participantSearchQuery = '';
   }
 
-  onEventModalBackdropClick(event: Event) {
-    if (event.target === event.currentTarget) {
-      this.closeAddEventModal();
-    }
-  }
+
+
+ 
 
   // Task Modal Methods
+  isAddTaskModalOpen = false;
   openAddTaskModal() {
     this.isAddTaskModalOpen = true;
   }
-
-  closeAddTaskModal() {
+  onCloseAddTaskModal(){
     this.isAddTaskModalOpen = false;
-    this.isTaskParticipantSearchOpen = false;
-    this.taskParticipantSearchQuery = '';
-    // Close all subtask participant searches when closing task modal
-    Object.keys(this.isSubtaskParticipantSearchOpen).forEach((key) => {
-      this.closeSubtaskParticipantSearch(parseInt(key));
-    });
   }
 
-  onTaskModalBackdropClick(event: Event) {
-    if (event.target === event.currentTarget) {
-      this.closeAddTaskModal();
-    }
-  }
+
+
+
 
   // Event Participant management methods
-  openParticipantSearch() {
-    this.isParticipantSearchOpen = true;
-    this.participantSearchQuery = '';
-  }
 
-  closeParticipantSearch() {
-    this.isParticipantSearchOpen = false;
-    this.participantSearchQuery = '';
-  }
 
-  onParticipantSearchInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.participantSearchQuery = target.value;
-  }
 
-  addParticipant(participant: Participant) {
-    if (!this.selectedParticipants.find((p) => p.id === participant.id)) {
-      this.selectedParticipants.push(participant);
-    }
-    this.closeParticipantSearch();
-  }
 
-  removeParticipant(participantId: number) {
-    this.selectedParticipants = this.selectedParticipants.filter(
-      (p) => p.id !== participantId
-    );
-  }
+
+
+
 
   // Task Participant management methods
-  openTaskParticipantSearch() {
-    this.isTaskParticipantSearchOpen = true;
-    this.taskParticipantSearchQuery = '';
-  }
+ 
 
-  closeTaskParticipantSearch() {
-    this.isTaskParticipantSearchOpen = false;
-    this.taskParticipantSearchQuery = '';
-  }
+ 
 
-  onTaskParticipantSearchInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.taskParticipantSearchQuery = target.value;
-  }
 
-  addTaskParticipant(participant: Participant) {
-    if (!this.taskSelectedParticipants.find((p) => p.id === participant.id)) {
-      this.taskSelectedParticipants.push(participant);
-    }
-    this.closeTaskParticipantSearch();
-  }
 
-  removeTaskParticipant(participantId: number) {
-    this.taskSelectedParticipants = this.taskSelectedParticipants.filter(
-      (p) => p.id !== participantId
-    );
-  }
+  
+
+  
 
   // Event File attachment methods
-  onFileSelect(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
 
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const attachedFile: AttachedFile = {
-          id: Date.now() + i,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          icon: this.getFileIcon(file.name, file.type),
-        };
-        this.attachedFiles.push(attachedFile);
-      }
-    }
 
-    target.value = '';
-  }
 
-  removeFile(fileId: number) {
-    this.attachedFiles = this.attachedFiles.filter((f) => f.id !== fileId);
-  }
 
   // Task File attachment methods
-  onTaskFileSelect(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
 
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const attachedFile: AttachedFile = {
-          id: Date.now() + i,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          icon: this.getFileIcon(file.name, file.type),
-        };
-        this.taskAttachedFiles.push(attachedFile);
-      }
-    }
 
-    target.value = '';
-  }
 
-  removeTaskFile(fileId: number) {
-    this.taskAttachedFiles = this.taskAttachedFiles.filter(
-      (f) => f.id !== fileId
-    );
-  }
 
-  getFileIcon(fileName: string, fileType: string): string {
-    const extension = fileName.split('.').pop()?.toLowerCase();
 
-    if (fileType.startsWith('image/')) {
-      return 'JPG';
-    } else if (extension === 'pdf') {
-      return 'PDF';
-    } else if (extension === 'doc' || extension === 'docx') {
-      return 'DOC';
-    } else if (extension === 'xls' || extension === 'xlsx') {
-      return 'XLS';
-    } else if (extension === 'ppt' || extension === 'pptx') {
-      return 'PPT';
-    } else if (extension === 'txt') {
-      return 'TXT';
-    } else if (extension === 'zip' || extension === 'rar') {
-      return 'ZIP';
-    } else if (extension === 'csv') {
-      return 'CSV';
-    } else {
-      return 'FILE';
-    }
-  }
+  
 
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
 
-  // Checklist management methods
-  addChecklistItem() {
-    if (this.newChecklistItem.trim()) {
-      const newItem: ChecklistItem = {
-        id: Date.now(),
-        text: this.newChecklistItem.trim(),
-        completed: false,
-      };
-      this.checklistItems.push(newItem);
-      this.newChecklistItem = '';
-    }
-  }
+  
 
-  toggleChecklistItem(itemId: number) {
-    const item = this.checklistItems.find((item) => item.id === itemId);
-    if (item) {
-      item.completed = !item.completed;
-    }
-  }
+ 
 
-  removeChecklistItem(itemId: number) {
-    this.checklistItems = this.checklistItems.filter(
-      (item) => item.id !== itemId
-    );
-  }
+ 
 
-  get checklistProgress(): number {
-    if (this.checklistItems.length === 0) return 0;
-    const completedItems = this.checklistItems.filter(
-      (item) => item.completed
-    ).length;
-    return Math.round((completedItems / this.checklistItems.length) * 100);
-  }
 
-  get completedChecklistCount(): number {
-    return this.checklistItems.filter((item) => item.completed).length;
-  }
 
-  onChecklistInputChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.newChecklistItem = target.value;
-  }
 
-  onChecklistInputKeyPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.addChecklistItem();
-    }
-  }
+
+
 
   // Subtask management methods
-  addSubtask() {
-    if (this.newSubtaskTitle.trim()) {
-      const newSubtask: Subtask = {
-        id: Date.now(),
-        title: this.newSubtaskTitle.trim(),
-        completed: false,
-        assignedParticipant: undefined,
-        order: this.subtasks.length,
-      };
-      this.subtasks.push(newSubtask);
-      this.newSubtaskTitle = '';
-    }
-  }
+ 
 
-  removeSubtask(subtaskId: number) {
-    this.subtasks = this.subtasks.filter((s) => s.id !== subtaskId);
-    // Update order for remaining subtasks
-    this.subtasks.forEach((subtask, index) => {
-      subtask.order = index;
-    });
-  }
 
-  toggleSubtask(subtaskId: number) {
-    const subtask = this.subtasks.find((s) => s.id === subtaskId);
-    if (subtask) {
-      subtask.completed = !subtask.completed;
-    }
-  }
 
-  onSubtaskTitleChange(subtaskId: number, event: Event) {
-    const target = event.target as HTMLInputElement;
-    const subtask = this.subtasks.find((s) => s.id === subtaskId);
-    if (subtask) {
-      subtask.title = target.value;
-    }
-  }
 
-  onNewSubtaskInputChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.newSubtaskTitle = target.value;
-  }
 
-  onNewSubtaskKeyPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.addSubtask();
-    }
-  }
+ 
+
+  
+
+ 
 
   // Subtask participant management
-  openSubtaskParticipantSearch(subtaskId: number) {
-    this.isSubtaskParticipantSearchOpen[subtaskId] = true;
-    this.subtaskParticipantSearchQuery[subtaskId] = '';
-  }
 
-  closeSubtaskParticipantSearch(subtaskId: number) {
-    this.isSubtaskParticipantSearchOpen[subtaskId] = false;
-    this.subtaskParticipantSearchQuery[subtaskId] = '';
-  }
+
+ 
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
-
-    // Check if any subtask participant search is open
-    const openSearches = Object.keys(
-      this.isSubtaskParticipantSearchOpen
-    ).filter((key) => this.isSubtaskParticipantSearchOpen[parseInt(key)]);
-
-    if (openSearches.length > 0) {
-      // Check if the click is outside any subtask participant search dropdown
-      const isClickInsideDropdown = target.closest(
-        '.subtask-participant-dropdown'
-      );
-      const isClickOnParticipantCircle = target.closest(
-        '.subtask-participant-circle'
-      );
-
-      if (!isClickInsideDropdown && !isClickOnParticipantCircle) {
-        // Close all open subtask participant searches
-        openSearches.forEach((key) => {
-          this.closeSubtaskParticipantSearch(parseInt(key));
-        });
-      }
-    }
 
     // Check if workspace dropdown is open and close it if clicking outside
     if (this.isWorkspaceDropdownOpen) {
@@ -562,104 +278,22 @@ export class Layouts {
       }
     }
 
-    // Check if create workspace modal should be closed when clicking outside
-    if (this.isCreateWorkspaceModalOpen) {
-      const isClickInsideModal = target.closest('.modal-container');
-
-      if (!isClickInsideModal) {
-        this.closeCreateWorkspaceModal();
-      }
-    }
   }
 
-  onSubtaskParticipantSearchBackdropClick(event: Event, subtaskId: number) {
-    // Close the dropdown if clicking outside of it
-    if (event.target === event.currentTarget) {
-      this.closeSubtaskParticipantSearch(subtaskId);
-    }
-  }
 
-  onSubtaskParticipantSearchInput(subtaskId: number, event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.subtaskParticipantSearchQuery[subtaskId] = target.value;
-  }
 
-  getFilteredSubtaskParticipants(subtaskId: number): Participant[] {
-    const subtask = this.subtasks.find((s) => s.id === subtaskId);
-    if (!subtask) return [];
 
-    const query = this.subtaskParticipantSearchQuery[subtaskId] || '';
-    let availableParticipants = this.allParticipants.filter(
-      (p) =>
-        !subtask.assignedParticipant || subtask.assignedParticipant.id !== p.id
-    );
 
-    if (query.trim()) {
-      const searchQuery = query.toLowerCase();
-      availableParticipants = availableParticipants.filter(
-        (participant) =>
-          participant.name.toLowerCase().includes(searchQuery) ||
-          participant.email.toLowerCase().includes(searchQuery)
-      );
-    }
+  
 
-    return availableParticipants;
-  }
 
-  addParticipantToSubtask(subtaskId: number, participant: Participant) {
-    const subtask = this.subtasks.find((s) => s.id === subtaskId);
-    if (subtask) {
-      subtask.assignedParticipant = participant;
-    }
-    this.closeSubtaskParticipantSearch(subtaskId);
-  }
 
-  removeParticipantFromSubtask(subtaskId: number) {
-    const subtask = this.subtasks.find((s) => s.id === subtaskId);
-    if (subtask) {
-      subtask.assignedParticipant = undefined;
-    }
-  }
-
-  // Subtask ordering functionality
-  moveSubtaskUp(index: number) {
-    if (index > 0) {
-      const temp = this.subtasks[index];
-      this.subtasks[index] = this.subtasks[index - 1];
-      this.subtasks[index - 1] = temp;
-
-      // Update order for all subtasks
-      this.subtasks.forEach((subtask, idx) => {
-        subtask.order = idx;
-      });
-    }
-  }
-
-  moveSubtaskDown(index: number) {
-    if (index < this.subtasks.length - 1) {
-      const temp = this.subtasks[index];
-      this.subtasks[index] = this.subtasks[index + 1];
-      this.subtasks[index + 1] = temp;
-
-      // Update order for all subtasks
-      this.subtasks.forEach((subtask, idx) => {
-        subtask.order = idx;
-      });
-    }
-  }
+  
 
   // Subtask progress calculation
-  get subtaskProgress(): number {
-    if (this.subtasks.length === 0) return 0;
-    const completedSubtasks = this.subtasks.filter(
-      (subtask) => subtask.completed
-    ).length;
-    return Math.round((completedSubtasks / this.subtasks.length) * 100);
-  }
+  
 
-  get completedSubtaskCount(): number {
-    return this.subtasks.filter((subtask) => subtask.completed).length;
-  }
+ 
 
   // Workspace dropdown methods
   toggleWorkspaceDropdown() {
@@ -728,50 +362,15 @@ export class Layouts {
     this.closeWorkspaceDropdown();
   }
 
-  closeCreateWorkspaceModal() {
-    this.isCreateWorkspaceModalOpen = false;
-    this.newWorkspaceName = '';
-  }
+ 
 
-  onCreateWorkspaceModalBackdropClick(event: Event) {
-    if (event.target === event.currentTarget) {
-      this.closeCreateWorkspaceModal();
-    }
-  }
 
-  onWorkspaceNameInputChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.newWorkspaceName = target.value;
-  }
 
-  onWorkspaceNameKeyPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.createWorkspace();
-    }
-  }
+ 
 
-  createWorkspace() {
-    console.log('hi');
-    if (this.newWorkspaceName.trim()) {
-      const newWorkspace: Workspace = {
-        id: Date.now(),
-        name: this.newWorkspaceName.trim(),
-        avatar: '/assets/images/zubayer.jpg',
-      };
 
-      // Add to available workspaces
-      this.availableWorkspaces.push(newWorkspace);
 
-      // Switch to the new workspace
-      this.currentWorkspace = newWorkspace;
 
-      // Close the modal
-      this.closeCreateWorkspaceModal();
-
-      console.log('Created new workspace:', newWorkspace.name);
-    }
-  }
 
   // Left sidebar event handlers
   onSidebarToggle() {
@@ -799,12 +398,13 @@ export class Layouts {
   }
 
   onCreateWorkspaceModalClose() {
-    this.closeCreateWorkspaceModal();
+    this.isCreateWorkspaceModalOpen = false;
+    this.newWorkspaceName = '';
   }
 
   onWorkspaceCreate(workspaceName: string) {
     this.newWorkspaceName = workspaceName;
-    this.createWorkspace();
+    //this.createWorkspace();
   }
 
   onWorkspaceNameChange(name: string) {
@@ -817,5 +417,23 @@ export class Layouts {
 
   onAddEventModalOpen() {
     this.openAddEventModal();
+  }
+
+
+  // Handlers for header component events
+  onToggleSidebar() {
+    this.toggleSidebar();
+  }
+  onToggleUserProfileDropdown() {
+    this.toggleUserProfileDropdown();
+  }
+  onCloseUserProfileDropdown() {
+    this.closeUserProfileDropdown();
+  }
+  onOpenProfileSettings() {
+    this.openProfileSettings();
+  }
+  onLogout() {
+    this.logout();
   }
 }
