@@ -73,7 +73,10 @@
   @for (project of systemDefinedProjects; track project.id) {
     <div class="d-flex align-items-center">
       <i class="ph ph-tray fs-4 me-2"></i>
-      <a [routerLink]="['/project', project.id]" [queryParams]="{ projectName: project.name }" class="page-link flex-grow-1">{{ project.name }}</a>
+      <a [routerLink]="['/project', project.id]" 
+         [queryParams]="{ projectName: project.name }" 
+         routerLinkActive="page-active"
+         class="page-link flex-grow-1">{{ project.name }}</a>
       <span class="ms-2 me-2">3</span>
     </div>
   }
@@ -81,34 +84,49 @@
 
   <div class="d-flex align-items-center">
     <i class="ph ph-calendar-dot fs-4 me-2"></i>
-    <a routerLink="/today" class="page-link page-active flex-grow-1">Today</a>
+    <a routerLink="/today" 
+       routerLinkActive="page-active"
+       class="page-link flex-grow-1">Today</a>
     <span class="ms-2 me-2">3</span>
   </div>
   <div class="d-flex align-items-center">
     <i class="ph ph-calendar-dots fs-4 me-2"></i>
-    <a routerLink="/upcoming" class="page-link flex-grow-1">Upcoming</a>
+    <a routerLink="/upcoming" 
+       routerLinkActive="page-active"
+       class="page-link flex-grow-1">Upcoming</a>
   </div>
   <div class="divider"></div>
   <div class="d-flex align-items-center">
     <i class="ph ph-check-circle fs-4 me-2"></i>
-    <a routerLink="/completed" class="page-link flex-grow-1">Completed</a>
+    <a routerLink="/completed" 
+       routerLinkActive="page-active"
+       class="page-link flex-grow-1">Completed</a>
     <span class="ms-2 me-2">2</span>
   </div>
   <div class="spacer"></div>
   <div class="d-flex align-items-center section-favourites">
     <i class="ph ph-star fs-4 fw-bold me-2"></i>
     <span class="page-link fw-bold flex-grow-1">Favourites</span>
-    <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
+    <a href="#" (click)="toggleFavouritesDropdown(); $event.preventDefault()" class="page-link">
+      <i class="ph fs-5 fw-bold ms-2" 
+         [class.ph-caret-down]="isFavouritesExpanded" 
+         [class.ph-caret-right]="!isFavouritesExpanded"></i>
+    </a>
   </div>
   
-  @for (project of favouriteProjects; track project.id) {
-    <div class="d-flex align-items-center text-muted project-item">
-      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-      <a [routerLink]="['/project', project.id]" [queryParams]="{ projectName: project.name }" class="page-link flex-grow-1">{{ project.name }}</a>
-      <span class="ms-2 me-2">2</span>
-      <a href="" class="page-link align-items-center btn-edit-project"><i
-          class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-    </div>
+  @if (isFavouritesExpanded) {
+    @for (project of favouriteProjects; track project.id) {
+      <div class="d-flex align-items-center text-muted project-item">
+        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <a [routerLink]="['/project', project.id]" 
+           [queryParams]="{ projectName: project.name }" 
+           routerLinkActive="page-active"
+           class="page-link flex-grow-1">{{ project.name }}</a>
+        <span class="ms-2 me-2">2</span>
+        <a href="" class="page-link align-items-center btn-edit-project"><i
+            class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+      </div>
+    }
   }
 
   <div class="spacer"></div>
@@ -116,16 +134,25 @@
     <i class="ph ph-briefcase fs-4 fw-bold me-2"></i>
     <span class="page-link fw-bold flex-grow-1">My Projects</span>
     <a href="#" (click)="addProject(); $event.preventDefault()" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
-    <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
+    <a href="#" (click)="toggleMyProjectsDropdown(); $event.preventDefault()" class="page-link">
+      <i class="ph fs-5 fw-bold ms-2" 
+         [class.ph-caret-down]="isMyProjectsExpanded" 
+         [class.ph-caret-right]="!isMyProjectsExpanded"></i>
+    </a>
   </div>
-  @for (project of allProjects; track project.id) {
-    <div class="d-flex align-items-center text-muted project-item">
-      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-      <a [routerLink]="['/project', project.id]" [queryParams]="{ projectName: project.name }" class="page-link flex-grow-1">{{ project.name }}</a>
-      <span class="ms-2 me-2">2</span>
-      <a href="" class="page-link align-items-center btn-edit-project">
-        <i class="ph ph-dots-three-outline fs-5 ms-2"></i>
-      </a>
-    </div>
+  @if (isMyProjectsExpanded) {
+    @for (project of allProjects; track project.id) {
+      <div class="d-flex align-items-center text-muted project-item">
+        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <a [routerLink]="['/project', project.id]" 
+           [queryParams]="{ projectName: project.name }" 
+           routerLinkActive="page-active"
+           class="page-link flex-grow-1">{{ project.name }}</a>
+        <span class="ms-2 me-2">2</span>
+        <a href="" class="page-link align-items-center btn-edit-project">
+          <i class="ph ph-dots-three-outline fs-5 ms-2"></i>
+        </a>
+      </div>
+    }
   }
 </div>

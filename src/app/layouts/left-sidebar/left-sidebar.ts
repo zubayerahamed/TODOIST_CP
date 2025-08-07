@@ -10,7 +10,7 @@ import {
   Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Project } from '../../core/models/project.model';
 import { Workspace } from '../../core/models/workspace.model';
 import { ProjectService } from '../../core/services/project.service';
@@ -18,7 +18,7 @@ import { ProjectService } from '../../core/services/project.service';
 @Component({
   selector: 'app-left-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './left-sidebar.html',
   styleUrl: './left-sidebar.css',
 })
@@ -53,6 +53,10 @@ export class LeftSidebar implements OnInit, OnChanges {
   public systemDefinedProjects: Project[] = [];
   public favouriteProjects: Project[] = [];
   public allProjects: Project[] = [];
+
+  // Dropdown states for collapsible sections
+  public isFavouritesExpanded: boolean = true;
+  public isMyProjectsExpanded: boolean = true;
 
   ngOnInit() {
     this.loadProjects();
@@ -183,5 +187,14 @@ export class LeftSidebar implements OnInit, OnChanges {
   addProject(){
     console.log('Add Project clicked');
     this.addProjectModalOpen.emit();
+  }
+
+  // Toggle dropdown methods
+  toggleFavouritesDropdown() {
+    this.isFavouritesExpanded = !this.isFavouritesExpanded;
+  }
+
+  toggleMyProjectsDropdown() {
+    this.isMyProjectsExpanded = !this.isMyProjectsExpanded;
   }
 }

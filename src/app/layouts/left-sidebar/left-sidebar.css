@@ -96,6 +96,17 @@ body{
     display: flex !important;
     transition: all 0.3s ease-in-out;
   }
+
+  /* Dropdown chevron transition */
+  .section-favourites i,
+  .section-my-projects i {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  /* Smooth transitions for collapsible sections */
+  .project-item {
+    transition: all 0.2s ease-in-out;
+  }
   
   /*
   CONTENT SECTION
