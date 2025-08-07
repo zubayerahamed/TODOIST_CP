@@ -8,6 +8,8 @@ import { ForgotPassword } from './Authentication/forgot-password/forgot-password
 import { ResetPassword } from './Authentication/reset-password/reset-password';
 import { AuthGuard } from './core/guards/auth.guard';
 import { Project } from './project/project';
+import { Upcoming } from './upcoming/upcoming';
+import { Completed } from './completed/completed';
 
 
 export const routes: Routes = [
@@ -20,13 +22,19 @@ export const routes: Routes = [
       {
         path: 'today',
         component: Today,
-        data: { title: 'Today' }
       },
       {
         path: 'project/:projectId',
         component: Project,
-        data: { title: 'Project' }
-      }
+      },
+      {
+        path: 'upcoming',
+        component: Upcoming,
+      },
+      {
+        path: 'completed',
+        component: Completed,
+      },
     ]
   },
   {

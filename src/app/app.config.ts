@@ -9,8 +9,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(
       routes,
-      withComponentInputBinding(),
-      withRouterConfig({ paramsInheritanceStrategy: 'always' }),
+      withComponentInputBinding(),  // Input binding for components
+      withRouterConfig({ paramsInheritanceStrategy: 'always' }) // Always inherit params from parent routes,
     ),
     provideHttpClient(withInterceptors([authInterceptor])),
   ]

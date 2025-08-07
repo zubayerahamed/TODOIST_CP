@@ -1,17 +1,36 @@
-import { Component, Input } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-project',
   imports: [],
   templateUrl: './project.html',
-  styleUrl: './project.css'
+  styleUrl: './project.css',
+  encapsulation: ViewEncapsulation.None,
+  host: {
+    class: 'content-area flex-grow-1 d-flex flex-column gap-4'
+  }
 })
-export class Project {
+export class Project implements OnInit {
 
-  @Input({required:true}) projectId!: number;
+  @Input() projectName!: string;
+  projectId!: string;
+
+  private destroyRef = inject(DestroyRef);
+  private activatedRoute = inject(ActivatedRoute);
 
   ngOnInit() {
-    
+    const subscription = this.activatedRoute.params.subscribe(
+      {
+        next: (paramMap) => {
+          this.projectId = paramMap['projectId'];
+        }
+      }
+    );
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
 }

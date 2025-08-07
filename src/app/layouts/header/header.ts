@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
 export class Header {
-  @Input({required : true}) pageTitle!: string;
+  @Input({required : true}) appTitle!: string;
   @Input() isUserProfileDropdownOpen = false;
   @Input() currentUser = {
     name: 'Zubayer Ahamed',

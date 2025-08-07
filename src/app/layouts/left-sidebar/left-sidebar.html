@@ -73,7 +73,7 @@
   @for (project of systemDefinedProjects; track project.id) {
     <div class="d-flex align-items-center">
       <i class="ph ph-tray fs-4 me-2"></i>
-      <a [routerLink]="'/project/' + project.id" class="page-link flex-grow-1">{{ project.name }}</a>
+      <a [routerLink]="['/project', project.id]" [queryParams]="{ projectName: project.name }" class="page-link flex-grow-1">{{ project.name }}</a>
       <span class="ms-2 me-2">3</span>
     </div>
   }
@@ -86,12 +86,12 @@
   </div>
   <div class="d-flex align-items-center">
     <i class="ph ph-calendar-dots fs-4 me-2"></i>
-    <a href="" class="page-link flex-grow-1">Upcoming</a>
+    <a routerLink="/upcoming" class="page-link flex-grow-1">Upcoming</a>
   </div>
   <div class="divider"></div>
   <div class="d-flex align-items-center">
     <i class="ph ph-check-circle fs-4 me-2"></i>
-    <a href="" class="page-link flex-grow-1">Completed</a>
+    <a routerLink="/completed" class="page-link flex-grow-1">Completed</a>
     <span class="ms-2 me-2">2</span>
   </div>
   <div class="spacer"></div>
@@ -104,7 +104,7 @@
   @for (project of favouriteProjects; track project.id) {
     <div class="d-flex align-items-center text-muted project-item">
       <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-      <a [routerLink]="'/project/' + project.id" class="page-link flex-grow-1">{{ project.name }}</a>
+      <a [routerLink]="['/project', project.id]" [queryParams]="{ projectName: project.name }" class="page-link flex-grow-1">{{ project.name }}</a>
       <span class="ms-2 me-2">2</span>
       <a href="" class="page-link align-items-center btn-edit-project"><i
           class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
@@ -121,7 +121,7 @@
   @for (project of allProjects; track project.id) {
     <div class="d-flex align-items-center text-muted project-item">
       <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-      <a [routerLink]="'/project/' + project.id" class="page-link flex-grow-1">{{ project.name }}</a>
+      <a [routerLink]="['/project', project.id]" [queryParams]="{ projectName: project.name }" class="page-link flex-grow-1">{{ project.name }}</a>
       <span class="ms-2 me-2">2</span>
       <a href="" class="page-link align-items-center btn-edit-project">
         <i class="ph ph-dots-three-outline fs-5 ms-2"></i>

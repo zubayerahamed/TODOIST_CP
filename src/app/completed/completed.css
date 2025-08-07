@@ -375,7 +375,7 @@ body{
       min-height: 44px;
       display: flex;
       align-items: center;
-      justify-content: start;
+      justify-content: center;
     }
     
     .page-link {

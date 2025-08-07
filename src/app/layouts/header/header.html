@@ -3,7 +3,9 @@
     <button class="mobile-menu-btn d-md-none btn p-0 me-3" (click)="onToggleSidebar()">
       <i class="ph ph-list fs-2"></i>
     </button>
-    <h3 class="p-0 m-0 fw-bold flex-grow-1">{{ pageTitle }}</h3>
+    <h3 class="p-0 m-0 fw-bold flex-grow-1">
+      <a routerLink="/" class="page-link">{{ appTitle }}</a>
+    </h3>
     <div class="d-flex align-items-center gap-3">
       <div class="d-flex align-items-center gap-2 p-1 ps-4 pe-4 bg-dark text-white rounded timer-display">
         <i class="ph ph-timer fs-5"></i>

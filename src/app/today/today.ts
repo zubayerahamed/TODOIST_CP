@@ -9,7 +9,7 @@ import { ProjectService } from '../core/services/project.service';
   styleUrl: './today.css',
   encapsulation: ViewEncapsulation.None,
   host: {
-    class: 'content-area flex-grow-1 d-flex flex-column gap-5'
+    class: 'content-area flex-grow-1 d-flex flex-column gap-4'
   }
 })
 export class Today {

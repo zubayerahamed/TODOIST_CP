@@ -24,7 +24,7 @@
 
       <!-- Header Component -->
       <app-header
-        [pageTitle]="pageTitle"
+        [appTitle]="appTitle"
         [currentUser]="currentUser"
         [isUserProfileDropdownOpen]="isUserProfileDropdownOpen"
         (toggleSidebar)="onToggleSidebar()"
@@ -35,7 +35,7 @@
       />
       
       <!-- Content Area -->
-      <router-outlet></router-outlet>
+      <router-outlet/>
 
     </div>
   

@@ -1,63 +1,67 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AuthHelper } from '../core/helpers/auth.helper';
-import { AttachedFile } from '../core/models/attached-file.model';
-import { ChecklistItem } from '../core/models/checklist-item.model';
-import { Participant } from '../core/models/participant.model';
-import { Subtask } from '../core/models/subtask.model';
-import { Tag } from '../core/models/tag.model';
-import { Workspace } from '../core/models/workspace.model';
-import { AuthService } from '../core/services/auth.service';
 import { LeftSidebar } from './left-sidebar/left-sidebar';
-import { Header } from "./header/header";
-import { CreateEvent } from "../events/create-event/create-event";
-import { CreateTask } from "../tasks/create-task/create-task";
-import { CreateWorkspace } from "../workspaces/create-workspace/create-workspace";
-import { filter, map } from 'rxjs';
+import { ActivatedRoute, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { Header } from './header/header';
+import { CreateEvent } from '../events/create-event/create-event';
+import { CreateTask } from '../tasks/create-task/create-task';
+import { CreateWorkspace } from '../workspaces/create-workspace/create-workspace';
+import { AuthService } from '../core/services/auth.service';
+import { Workspace } from '../core/models/workspace.model';
+import { Participant } from '../core/models/participant.model';
+import { Tag } from '../core/models/tag.model';
+import { AuthHelper } from '../core/helpers/auth.helper';
 
 @Component({
   selector: 'app-layouts',
   standalone: true,
   templateUrl: './layouts.html',
   styleUrl: './layouts.css',
-  imports: [CommonModule, FormsModule, LeftSidebar, RouterOutlet, Header, CreateEvent, CreateTask, CreateWorkspace]
+  imports: [
+    RouterOutlet,
+    CommonModule, 
+    FormsModule, 
+    LeftSidebar,  
+    Header, 
+    CreateEvent, 
+    CreateTask, 
+    CreateWorkspace
+  ]
 })
-export class Layouts {
+export class Layouts implements OnInit {
 
-  protected title = 'TASKNEST';
+  appTitle: string = 'TASKNEST';
   isSidebarOpen = false;
-  pageTitle: string;
-  
 
-  constructor(private authService: AuthService, private router: Router, private activatedRoute: ActivatedRoute) {
-    // Example condition: redirect to dashboard
-    const defaultPage = 'today'; 
-    this.pageTitle = "Today";
-    this.router.navigate([defaultPage]);
+  private authService = inject(AuthService); 
+  private router= inject(Router); 
+  private activatedRoute= inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    if(this.router.url == '/'){
+      this.router.navigate(['/today']);
+    }
   }
 
-  ngOnInit() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-        map(() => {
-          let route = this.activatedRoute;
-          while (route.firstChild) {
-            route = route.firstChild;
+  ngOnInit(): void {
+
+    const routerSubs = this.router.events.subscribe({
+      next: (event) => {
+        if (event instanceof NavigationStart) {
+          // Reset sidebar state when navigating to a new route
+          const url = event.url;
+          if(url === '/'){
+            this.router.navigate(['/today']);
           }
-          return route.snapshot.data['title'];
-        })
-    ).subscribe(() => {
-      // Update page title based on the current route
-      const currentRoute = this.router.routerState.snapshot.root;
-      if (currentRoute.firstChild) {
-        this.pageTitle = currentRoute.firstChild.data['title'] || 'Default Title';
-      } else {
-        this.pageTitle = 'Default Title';
+        }
       }
     });
 
+    this.destroyRef.onDestroy(() => {
+      routerSubs.unsubscribe();
+    });
   }
 
   // Workspace dropdown properties
@@ -347,4 +351,5 @@ export class Layouts {
   onLogout() {
     this.logout();
   }
+  
 }

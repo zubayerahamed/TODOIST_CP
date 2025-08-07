@@ -9,8 +9,9 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   templateUrl: './app.html',
   styleUrl: './app.css',
-  imports: [RouterOutlet]
+  imports: [ RouterOutlet ]
 })
 export class App {
+  
   
 }
