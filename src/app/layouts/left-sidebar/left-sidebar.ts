@@ -58,6 +58,10 @@ export class LeftSidebar implements OnInit, OnChanges {
   public isFavouritesExpanded: boolean = true;
   public isMyProjectsExpanded: boolean = true;
 
+  // Context menu states - section-specific
+  public activeContextMenuProjectId: number | null = null;
+  public activeContextMenuSection: 'favourites' | 'projects' | null = null;
+
   ngOnInit() {
     this.loadProjects();
   }
@@ -180,6 +184,16 @@ export class LeftSidebar implements OnInit, OnChanges {
         this.closeCreateWorkspaceModal();
       }
     }
+
+    // Check if project context menu should be closed when clicking outside
+    if (this.activeContextMenuProjectId !== null && this.activeContextMenuSection !== null) {
+      const isClickInsideContextMenu = target.closest('.project-context-menu');
+      const isClickOnContextMenuTrigger = target.closest('.btn-edit-project');
+
+      if (!isClickInsideContextMenu && !isClickOnContextMenuTrigger) {
+        this.closeProjectContextMenu();
+      }
+    }
   }
 
 
@@ -196,5 +210,71 @@ export class LeftSidebar implements OnInit, OnChanges {
 
   toggleMyProjectsDropdown() {
     this.isMyProjectsExpanded = !this.isMyProjectsExpanded;
+  }
+
+  // Context menu methods
+  toggleProjectContextMenu(projectId: number, section: 'favourites' | 'projects', event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (this.activeContextMenuProjectId === projectId && this.activeContextMenuSection === section) {
+      this.activeContextMenuProjectId = null;
+      this.activeContextMenuSection = null;
+    } else {
+      this.activeContextMenuProjectId = projectId;
+      this.activeContextMenuSection = section;
+    }
+  }
+
+  closeProjectContextMenu() {
+    this.activeContextMenuProjectId = null;
+    this.activeContextMenuSection = null;
+  }
+
+  // Helper method to check if context menu should be shown
+  isContextMenuActive(projectId: number, section: 'favourites' | 'projects'): boolean {
+    return this.activeContextMenuProjectId === projectId && this.activeContextMenuSection === section;
+  }
+
+  // Project action methods
+  removeFromFavourites(project: Project, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('Removing from favourites:', project.name);
+    // TODO: Implement API call to update project favourite status
+    // this.projectService.updateProject(project.id, { isFavourite: false }).subscribe(...)
+    
+    this.closeProjectContextMenu();
+    // Refresh projects after update
+    this.loadProjects();
+  }
+
+  addToFavourites(project: Project, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('Adding to favourites:', project.name);
+    // TODO: Implement API call to update project favourite status
+    // this.projectService.updateProject(project.id, { isFavourite: true }).subscribe(...)
+    
+    this.closeProjectContextMenu();
+    // Refresh projects after update
+    this.loadProjects();
+  }
+
+  deleteProject(project: Project, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (confirm(`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`)) {
+      console.log('Deleting project:', project.name);
+      // TODO: Implement API call to delete project
+      // this.projectService.deleteProject(project.id).subscribe(...)
+      
+      this.closeProjectContextMenu();
+      // Refresh projects after deletion
+      this.loadProjects();
+    }
   }
 }

@@ -116,15 +116,28 @@
   
   @if (isFavouritesExpanded) {
     @for (project of favouriteProjects; track project.id) {
-      <div class="d-flex align-items-center text-muted project-item">
+      <div class="d-flex align-items-center text-muted project-item position-relative">
         <i class="ph ph-hash fs-5 ms-3 me-2"></i>
         <a [routerLink]="['/project', project.id]" 
            [queryParams]="{ projectName: project.name }" 
            routerLinkActive="page-active"
            class="page-link flex-grow-1">{{ project.name }}</a>
         <span class="ms-2 me-2">2</span>
-        <a href="" class="page-link align-items-center btn-edit-project"><i
-            class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+        <a href="#" 
+           (click)="toggleProjectContextMenu(project.id, 'favourites', $event)" 
+           class="page-link align-items-center btn-edit-project">
+          <i class="ph ph-dots-three-outline fs-5 ms-2"></i>
+        </a>
+        
+        <!-- Context Menu for Favourite Projects -->
+        @if (isContextMenuActive(project.id, 'favourites')) {
+          <div class="project-context-menu">
+            <div class="context-menu-item" (click)="removeFromFavourites(project, $event)">
+              <i class="ph ph-star fs-5 me-2"></i>
+              <span>Remove from favourites</span>
+            </div>
+          </div>
+        }
       </div>
     }
   }
@@ -142,16 +155,33 @@
   </div>
   @if (isMyProjectsExpanded) {
     @for (project of allProjects; track project.id) {
-      <div class="d-flex align-items-center text-muted project-item">
+      <div class="d-flex align-items-center text-muted project-item position-relative">
         <i class="ph ph-hash fs-5 ms-3 me-2"></i>
         <a [routerLink]="['/project', project.id]" 
            [queryParams]="{ projectName: project.name }" 
            routerLinkActive="page-active"
            class="page-link flex-grow-1">{{ project.name }}</a>
         <span class="ms-2 me-2">2</span>
-        <a href="" class="page-link align-items-center btn-edit-project">
+        <a href="#" 
+           (click)="toggleProjectContextMenu(project.id, 'projects', $event)" 
+           class="page-link align-items-center btn-edit-project">
           <i class="ph ph-dots-three-outline fs-5 ms-2"></i>
         </a>
+        
+        <!-- Context Menu for My Projects -->
+        @if (isContextMenuActive(project.id, 'projects')) {
+          <div class="project-context-menu">
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-star fs-5 me-2"></i>
+              <span>Add to favourites</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item context-menu-item-danger" (click)="deleteProject(project, $event)">
+              <i class="ph ph-trash fs-5 me-2"></i>
+              <span>Delete project</span>
+            </div>
+          </div>
+        }
       </div>
     }
   }
