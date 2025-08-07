@@ -16,12 +16,15 @@
       (createWorkspaceModalClose)="onCreateWorkspaceModalClose()"
       (workspaceCreate)="onWorkspaceCreate($event)"
       (workspaceNameChange)="onWorkspaceNameChange($event)"
-      (addTaskModalOpen)="onAddTaskModalOpen()"
-      (addEventModalOpen)="onAddEventModalOpen()"
+      (addTaskModalOpen)="openAddTaskModal()"
+      (addEventModalOpen)="openAddEventModal()"
     />
 
     <div class="content-wrapper vh-100 d-flex flex-grow-1 flex-column">
+
+      <!-- Header Component -->
       <app-header
+        [pageTitle]="pageTitle"
         [currentUser]="currentUser"
         [isUserProfileDropdownOpen]="isUserProfileDropdownOpen"
         (toggleSidebar)="onToggleSidebar()"
@@ -33,6 +36,7 @@
       
       <!-- Content Area -->
       <router-outlet></router-outlet>
+
     </div>
   
     <!-- Add Event Modal -->

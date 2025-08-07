@@ -13,7 +13,7 @@
     <a href="#" class="page-link workspace-dropdown-link" (click)="toggleWorkspaceDropdown(); $event.preventDefault()">
       <i class="ph ph-caret-down fs-4 fw-bold"></i>
     </a>
-    
+
     <!-- Workspace Dropdown -->
     <div class="workspace-dropdown" *ngIf="isWorkspaceDropdownOpen" (click)="onWorkspaceDropdownBackdropClick($event)">
       <div class="workspace-dropdown-content">
@@ -22,33 +22,33 @@
           <img [src]="currentWorkspace.avatar" class="rounded-circle workspace-avatar" [alt]="currentWorkspace.name">
           <span class="workspace-name">{{ currentWorkspace.name }}</span>
         </div>
-        
+
         <!-- Workspace Settings -->
         <div class="workspace-dropdown-item d-flex align-items-center" (click)="closeWorkspaceDropdown()">
           <i class="ph ph-gear fs-5 me-3"></i>
           <span>Workspace settings</span>
         </div>
-        
+
         <!-- Divider -->
         <div class="workspace-dropdown-divider"></div>
-        
+
         <!-- Switch to Section -->
         <div class="workspace-dropdown-section-title">
           <i class="ph ph-arrows-clockwise me-3"></i>
           <span>Switch to</span>
         </div>
-        
+
         <!-- Available Workspaces -->
-        <div *ngFor="let workspace of availableWorkspaces" 
-             class="workspace-dropdown-item" 
-             (click)="switchWorkspace(workspace)">
-          <i class="ph ph-gps fs-5 me-3"></i>
-          <span>{{ workspace.name }}</span>
-        </div>
-        
+        @for(workspace of availableWorkspaces; track workspace.id) {
+          <div class="workspace-dropdown-item" (click)="switchWorkspace(workspace); $event.stopPropagation()">
+            <i class="ph ph-gps fs-5 me-3"></i>
+            <span>{{ workspace.name }}</span>
+          </div>
+        }
+
         <!-- Divider -->
         <div class="workspace-dropdown-divider"></div>
-        
+
         <!-- Create Workspace -->
         <div class="workspace-dropdown-item" (click)="openCreateWorkspaceModal(); $event.stopPropagation()">
           <i class="ph ph-plus fs-5 me-3"></i>
@@ -61,20 +61,24 @@
     <button class="btn btn-warning d-flex align-items-center justify-content-center" type="button">
       <i class="ph ph-user-sound fs-5 me-2"></i><span>Voice Command</span>
     </button>
-    <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button"
-            (click)="openAddTaskModal()">
+    <button class="btn btn-dark d-flex align-items-center justify-content-center" type="button" (click)="openAddTaskModal()">
       <i class="ph ph-plus-circle fs-5 me-2"></i><span>Add Task</span>
     </button>
-    <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button"
-            (click)="openAddEventModal()">
+    <button class="btn btn-primary d-flex align-items-center justify-content-center" type="button" (click)="openAddEventModal()">
       <i class="ph ph-calendar-plus fs-5 me-2"></i><span>Add Event</span>
     </button>
   </div>
   <div class="divider"></div>
-  <div class="d-flex align-items-center">
-    <i class="ph ph-tray fs-4 me-2"></i>
-    <a href="" class="page-link flex-grow-1">Inbox</a>
-  </div>
+  
+  @for (project of systemDefinedProjects; track project.id) {
+    <div class="d-flex align-items-center">
+      <i class="ph ph-tray fs-4 me-2"></i>
+      <a [routerLink]="'/project/' + project.id" class="page-link flex-grow-1">{{ project.name }}</a>
+      <span class="ms-2 me-2">3</span>
+    </div>
+  }
+  
+
   <div class="d-flex align-items-center">
     <i class="ph ph-calendar-dot fs-4 me-2"></i>
     <a routerLink="/today" class="page-link page-active flex-grow-1">Today</a>
@@ -96,13 +100,17 @@
     <span class="page-link fw-bold flex-grow-1">Favourites</span>
     <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
   </div>
-  <div class="d-flex align-items-center text-muted project-item">
-    <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-    <a href="" class="page-link flex-grow-1">Office work</a>
-    <span class="ms-2 me-2">2</span>
-    <a href="" class="page-link align-items-center btn-edit-project"><i
-         class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-  </div>
+  
+  @for (project of favouriteProjects; track project.id) {
+    <div class="d-flex align-items-center text-muted project-item">
+      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+      <a [routerLink]="'/project/' + project.id" class="page-link flex-grow-1">{{ project.name }}</a>
+      <span class="ms-2 me-2">2</span>
+      <a href="" class="page-link align-items-center btn-edit-project"><i
+          class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
+    </div>
+  }
+
   <div class="spacer"></div>
   <div class="d-flex align-items-center section-my-projects">
     <i class="ph ph-briefcase fs-4 fw-bold me-2"></i>
@@ -110,18 +118,14 @@
     <a href="" class="page-link btn-add-project"><i class="ph ph-plus fs-5 fw-bold ms-2 me-2"></i></a>
     <a href="" class="page-link"><i class="ph ph-caret-down fs-5 fw-bold ms-2"></i></a>
   </div>
-  <div class="d-flex align-items-center text-muted project-item">
-    <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-    <a href="" class="page-link flex-grow-1">Office work</a>
-    <span class="ms-2 me-2">2</span>
-    <a href="" class="page-link align-items-center btn-edit-project"><i
-         class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-  </div>
-  <div class="d-flex align-items-center text-muted project-item">
-    <i class="ph ph-hash fs-5 ms-3 me-2"></i>
-    <a href="" class="page-link flex-grow-1">Hous work</a>
-    <span class="ms-2 me-2">1</span>
-    <a href="" class="page-link align-items-center btn-edit-project"><i
-         class="ph ph-dots-three-outline fs-5 ms-2"></i></a>
-  </div>
+  @for (project of allProjects; track project.id) {
+    <div class="d-flex align-items-center text-muted project-item">
+      <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+      <a [routerLink]="'/project/' + project.id" class="page-link flex-grow-1">{{ project.name }}</a>
+      <span class="ms-2 me-2">2</span>
+      <a href="" class="page-link align-items-center btn-edit-project">
+        <i class="ph ph-dots-three-outline fs-5 ms-2"></i>
+      </a>
+    </div>
+  }
 </div>

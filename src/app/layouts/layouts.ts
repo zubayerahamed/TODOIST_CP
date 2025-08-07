@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthHelper } from '../core/helpers/auth.helper';
 import { AttachedFile } from '../core/models/attached-file.model';
 import { ChecklistItem } from '../core/models/checklist-item.model';
@@ -15,6 +15,7 @@ import { Header } from "./header/header";
 import { CreateEvent } from "../events/create-event/create-event";
 import { CreateTask } from "../tasks/create-task/create-task";
 import { CreateWorkspace } from "../workspaces/create-workspace/create-workspace";
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-layouts',
@@ -25,15 +26,38 @@ import { CreateWorkspace } from "../workspaces/create-workspace/create-workspace
 })
 export class Layouts {
 
-  protected title = 'TODOIST';
+  protected title = 'TASKNEST';
   isSidebarOpen = false;
-  
+  pageTitle: string;
   
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private activatedRoute: ActivatedRoute) {
     // Example condition: redirect to dashboard
-    const defaultPage = 'today'; // or get from service or storage
+    const defaultPage = 'today'; 
+    this.pageTitle = "Today";
     this.router.navigate([defaultPage]);
+  }
+
+  ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+        map(() => {
+          let route = this.activatedRoute;
+          while (route.firstChild) {
+            route = route.firstChild;
+          }
+          return route.snapshot.data['title'];
+        })
+    ).subscribe(() => {
+      // Update page title based on the current route
+      const currentRoute = this.router.routerState.snapshot.root;
+      if (currentRoute.firstChild) {
+        this.pageTitle = currentRoute.firstChild.data['title'] || 'Default Title';
+      } else {
+        this.pageTitle = 'Default Title';
+      }
+    });
+
   }
 
   // Workspace dropdown properties
@@ -115,21 +139,6 @@ export class Layouts {
       avatar: '/assets/images/zubayer.jpg',
     },
   ];
-
-
-
-
-  
-  
-
-  // Task-specific properties
-
-
-  
-
-  // Subtask properties
-  
-  
   
   
   draggedSubtaskIndex: number | null = null;
@@ -148,10 +157,6 @@ export class Layouts {
     { id: 4, name: 'AWS', color: '#fd7e14' },
   ];
 
-
-
-  
-
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
@@ -169,10 +174,6 @@ export class Layouts {
     this.isAddEventModalOpen = false;
   }
 
-
-
- 
-
   // Task Modal Methods
   isAddTaskModalOpen = false;
   openAddTaskModal() {
@@ -184,68 +185,6 @@ export class Layouts {
 
 
 
-
-
-  // Event Participant management methods
-
-
-
-
-
-
-
-
-  // Task Participant management methods
- 
-
- 
-
-
-
-  
-
-  
-
-  // Event File attachment methods
-
-
-
-
-  // Task File attachment methods
-
-
-
-
-
-  
-
-
-  
-
- 
-
- 
-
-
-
-
-
-
-
-  // Subtask management methods
- 
-
-
-
-
-
- 
-
-  
-
- 
-
-  // Subtask participant management
 
 
  
@@ -280,20 +219,6 @@ export class Layouts {
 
   }
 
-
-
-
-
-  
-
-
-
-  
-
-  // Subtask progress calculation
-  
-
- 
 
   // Workspace dropdown methods
   toggleWorkspaceDropdown() {
@@ -364,14 +289,6 @@ export class Layouts {
 
  
 
-
-
- 
-
-
-
-
-
   // Left sidebar event handlers
   onSidebarToggle() {
     this.toggleSidebar();
@@ -411,13 +328,7 @@ export class Layouts {
     this.newWorkspaceName = name;
   }
 
-  onAddTaskModalOpen() {
-    this.openAddTaskModal();
-  }
 
-  onAddEventModalOpen() {
-    this.openAddEventModal();
-  }
 
 
   // Handlers for header component events

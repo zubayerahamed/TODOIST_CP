@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './create-event.css',
 })
 export class CreateEvent {
-  @Input() isAddEventModalOpen = false;
+  @Input({required : true}) isAddEventModalOpen!: boolean;
   @Output() isAddEventModalClose = new EventEmitter<void>();
 
   allParticipants: Participant[] = [

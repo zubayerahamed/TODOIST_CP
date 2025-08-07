@@ -12,7 +12,7 @@ import { AttachedFile } from '../../core/models/attached-file.model';
   styleUrl: './create-task.css',
 })
 export class CreateTask {
-  @Input() isAddTaskModalOpen = false;
+  @Input({required : true}) isAddTaskModalOpen!: boolean;
   @Output() isAddTaskModalClose = new EventEmitter<void>();
 
   allParticipants: Participant[] = [

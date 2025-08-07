@@ -1,15 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Workspace } from '../../core/models/workspace.model';
+import { ProjectService } from '../../core/services/project.service';
+import { Project } from '../../core/models/project.model';
 
 @Component({
   selector: 'app-left-sidebar',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './left-sidebar.html',
-  styleUrl: './left-sidebar.css'
+  styleUrl: './left-sidebar.css',
 })
 export class LeftSidebar {
   @Input() isSidebarOpen = false;
@@ -34,6 +43,37 @@ export class LeftSidebar {
   @Output() workspaceNameChange = new EventEmitter<string>();
   @Output() addTaskModalOpen = new EventEmitter<void>();
   @Output() addEventModalOpen = new EventEmitter<void>();
+
+  public projectService = inject(ProjectService);
+  public projects: Project[] = [];
+  public systemDefinedProjects: Project[] = [];
+  public favouriteProjects: Project[] = [];
+  public allProjects: Project[] = [];
+
+  ngOnInit() {
+    this.loadProjects();
+  }
+
+  private loadProjects(){
+    this.projectService.getAllProjects().subscribe({
+      next: (resData) => {
+        //console.log('Projects fetched successfully:', resData);
+        this.projects = resData.data || [];
+        this.processProjects();
+      },
+      error: (error) => {
+        console.error('Error fetching projects:', error);
+      },
+    });
+  }
+
+  private processProjects(): void {
+    // Process data once and store in properties
+    this.systemDefinedProjects = this.projectService.getFilteredSystemDefinedProjects(this.projects);
+    this.favouriteProjects = this.projectService.getFilteredfavouriteProjects(this.projects);
+    this.allProjects = this.projectService.getFilteredallProjects(this.projects);
+  }
+  
 
   toggleSidebar() {
     this.sidebarToggle.emit();
@@ -107,7 +147,9 @@ export class LeftSidebar {
 
     // Check if workspace dropdown is open and close it if clicking outside
     if (this.isWorkspaceDropdownOpen) {
-      const isClickInsideWorkspaceDropdown = target.closest('.workspace-dropdown');
+      const isClickInsideWorkspaceDropdown = target.closest(
+        '.workspace-dropdown'
+      );
       const isClickOnWorkspaceLink = target.closest('.workspace-dropdown-link');
 
       if (!isClickInsideWorkspaceDropdown && !isClickOnWorkspaceLink) {

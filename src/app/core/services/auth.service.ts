@@ -2,15 +2,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthHelper } from '../helpers/auth.helper';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService extends BaseService {
 
-  baseUrl = 'http://localhost:8081/api/v1'; 
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    super();
+  }
 
   signup(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/register`, data);

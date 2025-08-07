@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './header.css'
 })
 export class Header {
-
+  @Input({required : true}) pageTitle!: string;
   @Input() isUserProfileDropdownOpen = false;
   @Input() currentUser = {
     name: 'Zubayer Ahamed',
