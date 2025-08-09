@@ -19,7 +19,7 @@ export class CreateProject {
 
   // Properties for the project form
   enteredName: string = '';
-  enteredColor: string = '#000000';
+  enteredColor: string = '#645896';
   enteredLayoutType: string = 'LIST';
   enteredIsFavourite: boolean = false;
 
@@ -58,7 +58,7 @@ export class CreateProject {
 
   resetForm(){
     this.enteredName = '';
-    this.enteredColor = '#000000';
+    this.enteredColor = '#645896';
     this.enteredLayoutType = 'LIST';
     this.enteredIsFavourite = false;
     this.invalidFormSubmit = false;

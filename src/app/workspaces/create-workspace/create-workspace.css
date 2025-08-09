@@ -429,6 +429,10 @@ body{
     box-sizing: border-box;
     animation: fadeIn 0.3s ease-in-out;
   }
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
   
   .modal-container {
     width: 100%;

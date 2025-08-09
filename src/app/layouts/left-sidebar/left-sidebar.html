@@ -105,7 +105,7 @@
   </div>
   <div class="spacer"></div>
   <div class="d-flex align-items-center section-favourites">
-    <i class="ph ph-star fs-4 fw-bold me-2"></i>
+    <i class="ph ph-heart fs-4 fw-bold me-2"></i>
     <span class="page-link fw-bold flex-grow-1">Favourites</span>
     <a href="#" (click)="toggleFavouritesDropdown(); $event.preventDefault()" class="page-link">
       <i class="ph fs-5 fw-bold ms-2" 
@@ -133,8 +133,30 @@
         @if (isContextMenuActive(project.id, 'favourites')) {
           <div class="project-context-menu">
             <div class="context-menu-item" (click)="removeFromFavourites(project, $event)">
-              <i class="ph ph-star fs-5 me-2"></i>
+              <i class="ph ph-heart-break fs-5 me-2"></i>
               <span>Remove from favourites</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-pencil-simple-line fs-5 me-2"></i>
+              <span>Edit</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-user-plus fs-5 me-2"></i>
+              <span>Add members</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-sign-out fs-5 me-2"></i>
+              <span>Leave from project</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-gear fs-5 me-2"></i>
+              <span>Project settings</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item context-menu-item-danger" (click)="deleteProject(project, $event)">
+              <i class="ph ph-trash fs-5 me-2"></i>
+              <span>Delete project</span>
             </div>
           </div>
         }
@@ -172,8 +194,29 @@
         @if (isContextMenuActive(project.id, 'projects')) {
           <div class="project-context-menu">
             <div class="context-menu-item" (click)="addToFavourites(project, $event)">
-              <i class="ph ph-star fs-5 me-2"></i>
+              <i class="ph ph-heart fs-5 me-2"></i>
               <span>Add to favourites</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-heart-break fs-5 me-2"></i>
+              <span>Remove from favourites</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-pencil-simple-line fs-5 me-2"></i>
+              <span>Edit</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-user-plus fs-5 me-2"></i>
+              <span>Add members</span>
+            </div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-sign-out fs-5 me-2"></i>
+              <span>Leave from project</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+              <i class="ph ph-gear fs-5 me-2"></i>
+              <span>Project settings</span>
             </div>
             <div class="context-menu-divider"></div>
             <div class="context-menu-item context-menu-item-danger" (click)="deleteProject(project, $event)">

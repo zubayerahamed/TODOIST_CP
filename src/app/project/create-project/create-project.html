@@ -14,20 +14,31 @@
             <input type="text" class="form-control" placeholder="Project name" name="name" [(ngModel)]="enteredName"/>
             <div class="text-danger text-sm" *ngIf="enteredNameError">{{ enteredNameError }}</div>
         </div>
-        <div class="mb-3">
-          <input type="text" class="form-control" placeholder="Color" name="color" [(ngModel)]="enteredColor" />
+        <div class="mb-3 color-picker-container">
+          <label for="colorInput" class="form-label">Color</label>
+          <div class="d-flex align-items-center">
+            <input type="color" id="colorInput" name="color" [(ngModel)]="enteredColor" class="form-control form-control-color" />
+            <input type="text" class="form-control ms-2 color-hex-input" [value]="enteredColor" readonly />
+          </div>
         </div>
-        <div class="mb-3">
-            <select name="layoutType" id="layoutType" class="form-select" [(ngModel)]="enteredLayoutType">
-                <option value="">-- Select Layout --</option>
-                <option value="LIST">List</option>
-                <option value="BOARD">Board</option>
-            </select>
-            <div class="text-danger text-sm" *ngIf="enteredLayoutTypeError">{{ enteredLayoutTypeError }}</div>
+        <div class="mb-3 layout-button-group">
+          <label class="form-label">Layout</label>
+          <div class="btn-group gap-2" role="group" aria-label="Layout selection">
+            <button type="button" class="btn" [class.active]="enteredLayoutType === 'LIST'" (click)="enteredLayoutType = 'LIST'">
+              <i class="ph ph-list"></i><br/><span>List</span>
+            </button>
+            <button type="button" class="btn" [class.active]="enteredLayoutType === 'BOARD'" (click)="enteredLayoutType = 'BOARD'">
+              <i class="ph ph-columns"></i><br/><span>Board</span>
+            </button>
+            <button type="button" class="btn" [class.active]="enteredLayoutType === 'CALENDAR'" (click)="enteredLayoutType = 'CALENDAR'">
+              <i class="ph ph-calendar"></i><br/><span>Calendar</span>
+            </button>
+          </div>
+          <div class="text-danger text-sm" *ngIf="enteredLayoutTypeError">{{ enteredLayoutTypeError }}</div>
         </div>
-        <div class="mb-3">
-          <input type="checkbox" class="me-2" id="isFavourite" name="isFavourite" [(ngModel)]="enteredIsFavourite"/>
-          <label for="isFavourite">Add to Favourite</label>
+        <div class="mb-3 form-check form-switch">
+          <input type="checkbox" class="form-check-input" id="isFavourite" name="isFavourite" [(ngModel)]="enteredIsFavourite"/>
+          <label class="form-check-label" for="isFavourite">Add to favourite</label>
         </div>
       </form>
     </div>
