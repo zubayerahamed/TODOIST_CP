@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../core/services/project.service';
+import { AlertService } from '../../core/services/alert.service';
 import { AddProject } from '../../core/models/project.model';
 
 @Component({
@@ -16,6 +17,7 @@ export class CreateProject {
   @Output() refreshProjectsOfSidebar = new EventEmitter<void>();
 
   private projectService = inject(ProjectService);
+  private alertService = inject(AlertService);
 
   // Properties for the project form
   enteredName: string = '';
@@ -90,12 +92,16 @@ export class CreateProject {
     this.projectService.createProject(addProject).subscribe({
       next: (res) => {
         console.log('Project created successfully', res);
+        // Show success alert
+        this.alertService.success('Success!', 'Project created successfully');
         // Only emit refresh after successful creation
         this.refreshProjectsOfSidebar.emit();
         this.onCloseAddProjectModal();
       },
       error: (err) => {
         console.error('Failed to create project', err);
+        // Show error alert
+        this.alertService.error('Error!', 'Failed to create project. Please try again.');
         // Still close modal on error, but don't refresh
         this.onCloseAddProjectModal();
       }
