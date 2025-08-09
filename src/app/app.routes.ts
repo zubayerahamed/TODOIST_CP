@@ -10,6 +10,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { Project } from './project/project';
 import { Upcoming } from './upcoming/upcoming';
 import { Completed } from './completed/completed';
+import { WorkspaceSettings } from './workspaces/workspace-settings/workspace-settings';
 
 
 export const routes: Routes = [
@@ -22,6 +23,10 @@ export const routes: Routes = [
       {
         path: 'today',
         component: Today,
+      },
+      {
+        path: 'workspace-settings',
+        component: WorkspaceSettings
       },
       {
         path: 'project/:projectId',
