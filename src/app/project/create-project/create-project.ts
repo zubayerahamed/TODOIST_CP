@@ -9,7 +9,7 @@ import { AddProject } from '../../core/models/project.model';
   selector: 'app-create-project',
   imports: [CommonModule, FormsModule],
   templateUrl: './create-project.html',
-  styleUrl: './create-project.css',
+  styleUrls: ['./create-project.css'],
 })
 export class CreateProject {
   @Input({ required: true }) isAddProjectModalOpen!: boolean;

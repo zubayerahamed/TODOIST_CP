@@ -6,7 +6,7 @@ import { AlertService, Alert } from '../../services/alert.service';
   selector: 'app-alert',
   imports: [CommonModule],
   templateUrl: './alert.component.html',
-  styleUrl: './alert.component.css'
+  styleUrls: ['./alert.component.css']
 })
 export class AlertComponent implements OnInit {
   alerts: Alert[] = [];

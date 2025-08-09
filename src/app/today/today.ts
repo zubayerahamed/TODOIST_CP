@@ -1,4 +1,4 @@
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ProjectService } from '../core/services/project.service';
 
 @Component({
@@ -6,8 +6,7 @@ import { ProjectService } from '../core/services/project.service';
   standalone: true,
   imports: [],
   templateUrl: './today.html',
-  styleUrl: './today.css',
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./today.css'],
   host: {
     class: 'content-area flex-grow-1 d-flex flex-column gap-4'
   }

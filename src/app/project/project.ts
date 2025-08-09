@@ -1,12 +1,11 @@
-import { Component, DestroyRef, inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-project',
   imports: [],
   templateUrl: './project.html',
-  styleUrl: './project.css',
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./project.css'],
   host: {
     class: 'content-area flex-grow-1 d-flex flex-column gap-4'
   }

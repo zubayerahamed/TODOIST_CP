@@ -1,6 +1,3 @@
-.content-area {
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
+/* Component-specific styles for project component */
+/* This component uses global styles from src/styles.css */
+/* Add any project specific styles here if needed */

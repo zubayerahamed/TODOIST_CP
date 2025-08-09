@@ -18,7 +18,7 @@ import { CreateProject } from "../project/create-project/create-project";
   selector: 'app-layouts',
   standalone: true,
   templateUrl: './layouts.html',
-  styleUrl: './layouts.css',
+  styleUrls: ['./layouts.css'],
   imports: [
     RouterOutlet,
     CommonModule,

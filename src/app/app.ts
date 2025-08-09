@@ -6,7 +6,7 @@ import { AlertComponent } from './core/components/alert/alert.component';
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrls: ['./app.css'],
   imports: [ RouterOutlet, AlertComponent ]
 })
 export class App {
