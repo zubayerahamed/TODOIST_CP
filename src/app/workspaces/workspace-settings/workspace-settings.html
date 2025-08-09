@@ -46,26 +46,107 @@
     <form>
       <div class="col-md-3">
         <div class="mb-2">
-          <label for="workspaceName" class="form-label fw-bold text-muted">Default types of task</label>
-          <select name="" id="" class="form-control">
-            <option value="">Select a type</option>
-            <option value="">Software Development</option>
-            <option value="">Software Development</option>
-            <option value="">Software Development</option>
-          </select>
+          <label class="form-label fw-bold text-muted">Default type of tasks</label>
+          <div class="custom-dropdown" id="defaultTaskTypeDropdown">
+            <div class="dropdown-selected" onclick="toggleDropdown('defaultTaskType')">
+              <div class="selected-option">
+                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
+                <span>Software development</span>
+              </div>
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-options" id="defaultTaskTypeOptions">
+              <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'software-development', 'Software development', 'rgb(75, 75, 232)')">
+                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
+                <span>Software development</span>
+              </div>
+              <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'qa', 'QA', 'rgb(53, 215, 96)')">
+                <div class="color-circle" style="background-color: rgb(53, 215, 96);"></div>
+                <span>QA</span>
+              </div>
+              <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'regular-work', 'Regular Work', 'rgb(255, 183, 77)')">
+                <div class="color-circle" style="background-color: rgb(255, 183, 77);"></div>
+                <span>Regular Work</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="mb-2">
-          <label for="workspaceName" class="form-label fw-bold text-muted">Default types of event</label>
-          <select name="" id="" class="form-control">
-            <option value="">Select a type</option>
-            <option value="">Software Development</option>
-            <option value="">Software Development</option>
-            <option value="">Software Development</option>
-          </select>
+          <label class="form-label fw-bold text-muted">Default type of events</label>
+          <div class="custom-dropdown" id="defaultEventTypeDropdown">
+            <div class="dropdown-selected" onclick="toggleDropdown('defaultEventType')">
+              <div class="selected-option">
+                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
+                <span>Meeting</span>
+              </div>
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-options" id="defaultEventTypeOptions">
+              <div class="dropdown-option" onclick="selectOption('defaultEventType', 'meeting', 'Meeting', 'rgb(75, 75, 232)')">
+                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
+                <span>Meeting</span>
+              </div>
+              <div class="dropdown-option" onclick="selectOption('defaultEventType', 'exam', 'Exam', 'rgb(53, 215, 96)')">
+                <div class="color-circle" style="background-color: rgb(53, 215, 96);"></div>
+                <span>Exam</span>
+              </div>
+              <div class="dropdown-option" onclick="selectOption('defaultEventType', 'regular-work', 'Regular Work', 'rgb(255, 183, 77)')">
+                <div class="color-circle" style="background-color: rgb(255, 183, 77);"></div>
+                <span>Regular Work</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Tags Section -->
+<div class="d-flex flex-column gap-3">
+  <h5>Tags</h5>
+  <div class="tags-container">
+    <div class="tag-pill">DSA</div>
+    <div class="tag-pill">Frontend</div>
+    <div class="tag-pill">Backend</div>
+  </div>
+  <div class="create-tag-section">
+    <button type="button" class="btn-create-tag">
+      <i class="ph ph-plus fw-bold"></i>
+      <span>Create tag</span>
+    </button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Task Statuses Section -->
+<div class="d-flex flex-column gap-3">
+  <h5>Task statuses</h5>
+  <div class="status-flow-container">
+    <div class="status-pill status-new-task">New task</div>
+    <div class="status-arrow">
+      <i class="ph ph-arrow-right fw-bold"></i>
+    </div>
+    <div class="status-pill status-scheduled">Scheduled</div>
+    <div class="status-arrow">
+      <i class="ph ph-arrow-right fw-bold"></i>
+    </div>
+    <div class="status-pill status-in-progress">In Progress</div>
+    <div class="status-arrow">
+      <i class="ph ph-arrow-right fw-bold"></i>
+    </div>
+    <div class="status-pill status-hold">Hold</div>
+    <div class="status-arrow">
+      <i class="ph ph-arrow-right fw-bold"></i>
+    </div>
+    <div class="status-pill status-completed">Completed</div>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary">Edit statuses</button>
   </div>
 </div>
