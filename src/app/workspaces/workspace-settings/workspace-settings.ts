@@ -1,82 +1,105 @@
-import { Component } from '@angular/core';
-
-declare global {
-  interface Window {
-    toggleDropdown: (dropdownId: string) => void;
-    selectOption: (dropdownId: string, value: string, text: string, color: string) => void;
-  }
-}
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AuthHelper } from '../../core/helpers/auth.helper';
+import { Category } from '../../core/models/category,model';
+import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
+import { AlertService } from '../../core/services/alert.service';
+import { CategoryService } from '../../core/services/category.service';
+import { WorkspaceService } from '../../core/services/workspace.service';
+import { Types } from '../../types/types';
 
 @Component({
   selector: 'app-workspace-settings',
-  imports: [],
+  imports: [Types, FormsModule],
   templateUrl: './workspace-settings.html',
   styleUrl: './workspace-settings.css',
   host: {
-    class: 'content-area flex-grow-1 d-flex flex-column gap-4'
-  }
+    class: 'content-area flex-grow-1 d-flex flex-column gap-4',
+  },
 })
-export class WorkspaceSettings {
+export class WorkspaceSettings implements OnInit {
+  private categoryService = inject(CategoryService);
+  private workspaceService = inject(WorkspaceService);
+  private alertService = inject(AlertService);
 
-  ngOnInit() {
-    // Add global functions for dropdown functionality
-    window.toggleDropdown = (dropdownId: string) => {
-      const dropdown = document.getElementById(dropdownId + 'Options');
-      const selected = document.querySelector(`#${dropdownId}Dropdown .dropdown-selected`);
-      
-      if (dropdown && selected) {
-        const isVisible = dropdown.style.display === 'flex';
-        
-        // Close all other dropdowns
-        document.querySelectorAll('.dropdown-options').forEach(d => {
-          (d as HTMLElement).style.display = 'none';
-        });
-        document.querySelectorAll('.dropdown-selected').forEach(s => {
-          s.classList.remove('active');
-        });
-        
-        if (!isVisible) {
-          dropdown.style.display = 'flex';
-          selected.classList.add('active');
-        }
-      }
-    };
+  public categories: Category[] = [];
+  public taskCategories: Category[] = [];
+  public eventCategories: Category[] = [];
+  public workspace!: Workspace;
+  public enteredWorkspaceName: string = "";
 
-    window.selectOption = (dropdownId: string, value: string, text: string, color: string) => {
-      const dropdown = document.getElementById(dropdownId + 'Options');
-      const selected = document.querySelector(`#${dropdownId}Dropdown .dropdown-selected`);
-      const selectedOption = selected?.querySelector('.selected-option');
-      
-      if (selectedOption) {
-        const colorCircle = selectedOption.querySelector('.color-circle') as HTMLElement;
-        const textSpan = selectedOption.querySelector('span');
-        
-        if (colorCircle && textSpan) {
-          colorCircle.style.backgroundColor = color;
-          textSpan.textContent = text;
-        }
-      }
-      
-      if (dropdown) {
-        dropdown.style.display = 'none';
-      }
-      
-      if (selected) {
-        selected.classList.remove('active');
-      }
-    };
+  ngOnInit(): void {
+    this.loadWorkspace();
+    this.loadWorkspaceCategories();
+  }
 
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', (event) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.custom-dropdown')) {
-        document.querySelectorAll('.dropdown-options').forEach(d => {
-          (d as HTMLElement).style.display = 'none';
-        });
-        document.querySelectorAll('.dropdown-selected').forEach(s => {
-          s.classList.remove('active');
-        });
+  loadWorkspace(){
+    const workspaceId = AuthHelper.getJwtPayloads()?.workspaceId ?? 0;
+    if(workspaceId == 0) return;
+
+    this.workspaceService.findWorkspace(workspaceId).subscribe({
+      next: (resData) => {
+        this.workspace = resData.data;
+        this.enteredWorkspaceName = this.workspace!.name;
+      }, 
+      error: (resErr) => {
+        console.error(resErr);
       }
     });
+  }
+
+  onUpdateWorkspace(){
+    const updateWorkspace: UpdateWorkspace = {
+      id: this.workspace!.id,
+      name: this.enteredWorkspaceName,
+    };
+
+    this.workspaceService.updateWorkspace(updateWorkspace).subscribe({
+      next: (resData) => {
+        this.alertService.success('Success!', 'Workspace updated successfully');
+        this.workspace = resData.data;
+        this.enteredWorkspaceName = this.workspace!.name;
+        sessionStorage.setItem("workspaceName", this.workspace!.name);
+      },
+      error: (resErr) => {
+        console.error(resErr);
+        this.alertService.error('Error!', 'Workspace updated failed');
+      }
+    });
+
+  }
+
+  onTriggerRefreshAfterSave() {
+    this.loadWorkspaceCategories();
+  }
+
+  loadWorkspaceCategories() {
+    this.categoryService.getAllWorkspaceCategories().subscribe({
+      next: (resData) => {
+        this.categories = resData.data || [];
+        this.processCategories();
+      },
+      error: (error) => {
+        console.error('Error fetching projects:', error);
+      },
+    });
+  }
+
+  private processCategories(): void {
+    this.taskCategories = this.categoryService.getFilteredTaskCategories(
+      this.categories
+    );
+    this.eventCategories = this.categoryService.getFilteredEventCategories(
+      this.categories
+    );
+  }
+
+  // Edit type modal events
+  isEditTypesModalOpen = false;
+  openEditTypesModal() {
+    this.isEditTypesModalOpen = true;
+  }
+  onEditTypesModalClose() {
+    this.isEditTypesModalOpen = false;
   }
 }

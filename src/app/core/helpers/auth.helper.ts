@@ -1,3 +1,6 @@
+import { jwtDecode } from 'jwt-decode';
+import { JwtPayload } from '../models/jwtpayloads.model';
+
 export class AuthHelper {
   private static readonly STORAGE_KEY = 'currentUser';
 
@@ -34,5 +37,18 @@ export class AuthHelper {
 
   static isAuthenticated(): boolean {
     return !!this.getAccessToken();
+  }
+
+  static getJwtPayloads(): JwtPayload | null {
+    const accessToken = this.getAccessToken();
+    if (!accessToken) {
+      return null;
+    }
+    return jwtDecode<JwtPayload>(accessToken);
+  }
+
+  static loadWorkspace(){
+    const workspaceName = this.getJwtPayloads()?.workspaceName?? "";
+    sessionStorage.setItem("workspaceName", workspaceName);
   }
 }

@@ -1,14 +1,12 @@
 <h3 class="fw-bold border-bottom p-2 text-center mb-0">Workspace settings</h3>
 <div class="d-flex">
-  <form class="flex-fill">
-    <div class="col-md-3">
-      <div class="mb-3">
-        <label for="workspaceName" class="form-label fw-bold text-muted">Workspace name</label>
-        <input type="text" class="form-control" id="workspaceName" value="Zubayer's Workspace">
-      </div>
-      <button type="submit" class="btn btn-primary">Save</button>
+  <div class="col-md-3">
+    <div class="mb-3">
+      <label for="workspaceName" class="form-label fw-bold text-muted">Workspace name</label>
+      <input type="text" class="form-control" id="workspaceName" [(ngModel)]="enteredWorkspaceName">
     </div>
-  </form>
+    <button type="button" class="btn btn-primary" (click)="onUpdateWorkspace()">Save</button>
+  </div>
 </div>
 <div class="divider"></div>
 <div class="d-flex flex-column gap-3">
@@ -16,31 +14,27 @@
   <div class="mb-2">
     <label for="workspaceName" class="form-label fw-bold text-muted">Task types</label>
     <div class="d-flex gap-2 flex-wrap">
-      <div class="d-flex gap-2 align-items-center border rounded p-2">
-        <div class="rounded" style="background-color: rgb(75, 75, 232); height: 20px; width: 20px;"></div>
-        <div>Software Development</div>
-      </div>
-      <div class="d-flex gap-2 align-items-center border rounded p-2">
-        <div class="rounded" style="background-color: rgb(53, 215, 96); height: 20px; width: 20px;"></div>
-        <div>Software Development</div>
-      </div>
+      @for (category of taskCategories; track category.id) {
+        <div class="d-flex gap-2 align-items-center border rounded p-2">
+          <div class="rounded" [style.background-color]="category.color" style="height: 20px; width: 20px;"></div>
+          <div>{{category.name}}</div>
+        </div>
+      }
     </div>
   </div>
   <div class="mb-2">
     <label for="workspaceName" class="form-label fw-bold text-muted">Event types</label>
     <div class="d-flex gap-2 flex-wrap">
-      <div class="d-flex gap-2 align-items-center border rounded p-2">
-        <div class="rounded" style="background-color: rgb(75, 75, 232); height: 20px; width: 20px;"></div>
-        <div>Meeting</div>
-      </div>
-      <div class="d-flex gap-2 align-items-center border rounded p-2">
-        <div class="rounded" style="background-color: rgb(53, 215, 96); height: 20px; width: 20px;"></div>
-        <div>Bazar</div>
-      </div>
+      @for (category of eventCategories; track category.id) {
+        <div class="d-flex gap-2 align-items-center border rounded p-2">
+          <div class="rounded" [style.background-color]="category.color" style="height: 20px; width: 20px;"></div>
+          <div>{{category.name}}</div>
+        </div>
+      }
     </div>
   </div>
   <div class="mb-2">
-    <button type="button" class="btn btn-primary">Edit types</button>
+    <button type="button" class="btn btn-primary" (click)="openEditTypesModal()">Edit types</button>
   </div>
   <div class="mb-2">
     <form>
@@ -150,3 +144,11 @@
     <button type="button" class="btn btn-primary">Edit statuses</button>
   </div>
 </div>
+
+<!-- Edit Types Modal -->
+<app-types
+  [isEditTypesModalOpen]="isEditTypesModalOpen"
+  [categories]="categories"
+  (onEditTypesModalClose)="onEditTypesModalClose()"
+  (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()"
+/>

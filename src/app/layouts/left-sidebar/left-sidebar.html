@@ -8,7 +8,7 @@
          class="rounded-circle user-content-user-image"
          alt="Workspace Avatar" />
     <h5 class="user-content-workspace-title text-truncate fw-bold">
-      {{ currentWorkspace.name }}
+      {{ workspaceName }}
     </h5>
     <a href="#" class="page-link workspace-dropdown-link" (click)="toggleWorkspaceDropdown(); $event.preventDefault()">
       <i class="ph ph-caret-down fs-4 fw-bold"></i>
@@ -20,7 +20,7 @@
         <!-- Current Workspace Header -->
         <div class="workspace-dropdown-header">
           <img [src]="currentWorkspace.avatar" class="rounded-circle workspace-avatar" [alt]="currentWorkspace.name">
-          <span class="workspace-name">{{ currentWorkspace.name }}</span>
+          <span class="workspace-name">{{ workspaceName }}</span>
         </div>
 
         <!-- Workspace Settings -->

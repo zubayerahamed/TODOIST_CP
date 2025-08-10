@@ -49,6 +49,9 @@ export class LeftSidebar implements OnInit, OnChanges {
   @Output() addProjectModalOpen = new EventEmitter<void>();
 
   public projectService = inject(ProjectService);
+
+  public workspace!: Workspace;
+  public workspaceName: string = "";
   public projects: Project[] = [];
   public systemDefinedProjects: Project[] = [];
   public favouriteProjects: Project[] = [];
@@ -63,7 +66,12 @@ export class LeftSidebar implements OnInit, OnChanges {
   public activeContextMenuSection: 'favourites' | 'projects' | null = null;
 
   ngOnInit() {
+    this.loadWorkspace();
     this.loadProjects();
+  }
+
+  loadWorkspace(){
+    this.workspaceName = sessionStorage.getItem("workspaceName")?? "";
   }
 
   ngOnChanges(){

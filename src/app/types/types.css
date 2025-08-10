@@ -1,0 +1,263 @@
+
+/* Types Editor Modal Styles */
+.types-editor-container {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.types-editor-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.types-editor-header > div,
+.type-editor-row > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.col-color-header,
+.col-color {
+  flex: 0 0 80px;
+  min-width: 80px;
+}
+
+.col-name-header,
+.col-name {
+  flex: 1;
+  min-width: 200px;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.col-task-header,
+.col-task {
+  flex: 0 0 80px;
+  min-width: 80px;
+}
+
+.col-event-header,
+.col-event {
+  flex: 0 0 80px;
+  min-width: 80px;
+}
+
+.col-action-header,
+.col-action {
+  flex: 0 0 80px;
+  min-width: 80px;
+}
+
+.type-editor-row {
+  transition: all 0.2s ease;
+  background-color: #fff;
+}
+
+.type-editor-row:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd !important;
+}
+
+.color-picker {
+  width: 38px !important;
+  height: 38px !important;
+  padding: 2px !important;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  cursor: pointer;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.col-name input {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.col-name input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.form-check-input {
+  margin: 0 8px 0 0;
+}
+
+.form-check-label {
+  font-size: 0.85rem;
+  color: #495057;
+  margin: 0;
+  cursor: pointer;
+}
+
+.btn-outline-danger {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.add-new-type-section {
+  padding: 16px 0;
+  border-top: 1px solid #e9ecef;
+  margin-top: 16px;
+}
+
+.btn-link {
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-link:hover {
+  text-decoration: none;
+  color: #0b5ed7 !important;
+}
+
+.btn-link i {
+  font-size: 1rem;
+}
+
+/* Responsive Design for Types Editor */
+@media (max-width: 768px) {
+  .types-editor-header,
+  .type-editor-row {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+  
+  .types-editor-header > div,
+  .type-editor-row > div {
+    flex: none;
+    min-width: auto;
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+  
+  .types-editor-header {
+    display: none;
+  }
+  
+  .type-editor-row > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .type-editor-row > div::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.8rem;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  
+  .col-color::before {
+    content: "Color:";
+  }
+  
+  .col-name::before {
+    content: "Name:";
+  }
+  
+  .col-task::before {
+    content: "Task:";
+  }
+  
+  .col-event::before {
+    content: "Event:";
+  }
+  
+  .col-action::before {
+    content: "Action:";
+  }
+  
+  .color-picker {
+    width: 40px !important;
+    height: 32px !important;
+  }
+  
+  .col-name input {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+  
+  .form-check-label {
+    font-size: 0.8rem;
+  }
+  
+  .btn-outline-danger {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .types-editor-container {
+    max-height: 50vh;
+  }
+  
+  .type-editor-row {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .type-editor-row > div {
+    gap: 8px;
+  }
+  
+  .type-editor-row > div::before {
+    min-width: 70px;
+    font-size: 0.75rem;
+  }
+  
+  .color-picker {
+    width: 35px !important;
+    height: 28px !important;
+  }
+  
+  .add-new-type-section {
+    padding: 12px 0;
+  }
+  
+  .btn-link {
+    font-size: 0.85rem;
+  }
+}

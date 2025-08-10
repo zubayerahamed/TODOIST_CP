@@ -1,0 +1,106 @@
+<div class="modal-backdrop" *ngIf="isEditTypesModalOpen" (click)="onEditTypesModalBackdropClick($event)">
+  <div class="modal-container modal-lg d-flex flex-column">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <i class="ph ph-palette me-2 fs-4"></i>
+        <h4 class="modal-title m-0 p-0">Edit Types & Colors</h4>
+      </div>
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeEditTypesModal()">
+        <i class="ph ph-x fs-4"></i>
+      </button>
+    </div>
+
+    <div class="modal-body flex-grow-1">
+      <div class="types-editor-container">
+        <!-- Header Row -->
+        <div class="types-editor-header d-flex align-items-center mb-3 p-3 bg-light rounded">
+          <div class="col-color-header">Color</div>
+          <div class="col-name-header">Type Name</div>
+          <div class="col-task-header">Task</div>
+          <div class="col-event-header">Event</div>
+          <div class="col-action-header">Action</div>
+        </div>
+
+        <!-- Type Rows -->
+        <div class="types-editor-rows">
+          @for (type of categories; track type.id) {
+            <div class="type-editor-row d-flex align-items-center mb-2 p-3 border rounded">
+
+              <!-- Color Picker -->
+              <div class="col-color">
+                <input type="color"
+                       class="form-control form-control-color color-picker"
+                       [value]="type.color"
+                       (change)="updateCategoryColor(type.id, $any($event.target).value)"
+                       title="Choose color">
+              </div>
+  
+              <!-- Name Input -->
+              <div class="col-name">
+                <input type="text"
+                       class="form-control"
+                       [value]="type.name"
+                       (input)="updateCategoryName(type.id, $any($event.target).value)"
+                       placeholder="Enter type name">
+              </div>
+  
+              <!-- Task Checkbox -->
+              <div class="col-task">
+                <div class="form-check">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         [checked]="type.isForTask"
+                         (change)="updateCategoryForTask(type.id, $any($event.target).checked)"
+                         [id]="'task-' + type.id">
+                  <label class="form-check-label" [for]="'task-' + type.id">
+                    Task
+                  </label>
+                </div>
+              </div>
+  
+              <!-- Event Checkbox -->
+              <div class="col-event">
+                <div class="form-check">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         [checked]="type.isForEvent"
+                         (change)="updateCategoryEvent(type.id, $any($event.target).checked)"
+                         [id]="'event-' + type.id">
+                  <label class="form-check-label" [for]="'event-' + type.id">
+                    Event
+                  </label>
+                </div>
+              </div>
+  
+              <!-- Delete Button -->
+              <div class="col-action">
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm"
+                        (click)="removeCategory(type.id)"
+                        title="Delete type">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </div>
+          }
+          
+        </div>
+
+        <!-- Add New Type Link -->
+        <div class="add-new-type-section mt-3">
+          <button type="button"
+                  class="btn btn-link p-0 text-primary"
+                  (click)="addNewCategory()">
+            <i class="ph ph-plus me-1"></i>
+            Add new type
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeEditTypesModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveTypes()">Save Changes</button>
+    </div>
+  </div>
+</div>

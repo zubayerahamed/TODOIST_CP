@@ -1,0 +1,43 @@
+import { Injectable } from '@angular/core';
+import { BaseService } from './base.service';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import {
+  Category,
+  CreateCategory,
+  UpdateCategory,
+} from '../models/category,model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CategoryService extends BaseService {
+  constructor(private http: HttpClient) {
+    super();
+  }
+
+  getAllWorkspaceCategories(): Observable<any> {
+    console.log('Fetching all workspace categories from the server...');
+    return this.http.get(`${this.baseUrl}/categories/all/workspace`);
+  }
+
+  createCategory(data: CreateCategory): Observable<any> {
+    return this.http.post(`${this.baseUrl}/categories`, data);
+  }
+
+  updateCategory(data: UpdateCategory): Observable<any> {
+    return this.http.put(`${this.baseUrl}/categories`, data);
+  }
+
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/categories/${id}`);
+  }
+
+  getFilteredTaskCategories(categories: Category[]): Category[] {
+    return categories.filter((category) => category.isForTask);
+  }
+
+  getFilteredEventCategories(categories: Category[]): Category[] {
+    return categories.filter((category) => category.isForEvent);
+  }
+}

@@ -30,6 +30,7 @@ export class Login {
 
         // Store tokens or user info (you can store just token or a user object)
         AuthHelper.setAuthData(accessToken, refreshToken);
+        AuthHelper.loadWorkspace();
 
         // Redirect to dashboard or your default route
         this.router.navigate(['/']);
