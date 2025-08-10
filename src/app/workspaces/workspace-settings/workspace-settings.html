@@ -14,21 +14,21 @@
   <div class="mb-2">
     <label for="workspaceName" class="form-label fw-bold text-muted">Task types</label>
     <div class="d-flex gap-2 flex-wrap">
-      @for (category of taskCategories; track category.id) {
+      @for(category of taskCategories; track category.id) {
         <div class="d-flex gap-2 align-items-center border rounded p-2">
           <div class="rounded" [style.background-color]="category.color" style="height: 20px; width: 20px;"></div>
-          <div>{{category.name}}</div>
+          <div>{{ category.name }}</div>
         </div>
-      }
+        }
     </div>
   </div>
   <div class="mb-2">
     <label for="workspaceName" class="form-label fw-bold text-muted">Event types</label>
     <div class="d-flex gap-2 flex-wrap">
-      @for (category of eventCategories; track category.id) {
+      @for(category of eventCategories; track category.id) {
         <div class="d-flex gap-2 align-items-center border rounded p-2">
           <div class="rounded" [style.background-color]="category.color" style="height: 20px; width: 20px;"></div>
-          <div>{{category.name}}</div>
+          <div>{{ category.name }}</div>
         </div>
       }
     </div>
@@ -37,65 +37,59 @@
     <button type="button" class="btn btn-primary" (click)="openEditTypesModal()">Edit types</button>
   </div>
   <div class="mb-2">
-    <form>
-      <div class="col-md-3">
-        <div class="mb-2">
-          <label class="form-label fw-bold text-muted">Default type of tasks</label>
-          <div class="custom-dropdown" id="defaultTaskTypeDropdown">
-            <div class="dropdown-selected" onclick="toggleDropdown('defaultTaskType')">
-              @if(defaultTaskCategory){
-                <div class="selected-option">
-                  <div class="color-circle" [style.background-color]="defaultTaskCategory.color"></div>
-                  <span>{{ defaultTaskCategory.name }}</span>
-                </div>
-              } @else {
-                <div class="selected-option">
-                  <span>-- Select default task type --</span>
-                </div>
-              }
-              <span class="dropdown-arrow">▼</span>
-            </div>
-            <div class="dropdown-options" id="defaultTaskTypeOptions">
-              @for (category of taskCategories; track category.id) {
-                <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'software-development', 'Software development', 'rgb(75, 75, 232)')">
-                  <div class="color-circle" [style.background-color]="category.color"></div>
-                  <span>{{ category.name }}</span>
-                </div>
-              }
-            </div>
+    <label class="form-label fw-bold text-muted">Default type of tasks</label>
+    <div class="custom-dropdown" id="defaultTaskTypeDropdown">
+      <div class="dropdown-selected" [class.active]="isTaskDropdownOpen" (click)="toggleTaskDropdown()">
+        @if(defaultTaskCategory){
+          <div class="selected-option">
+            <div class="color-circle" [style.background-color]="defaultTaskCategory.color"></div>
+            <span>{{ defaultTaskCategory.name }}</span>
           </div>
-        </div>
-
-        <div class="mb-2">
-          <label class="form-label fw-bold text-muted">Default type of events</label>
-          <div class="custom-dropdown" id="defaultEventTypeDropdown">
-            <div class="dropdown-selected" onclick="toggleDropdown('defaultEventType')">
-              @if(defaultEventCategory){
-                <div class="selected-option">
-                  <div class="color-circle" [style.background-color]="defaultEventCategory.color"></div>
-                  <span>{{ defaultEventCategory.name }}</span>
-                </div>
-              } @else {
-                <div class="selected-option">
-                  <span>-- Select default event type --</span>
-                </div>
-              }
-              <span class="dropdown-arrow">▼</span>
-            </div>
-            <div class="dropdown-options" id="defaultEventTypeOptions">
-              @for (category of eventCategories; track category.id) {
-                <div class="dropdown-option" onclick="selectOption('defaultEventType', 'meeting', 'Meeting', 'rgb(75, 75, 232)')">
-                  <div class="color-circle" [style.background-color]="category.color"></div>
-                  <span>{{ category.name }}</span>
-                </div>
-              }
-            </div>
+        } @else {
+          <div class="selected-option">
+            <span>-- Select default task type --</span>
           </div>
-        </div>
+        }
+        <span class="dropdown-arrow">▼</span>
       </div>
-      <button type="submit" class="btn btn-primary">Save</button>
-    </form>
+      <div class="dropdown-options" id="defaultTaskTypeOptions" [style.display]="isTaskDropdownOpen ? 'flex' : 'none'">
+        @for(category of taskCategories; track category.id) {
+          <div class="dropdown-option" (click)="onSelectDefaultTask(category)">
+            <div class="color-circle" [style.background-color]="category.color"></div>
+            <span>{{ category.name }}</span>
+          </div>
+        }
+      </div>
+    </div>
   </div>
+
+  <div class="mb-2">
+    <label class="form-label fw-bold text-muted">Default type of events</label>
+    <div class="custom-dropdown" id="defaultEventTypeDropdown">
+      <div class="dropdown-selected" [class.active]="isEventDropdownOpen" (click)="toggleEventDropdown()">
+        @if(defaultEventCategory){
+          <div class="selected-option">
+            <div class="color-circle" [style.background-color]="defaultEventCategory.color"></div>
+            <span>{{ defaultEventCategory.name }}</span>
+          </div>
+          } @else {
+          <div class="selected-option">
+            <span>-- Select default event type --</span>
+          </div>
+          }
+          <span class="dropdown-arrow">▼</span>
+      </div>
+      <div class="dropdown-options" id="defaultEventTypeOptions" [style.display]="isEventDropdownOpen ? 'flex' : 'none'">
+        @for(category of eventCategories; track category.id) {
+          <div class="dropdown-option" (click)="onSelectDefaultEvent(category)">
+            <div class="color-circle" [style.background-color]="category.color"></div>
+            <span>{{ category.name }}</span>
+          </div>
+          }
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="divider"></div>
@@ -147,8 +141,7 @@
 
 <!-- Edit Types Modal -->
 <app-types
-  [isEditTypesModalOpen]="isEditTypesModalOpen"
-  [categories]="categories"
-  (onEditTypesModalClose)="onEditTypesModalClose()"
-  (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()"
-/>
+           [isEditTypesModalOpen]="isEditTypesModalOpen"
+           [categories]="categories"
+           (onEditTypesModalClose)="onEditTypesModalClose()"
+           (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()" />

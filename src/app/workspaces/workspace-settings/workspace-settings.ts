@@ -112,4 +112,54 @@ export class WorkspaceSettings implements OnInit {
   onEditTypesModalClose() {
     this.isEditTypesModalOpen = false;
   }
+
+  // Dropdown state management
+  isTaskDropdownOpen = false;
+  isEventDropdownOpen = false;
+
+  toggleTaskDropdown() {
+    this.isTaskDropdownOpen = !this.isTaskDropdownOpen;
+    // Close event dropdown if open
+    if (this.isTaskDropdownOpen) {
+      this.isEventDropdownOpen = false;
+    }
+  }
+
+  toggleEventDropdown() {
+    this.isEventDropdownOpen = !this.isEventDropdownOpen;
+    // Close task dropdown if open
+    if (this.isEventDropdownOpen) {
+      this.isTaskDropdownOpen = false;
+    }
+  }
+
+  onSelectDefaultTask(category: Category) {
+    this.categoryService.addToDefaultTask(0, category.id).subscribe({
+      next: () => {
+        this.defaultTaskCategory = category;
+        this.isTaskDropdownOpen = false;
+        this.alertService.success('Success!', 'Default task type updated successfully');
+        this.loadWorkspaceCategories();
+      },
+      error: (error) => {
+        console.error('Error updating default task type:', error);
+        this.alertService.error('Error!', 'Failed to update default task type');
+      }
+    });
+  }
+
+  onSelectDefaultEvent(category: Category) {
+    this.categoryService.addToDefaultEvent(0, category.id).subscribe({
+      next: () => {
+        this.defaultEventCategory = category;
+        this.isEventDropdownOpen = false;
+        this.alertService.success('Success!', 'Default event type updated successfully');
+        this.loadWorkspaceCategories();
+      },
+      error: (error) => {
+        console.error('Error updating default event type:', error);
+        this.alertService.error('Error!', 'Failed to update default event type');
+      }
+    });
+  }
 }

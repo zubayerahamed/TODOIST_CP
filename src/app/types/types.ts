@@ -63,18 +63,20 @@ export class Types {
     console.log(this.categories);
   }
 
-  removeCategory(id: number) {
+  removeCategory(id: number, name: string) {
     if (id > 0) {
-      this.categoryService.deleteCategory(id).subscribe({
-        next: (response) => {
-          this.alertService.success('Success!', 'Category deleted successfully');
-          this.triggerRefreshAfterSave.emit();
-        },
-        error: (error) => {
-          console.error(error);
-          this.alertService.error('Error!', 'Failed to delete category. Please try again.');
-        },
-      });
+      if (confirm(`Are you sure you want to delete the type "${name}"? This action cannot be undone.`)) {
+        this.categoryService.deleteCategory(id).subscribe({
+          next: (response) => {
+            this.alertService.success('Success!', 'Category deleted successfully');
+            this.triggerRefreshAfterSave.emit();
+          },
+          error: (error) => {
+            console.error(error);
+            this.alertService.error('Error!', 'Failed to delete category. Please try again.');
+          },
+        });
+      }
     }
 
     this.categories = this.categories.filter((category) => category.id !== id);
@@ -129,36 +131,6 @@ export class Types {
         isForTask: category.isForTask,
         isForEvent: category.isForEvent,
       }));
-
-    console.log('Saving types:', createCategoryList);
-    console.log('update types:', updateCategoryList);
-
-    // createCategoryList.forEach((category) => {
-    //   this.categoryService.createCategory(category).subscribe({
-    //     next: (resData) => {
-    //       console.log('Category created:', resData);
-    //     },
-    //     error: (error) => {
-    //       console.error('Error fetching projects:', error);
-    //     },
-    //   });
-    // });
-
-    // updateCategoryList.forEach((category) => {
-    //   this.categoryService.updateCategory(category).subscribe({
-    //     next: (resData) => {
-    //       console.log('Category updated:', resData);
-    //     },
-    //     error: (error) => {
-    //       console.error('Error fetching projects:', error);
-    //     },
-    //   });
-    // });
-
-    // this.closeEditTypesModal();
-    // setTimeout(() => {
-    //   this.triggerRefreshAfterSave.emit();
-    // }, 1000);
 
     // Combine all API calls into one list
     const createRequests = createCategoryList.map((category) =>
