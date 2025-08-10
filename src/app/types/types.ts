@@ -56,6 +56,8 @@ export class Types {
       isForTask: false,
       isForEvent: false,
       seqn: 999,
+      isDefaultForEvent: false,
+      isDefaultForTask: false
     };
     this.categories.push(newCategory);
     console.log(this.categories);

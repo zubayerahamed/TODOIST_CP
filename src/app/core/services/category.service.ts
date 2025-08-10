@@ -33,6 +33,15 @@ export class CategoryService extends BaseService {
     return this.http.delete(`${this.baseUrl}/categories/${id}`);
   }
 
+  addToDefaultTask(referenceid: number, id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/categories/add-to-default-task/${referenceid}/${id}`, null);
+  }
+
+  addToDefaultEvent(referenceid: number, id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/categories/add-to-default-event/${referenceid}/${id}`, null);
+  }
+
+  // Helper methods
   getFilteredTaskCategories(categories: Category[]): Category[] {
     return categories.filter((category) => category.isForTask);
   }

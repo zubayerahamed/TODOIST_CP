@@ -17,6 +17,7 @@ import { Project } from '../../core/models/project.model';
 import { Workspace } from '../../core/models/workspace.model';
 import { ProjectService } from '../../core/services/project.service';
 import { WorkspaceStateService } from '../../core/services/workspace-state.service';
+import { AlertService } from '../../core/services/alert.service';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -51,8 +52,9 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   @Output() addEventModalOpen = new EventEmitter<void>();
   @Output() addProjectModalOpen = new EventEmitter<void>();
 
-  public projectService = inject(ProjectService);
+  private projectService = inject(ProjectService);
   private workspaceStateService = inject(WorkspaceStateService);
+  private alertService = inject(AlertService);
   private workspaceNameSubscription?: Subscription;
 
   public workspace!: Workspace;
@@ -265,31 +267,47 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
     return this.activeContextMenuProjectId === projectId && this.activeContextMenuSection === section;
   }
 
-  // Project action methods
-  removeFromFavourites(project: Project, event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    console.log('Removing from favourites:', project.name);
-    // TODO: Implement API call to update project favourite status
-    // this.projectService.updateProject(project.id, { isFavourite: false }).subscribe(...)
-    
-    this.closeProjectContextMenu();
-    // Refresh projects after update
-    this.loadProjects();
-  }
-
+  
+  // Project adding to favourite
   addToFavourites(project: Project, event: Event) {
     event.preventDefault();
     event.stopPropagation();
     
     console.log('Adding to favourites:', project.name);
-    // TODO: Implement API call to update project favourite status
-    // this.projectService.updateProject(project.id, { isFavourite: true }).subscribe(...)
+    this.projectService.addToFavoutire(project.id).subscribe({
+      next: (resData) => {
+        // Refresh projects after update
+        this.alertService.success('Success!', 'Project added to favourite');
+        this.loadProjects();
+      }, 
+      error: (error) => {
+        console.error('Error adding to favourites:', error);
+        this.alertService.error('Error!', 'Error adding to favourites');
+      }
+    });
     
     this.closeProjectContextMenu();
-    // Refresh projects after update
-    this.loadProjects();
+  }
+
+  // Project action methods
+  removeFavourites(project: Project, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('Removing from favourites:', project.name);
+    this.projectService.removeFromFavoutire(project.id).subscribe({
+      next: (resData) => {
+        // Refresh projects after update
+        this.alertService.success('Success!', 'Project remove from favourite');
+        this.loadProjects();
+      }, 
+      error: (error) => {
+        console.error('Error adding to favourites:', error);
+        this.alertService.error('Error!', 'Error removing from favourites');
+      }
+    });
+    
+    this.closeProjectContextMenu();
   }
 
   deleteProject(project: Project, event: Event) {
@@ -298,12 +316,20 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
     
     if (confirm(`Are you sure you want to delete the project "${project.name}"? This action cannot be undone.`)) {
       console.log('Deleting project:', project.name);
-      // TODO: Implement API call to delete project
-      // this.projectService.deleteProject(project.id).subscribe(...)
+      
+      this.projectService.deleteProject(project.id).subscribe({
+        next: (resData) => {
+          // Refresh projects after update
+          this.alertService.success('Success!', 'Project deleted successfully');
+          this.loadProjects();
+        }, 
+        error: (error) => {
+          console.error('Error deleting project:', error);
+          this.alertService.error('Error!', 'Delete operation failed');
+        }
+      });
       
       this.closeProjectContextMenu();
-      // Refresh projects after deletion
-      this.loadProjects();
     }
   }
 }

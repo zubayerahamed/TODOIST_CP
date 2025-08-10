@@ -117,7 +117,7 @@
   @if (isFavouritesExpanded) {
     @for (project of favouriteProjects; track project.id) {
       <div class="d-flex align-items-center text-muted project-item position-relative">
-        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <i class="ph ph-hash fs-5 ms-3 me-2" [style.color]="project.color"></i>
         <a [routerLink]="['/project', project.id]" 
            [queryParams]="{ projectName: project.name }" 
            routerLinkActive="page-active"
@@ -132,14 +132,16 @@
         <!-- Context Menu for Favourite Projects -->
         @if (isContextMenuActive(project.id, 'favourites')) {
           <div class="project-context-menu">
-            <div class="context-menu-item" (click)="removeFromFavourites(project, $event)">
-              <i class="ph ph-heart-break fs-5 me-2"></i>
-              <span>Remove from favourites</span>
-            </div>
+            @if (project.isFavourite) {
+              <div class="context-menu-item" (click)="removeFavourites(project, $event)">
+                <i class="ph ph-heart-break fs-5 me-2"></i>
+                <span>Remove from favourites</span>
+              </div>
+            }
             <div class="context-menu-item" (click)="addToFavourites(project, $event)">
-              <i class="ph ph-pencil-simple-line fs-5 me-2"></i>
-              <span>Edit</span>
-            </div>
+                <i class="ph ph-pencil-simple-line fs-5 me-2"></i>
+                <span>Edit</span>
+              </div>
             <div class="context-menu-item" (click)="addToFavourites(project, $event)">
               <i class="ph ph-user-plus fs-5 me-2"></i>
               <span>Add members</span>
@@ -178,7 +180,7 @@
   @if (isMyProjectsExpanded) {
     @for (project of allProjects; track project.id) {
       <div class="d-flex align-items-center text-muted project-item position-relative">
-        <i class="ph ph-hash fs-5 ms-3 me-2"></i>
+        <i class="ph ph-hash fs-5 ms-3 me-2" [style.color]="project.color"></i>
         <a [routerLink]="['/project', project.id]" 
            [queryParams]="{ projectName: project.name }" 
            routerLinkActive="page-active"
@@ -193,14 +195,17 @@
         <!-- Context Menu for My Projects -->
         @if (isContextMenuActive(project.id, 'projects')) {
           <div class="project-context-menu">
-            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
-              <i class="ph ph-heart fs-5 me-2"></i>
-              <span>Add to favourites</span>
-            </div>
-            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
-              <i class="ph ph-heart-break fs-5 me-2"></i>
-              <span>Remove from favourites</span>
-            </div>
+            @if (project.isFavourite) {
+              <div class="context-menu-item" (click)="removeFavourites(project, $event)">
+                <i class="ph ph-heart-break fs-5 me-2"></i>
+                <span>Remove from favourites</span>
+              </div>
+            } @else {
+              <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+                <i class="ph ph-heart fs-5 me-2"></i>
+                <span>Add to favourite</span>
+              </div>
+            }
             <div class="context-menu-item" (click)="addToFavourites(project, $event)">
               <i class="ph ph-pencil-simple-line fs-5 me-2"></i>
               <span>Edit</span>

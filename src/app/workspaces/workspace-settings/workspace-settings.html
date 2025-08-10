@@ -43,25 +43,25 @@
           <label class="form-label fw-bold text-muted">Default type of tasks</label>
           <div class="custom-dropdown" id="defaultTaskTypeDropdown">
             <div class="dropdown-selected" onclick="toggleDropdown('defaultTaskType')">
-              <div class="selected-option">
-                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
-                <span>Software development</span>
-              </div>
+              @if(defaultTaskCategory){
+                <div class="selected-option">
+                  <div class="color-circle" [style.background-color]="defaultTaskCategory.color"></div>
+                  <span>{{ defaultTaskCategory.name }}</span>
+                </div>
+              } @else {
+                <div class="selected-option">
+                  <span>-- Select default task type --</span>
+                </div>
+              }
               <span class="dropdown-arrow">▼</span>
             </div>
             <div class="dropdown-options" id="defaultTaskTypeOptions">
-              <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'software-development', 'Software development', 'rgb(75, 75, 232)')">
-                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
-                <span>Software development</span>
-              </div>
-              <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'qa', 'QA', 'rgb(53, 215, 96)')">
-                <div class="color-circle" style="background-color: rgb(53, 215, 96);"></div>
-                <span>QA</span>
-              </div>
-              <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'regular-work', 'Regular Work', 'rgb(255, 183, 77)')">
-                <div class="color-circle" style="background-color: rgb(255, 183, 77);"></div>
-                <span>Regular Work</span>
-              </div>
+              @for (category of taskCategories; track category.id) {
+                <div class="dropdown-option" onclick="selectOption('defaultTaskType', 'software-development', 'Software development', 'rgb(75, 75, 232)')">
+                  <div class="color-circle" [style.background-color]="category.color"></div>
+                  <span>{{ category.name }}</span>
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -70,25 +70,25 @@
           <label class="form-label fw-bold text-muted">Default type of events</label>
           <div class="custom-dropdown" id="defaultEventTypeDropdown">
             <div class="dropdown-selected" onclick="toggleDropdown('defaultEventType')">
-              <div class="selected-option">
-                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
-                <span>Meeting</span>
-              </div>
+              @if(defaultEventCategory){
+                <div class="selected-option">
+                  <div class="color-circle" [style.background-color]="defaultEventCategory.color"></div>
+                  <span>{{ defaultEventCategory.name }}</span>
+                </div>
+              } @else {
+                <div class="selected-option">
+                  <span>-- Select default event type --</span>
+                </div>
+              }
               <span class="dropdown-arrow">▼</span>
             </div>
             <div class="dropdown-options" id="defaultEventTypeOptions">
-              <div class="dropdown-option" onclick="selectOption('defaultEventType', 'meeting', 'Meeting', 'rgb(75, 75, 232)')">
-                <div class="color-circle" style="background-color: rgb(75, 75, 232);"></div>
-                <span>Meeting</span>
-              </div>
-              <div class="dropdown-option" onclick="selectOption('defaultEventType', 'exam', 'Exam', 'rgb(53, 215, 96)')">
-                <div class="color-circle" style="background-color: rgb(53, 215, 96);"></div>
-                <span>Exam</span>
-              </div>
-              <div class="dropdown-option" onclick="selectOption('defaultEventType', 'regular-work', 'Regular Work', 'rgb(255, 183, 77)')">
-                <div class="color-circle" style="background-color: rgb(255, 183, 77);"></div>
-                <span>Regular Work</span>
-              </div>
+              @for (category of eventCategories; track category.id) {
+                <div class="dropdown-option" onclick="selectOption('defaultEventType', 'meeting', 'Meeting', 'rgb(75, 75, 232)')">
+                  <div class="color-circle" [style.background-color]="category.color"></div>
+                  <span>{{ category.name }}</span>
+                </div>
+              }
             </div>
           </div>
         </div>

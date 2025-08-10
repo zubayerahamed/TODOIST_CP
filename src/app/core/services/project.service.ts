@@ -21,6 +21,18 @@ export class ProjectService extends BaseService {
     return this.http.post(`${this.baseUrl}/projects`, data);
   }
 
+  addToFavoutire(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/projects/add-to-favourite/${id}`, null);
+  }
+
+  removeFromFavoutire(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/projects/remove-from-favourite/${id}`, null);
+  }
+
+  deleteProject(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/projects/${id}`);
+  }
+
   // Helper Methods
   getFilteredSystemDefinedProjects(projects: Project[]): Project[] {
     return projects.filter((project: Project) => project.isSystemDefined);

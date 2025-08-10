@@ -27,6 +27,8 @@ export class WorkspaceSettings implements OnInit {
   public categories: Category[] = [];
   public taskCategories: Category[] = [];
   public eventCategories: Category[] = [];
+  public defaultTaskCategory?: Category;
+  public defaultEventCategory?: Category;
   public workspace!: Workspace;
   public enteredWorkspaceName: string = "";
 
@@ -97,6 +99,9 @@ export class WorkspaceSettings implements OnInit {
     this.eventCategories = this.categoryService.getFilteredEventCategories(
       this.categories
     );
+
+    this.defaultTaskCategory =  this.categories.find((c) => c.isDefaultForTask);
+    this.defaultEventCategory =  this.categories.find((c) => c.isDefaultForEvent);
   }
 
   // Edit type modal events

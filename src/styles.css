@@ -55,7 +55,6 @@ MOBILE OVERLAY AND MENU
   color: #202020 !important;
   border: none !important;
   background: none !important;
-  
 }
 
 /*
@@ -377,7 +376,7 @@ RESPONSIVE DESIGN - TABLET AND MOBILE
     min-height: 44px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
   }
   
   .page-link {

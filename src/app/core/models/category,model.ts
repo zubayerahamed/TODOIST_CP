@@ -6,6 +6,8 @@ export interface Category {
   isForTask: boolean;
   isForEvent: boolean;
   seqn: number;
+  isDefaultForTask: boolean;
+  isDefaultForEvent: boolean;
 }
 
 export interface CreateCategory{
