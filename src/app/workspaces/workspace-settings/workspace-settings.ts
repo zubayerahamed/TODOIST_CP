@@ -2,16 +2,19 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthHelper } from '../../core/helpers/auth.helper';
 import { Category } from '../../core/models/category,model';
+import { Status } from '../../core/models/status.model';
 import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
 import { AlertService } from '../../core/services/alert.service';
 import { CategoryService } from '../../core/services/category.service';
+import { StatusService } from '../../core/services/status.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { WorkspaceStateService } from '../../core/services/workspace-state.service';
+import { Statuses } from '../../statuses/statuses';
 import { Types } from '../../types/types';
 
 @Component({
   selector: 'app-workspace-settings',
-  imports: [Types, FormsModule],
+  imports: [Types, Statuses, FormsModule],
   templateUrl: './workspace-settings.html',
   styleUrl: './workspace-settings.css',
   host: {
@@ -20,6 +23,7 @@ import { Types } from '../../types/types';
 })
 export class WorkspaceSettings implements OnInit {
   private categoryService = inject(CategoryService);
+  private statusService = inject(StatusService);
   private workspaceService = inject(WorkspaceService);
   private alertService = inject(AlertService);
   private workspaceStateService = inject(WorkspaceStateService);
@@ -32,9 +36,13 @@ export class WorkspaceSettings implements OnInit {
   public workspace!: Workspace;
   public enteredWorkspaceName: string = "";
 
+  // Status-related properties
+  public statuses: Status[] = [];
+
   ngOnInit(): void {
     this.loadWorkspace();
     this.loadWorkspaceCategories();
+    this.loadStatuses();
   }
 
   loadWorkspace(){
@@ -78,6 +86,18 @@ export class WorkspaceSettings implements OnInit {
 
   onTriggerRefreshAfterSave() {
     this.loadWorkspaceCategories();
+    this.loadStatuses();
+  }
+
+  loadStatuses() {
+    this.statusService.getAllStatuses().subscribe({
+      next: (resData) => {
+        this.statuses = resData.data || [];
+      },
+      error: (error) => {
+        console.error('Error fetching statuses:', error);
+      },
+    });
   }
 
   loadWorkspaceCategories() {
@@ -111,6 +131,15 @@ export class WorkspaceSettings implements OnInit {
   }
   onEditTypesModalClose() {
     this.isEditTypesModalOpen = false;
+  }
+
+  // Edit status modal events
+  isEditStatusesModalOpen = false;
+  openEditStatusesModal() {
+    this.isEditStatusesModalOpen = true;
+  }
+  onEditStatusesModalClose() {
+    this.isEditStatusesModalOpen = false;
   }
 
   // Dropdown state management

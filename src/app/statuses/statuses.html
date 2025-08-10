@@ -1,0 +1,96 @@
+<div class="modal-backdrop" *ngIf="isEditStatusesModalOpen" (click)="onEditStatusesModalBackdropClick($event)">
+  <div class="modal-container modal-lg d-flex flex-column">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <i class="ph ph-list-bullets me-2 fs-4"></i>
+        <h4 class="modal-title m-0 p-0">Edit statuses</h4>
+      </div>
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeEditStatusesModal()">
+        <i class="ph ph-x fs-4"></i>
+      </button>
+    </div>
+
+    <div class="modal-body flex-grow-1">
+      <div class="statuses-editor-container">
+        <!-- Status Rows -->
+        <div class="statuses-editor-rows pt-2">
+          @for (status of statuses; track status.id; let i = $index) {
+            <div class="status-editor-row d-flex align-items-center mb-3 p-3 border rounded"
+                 [class.completed-status]="status.isCompleted">
+
+              <!-- Arrow Buttons -->
+              <div class="col-arrows" *ngIf="!status.isCompleted">
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm me-1"
+                        [disabled]="!canMoveUp(i)"
+                        (click)="moveStatusUp(i)"
+                        title="Move up">
+                  <i class="ph ph-arrow-up"></i>
+                </button>
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm"
+                        [disabled]="!canMoveDown(i)"
+                        (click)="moveStatusDown(i)"
+                        title="Move down">
+                  <i class="ph ph-arrow-down"></i>
+                </button>
+              </div>
+              <div class="col-arrows" *ngIf="status.isCompleted">
+                <!-- Empty space for completed status -->
+              </div>
+
+              <!-- Color Picker -->
+              <div class="col-color">
+                <input type="color"
+                       class="form-control form-control-color color-picker"
+                       [value]="status.color"
+                       [disabled]="status.isCompleted"
+                       (change)="updateStatusColor(status.id, $any($event.target).value)"
+                       title="Choose color">
+              </div>
+  
+              <!-- Name Input -->
+              <div class="col-name">
+                <input type="text"
+                       class="form-control"
+                       [value]="status.name"
+                       [readonly]="status.isCompleted"
+                       [class.readonly]="status.isCompleted"
+                       (input)="updateStatusName(status.id, $any($event.target).value)"
+                       placeholder="Enter status name">
+              </div>
+  
+              <!-- Delete Button -->
+              <div class="col-action">
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm"
+                        *ngIf="!status.isCompleted"
+                        (click)="removeStatus(status.id, status.name)"
+                        title="Delete status">
+                  <i class="ph ph-trash"></i>
+                </button>
+                <span *ngIf="status.isCompleted" class="text-muted small">Fixed</span>
+              </div>
+            </div>
+          }
+          
+        </div>
+
+        <!-- Add New Status Link -->
+        <div class="add-new-status-section mt-3">
+          <button type="button"
+                  class="btn btn-link p-0 text-primary"
+                  (click)="addNewStatus()">
+            <i class="ph ph-plus me-1"></i>
+            Add new statuses
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeEditStatusesModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveStatuses()">Save</button>
+    </div>
+  </div>
+</div>

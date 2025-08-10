@@ -135,7 +135,7 @@
     <div class="status-pill status-completed">Completed</div>
   </div>
   <div>
-    <button type="button" class="btn btn-primary">Edit statuses</button>
+    <button type="button" class="btn btn-primary" (click)="openEditStatusesModal()">Edit statuses</button>
   </div>
 </div>
 
@@ -145,3 +145,10 @@
            [categories]="categories"
            (onEditTypesModalClose)="onEditTypesModalClose()"
            (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()" />
+
+<!-- Edit Statuses Modal -->
+<app-statuses
+              [isEditStatusesModalOpen]="isEditStatusesModalOpen"
+              [statuses]="statuses"
+              (onEditStatusesModalClose)="onEditStatusesModalClose()"
+              (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()" />
