@@ -1,16 +1,17 @@
 <div class="d-flex flex-column justify-content-center align-items-center vh-100">
-    <h1 class="mb-3">TaskNest</h1>
-    <div class="card" style="width: 400px;">
-    <div class="card-header text-center">
-      <h5 class="card-title">Login</h5>
-      <p class="card-text">Please enter your credentials to login.</p>
-      @if (loginErrorMessage) {
-        <div class="text-danger text-center">
-          {{ loginErrorMessage }}
-        </div>
-      }
-    </div>
+  
+  <div class="card" style="width: 450px; border-radius: 15px; box-shadow: 0px 0px 5px #cecbcb;">
     <div class="card-body">
+      <div class="text-center mb-5">
+        <h2 class="mb-3">TaskNest</h2>
+        <h5 class="card-title">Login</h5>
+        <p class="card-text">Please enter your credentials below to login.</p>
+        @if(loginErrorMessage) {
+          <div class="text-danger text-center">
+            {{ loginErrorMessage }}
+          </div>
+          }
+      </div>
       <form class="mb-3" (ngSubmit)="onLogin(enteredEmail.value, enteredPassword.value)">
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
@@ -21,7 +22,7 @@
           <input type="password" class="form-control" id="password" #enteredPassword>
           <a routerLink="/forgot-password">Forgot password?</a>
         </div>
-        
+
         <button type="submit" class="btn btn-primary col-12">Login</button>
       </form>
       <p class="text-center">Don't have account? <a routerLink="/register" class="">Register here</a></p>

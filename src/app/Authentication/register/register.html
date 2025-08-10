@@ -1,27 +1,49 @@
 <div class="d-flex flex-column justify-content-center align-items-center vh-100">
-    <h1 class="mb-3">TaskNest</h1>
-    <div class="card" style="width: 400px;">
-    <div class="card-header text-center">
-      <h5 class="card-title">Registration</h5>
-      <p class="card-text">Please enter your details for registration.</p>
-    </div>
+  <div class="card" style="width: 600px; border-radius: 15px; box-shadow: 0px 0px 5px #cecbcb;">
     <div class="card-body">
-      <form class="mb-3">
-        <div class="mb-3">
-          <label for="fullName" class="form-label">Full Name</label>
-          <input type="text" class="form-control" id="fullName">
+      <div class="text-center mb-5">
+        <h2 class="mb-3">TaskNest</h2>
+        <h5 class="card-title">Registration</h5>
+        <p class="card-text">Please enter your details for registration.</p>
+      </div>
+      <form class="mb-3" (ngSubmit)="onRegister()">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="firstName" class="form-label">First name</label>
+              <input type="text" class="form-control" id="firstName" name="firstName" [(ngModel)]="enteredFirstName">
+              @if (firstNameError) {
+                <span class="text-danger">{{ firstNameError }}</span>
+              }
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Last name</label>
+              <input type="text" class="form-control" id="lastName" name="lastName" [(ngModel)]="enteredLastName">
+            </div>
+          </div>
         </div>
         <div class="mb-3">
-          <label for="exampleInputEmail1" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          <label for="emailAddress" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="emailAddress" name="emailAddress" aria-describedby="emailHelp" [(ngModel)]="enteredEmailAddress">
+          @if (emailAddressError) {
+            <span class="text-danger">{{ emailAddressError }}</span>
+          }
         </div>
         <div class="mb-3">
-          <label for="exampleInputPassword1" class="form-label">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" name="password" [(ngModel)]="enteredPassword">
+          @if (passwordError) {
+            <span class="text-danger">{{ passwordError }}</span>
+          }
         </div>
         <div class="mb-3">
           <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password" class="form-control" id="confirmPassword">
+          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" [(ngModel)]="enteredConfirmPassword">
+          @if (confirmPasswordError) {
+            <span class="text-danger">{{ confirmPasswordError }}</span>
+          }
         </div>
         <button type="submit" class="btn btn-primary col-12">Register</button>
       </form>

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthHelper } from '../helpers/auth.helper';
 import { BaseService } from './base.service';
+import { RegisterRequest } from '../models/register-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthService extends BaseService {
     super();
   }
 
-  signup(data: any): Observable<any> {
+  signup(data: RegisterRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/register`, data);
   }
 
