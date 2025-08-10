@@ -4,6 +4,8 @@ import { forkJoin } from 'rxjs';
 import { AlertService } from '../core/services/alert.service';
 import { StatusService } from '../core/services/status.service';
 import { Status, CreateStatus, UpdateStatus } from '../core/models/status.model';
+import { CreateWorkflow, UpdateWorkflow, Workflow } from '../core/models/workflow.model';
+import { WorkflowService } from '../core/services/workflow.service';
 
 @Component({
   selector: 'app-statuses',
@@ -14,11 +16,11 @@ import { Status, CreateStatus, UpdateStatus } from '../core/models/status.model'
 export class Statuses {
   // Modal state
   @Input({ required: true }) isEditStatusesModalOpen!: boolean;
-  @Input({ required: true }) statuses!: Status[];
+  @Input({ required: true }) statuses!: Workflow[];
   @Output() onEditStatusesModalClose = new EventEmitter<void>();
   @Output() triggerRefreshAfterSave = new EventEmitter<void>();
 
-  private statusService = inject(StatusService);
+  private statusService = inject(WorkflowService);
   private alertService = inject(AlertService);
 
   // Modal methods
@@ -39,21 +41,23 @@ export class Statuses {
 
   // Status management methods
   addNewStatus() {
-    const maxOrder = Math.max(...this.statuses.filter(s => !s.isCompleted).map(s => s.order), 0);
-    const newStatus: Status = {
+    const maxOrder = Math.max(...this.statuses.filter(s => !s.isSystemDefined).map(s => s.seqn), 0);
+    const newStatus: Workflow = {
       id: this.statuses.length < 1
         ? -1
         : Math.min(...this.statuses.map(s => s.id)) - 1 >= 0
         ? -1
         : Math.min(...this.statuses.map(s => s.id)) - 1,
+      referenceId: 0,
+      referenceType: 'WORKSPACE',
       name: '',
       color: '#dddddd',
-      order: maxOrder + 1,
-      isCompleted: false
+      seqn: maxOrder + 1,
+      isSystemDefined: false
     };
     
     // Insert before the completed status
-    const completedIndex = this.statuses.findIndex(s => s.isCompleted);
+    const completedIndex = this.statuses.findIndex(s => s.isSystemDefined);
     if (completedIndex !== -1) {
       this.statuses.splice(completedIndex, 0, newStatus);
     } else {
@@ -63,14 +67,14 @@ export class Statuses {
 
   removeStatus(id: number, name: string) {
     const status = this.statuses.find(s => s.id === id);
-    if (status?.isCompleted) {
+    if (status?.isSystemDefined) {
       this.alertService.error('Error!', 'Cannot delete the Completed status');
       return;
     }
 
     if (id > 0) {
       if (confirm(`Are you sure you want to delete the status "${name}"? This action cannot be undone.`)) {
-        this.statusService.deleteStatus(id).subscribe({
+        this.statusService.deleteWorkflow(id).subscribe({
           next: (response) => {
             this.alertService.success('Success!', 'Status deleted successfully');
             this.triggerRefreshAfterSave.emit();
@@ -88,71 +92,70 @@ export class Statuses {
 
   updateStatusName(id: number, name: string) {
     const status = this.statuses.find((status) => status.id == id);
-    if (status && !status.isCompleted) {
+    if (status && !status.isSystemDefined) {
       status.name = name;
     }
   }
 
   updateStatusColor(id: number, color: string) {
     const status = this.statuses.find((status) => status.id == id);
-    if (status && !status.isCompleted) {
+    if (status && !status.isSystemDefined) {
       status.color = color;
     }
   }
 
   // Arrow button methods for reordering
   moveStatusUp(index: number) {
-    if (index > 0 && !this.statuses[index].isCompleted && !this.statuses[index - 1].isCompleted) {
+    if (index > 0 && !this.statuses[index].isSystemDefined && !this.statuses[index - 1].isSystemDefined) {
       [this.statuses[index], this.statuses[index - 1]] = [this.statuses[index - 1], this.statuses[index]];
     }
   }
 
   moveStatusDown(index: number) {
-    if (index < this.statuses.length - 1 && !this.statuses[index].isCompleted && !this.statuses[index + 1].isCompleted) {
+    if (index < this.statuses.length - 1 && !this.statuses[index].isSystemDefined && !this.statuses[index + 1].isSystemDefined) {
       [this.statuses[index], this.statuses[index + 1]] = [this.statuses[index + 1], this.statuses[index]];
     }
   }
 
   canMoveUp(index: number): boolean {
-    return index > 0 && !this.statuses[index].isCompleted && !this.statuses[index - 1].isCompleted;
+    return index > 0 && !this.statuses[index].isSystemDefined && !this.statuses[index - 1].isSystemDefined;
   }
 
   canMoveDown(index: number): boolean {
-    return index < this.statuses.length - 1 && !this.statuses[index].isCompleted && !this.statuses[index + 1].isCompleted;
+    return index < this.statuses.length - 1 && !this.statuses[index].isSystemDefined && !this.statuses[index + 1].isSystemDefined;
   }
 
   saveStatuses() {
     // Update order for all statuses
     this.statuses.forEach((status, index) => {
-      status.order = index + 1;
+      status.seqn = index + 1;
     });
 
-    const createStatusList: CreateStatus[] = this.statuses
+    const createStatusList: CreateWorkflow[] = this.statuses
       .filter((status) => status.id < 0)
       .map((status) => ({
+        referenceId: 0,
         name: status.name,
         color: status.color,
-        order: status.order,
-        isCompleted: status.isCompleted
+        seqn: status.seqn,
       }));
 
-    const updateStatusList: UpdateStatus[] = this.statuses
-      .filter((status) => status.id > 0)
+    const updateStatusList: UpdateWorkflow[] = this.statuses
+      .filter((status) => status.id > 0 && !status.isSystemDefined)
       .map((status) => ({
         id: status.id,
         name: status.name,
         color: status.color,
-        order: status.order,
-        isCompleted: status.isCompleted
+        seqn: status.seqn,
       }));
 
     // Combine all API calls into one list
     const createRequests = createStatusList.map((status) =>
-      this.statusService.createStatus(status)
+      this.statusService.createWorkflow(status)
     );
 
     const updateRequests = updateStatusList.map((status) =>
-      this.statusService.updateStatus(status)
+      this.statusService.updateWorkflow(status)
     );
 
     // Wait for ALL requests to finish

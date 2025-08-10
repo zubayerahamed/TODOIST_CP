@@ -11,10 +11,15 @@ import { WorkspaceService } from '../../core/services/workspace.service';
 import { WorkspaceStateService } from '../../core/services/workspace-state.service';
 import { Statuses } from '../../statuses/statuses';
 import { Types } from '../../types/types';
+import { WorkflowService } from '../../core/services/workflow.service';
+import { Workflow } from '../../core/models/workflow.model';
+import { TagService } from '../../core/services/tag.service';
+import { Tags } from "../../tags/tags";
+import { asyncScheduler } from 'rxjs';
 
 @Component({
   selector: 'app-workspace-settings',
-  imports: [Types, Statuses, FormsModule],
+  imports: [Types, Statuses, FormsModule, Tags],
   templateUrl: './workspace-settings.html',
   styleUrl: './workspace-settings.css',
   host: {
@@ -27,7 +32,12 @@ export class WorkspaceSettings implements OnInit {
   private workspaceService = inject(WorkspaceService);
   private alertService = inject(AlertService);
   private workspaceStateService = inject(WorkspaceStateService);
+  private workflowService = inject(WorkflowService);
+  private tagService = inject(TagService);
 
+  public tags: Workflow[] = [];
+  public workflows: Workflow[] = [];
+  public nonSystemDefinedWorkflows: Workflow[] = [];
   public categories: Category[] = [];
   public taskCategories: Category[] = [];
   public eventCategories: Category[] = [];
@@ -35,14 +45,46 @@ export class WorkspaceSettings implements OnInit {
   public defaultEventCategory?: Category;
   public workspace!: Workspace;
   public enteredWorkspaceName: string = "";
+  public systemDefinedWorkflow?: Workflow;
 
   // Status-related properties
   public statuses: Status[] = [];
 
   ngOnInit(): void {
     this.loadWorkspace();
+    this.loadTags();
     this.loadWorkspaceCategories();
-    this.loadStatuses();
+    this.loadWorkspaceWorkflows();
+    //this.loadStatuses();
+  }
+
+  loadTags(){
+    this.tagService.getAllTags().subscribe({
+      next: (resData) => {
+        this.tags = resData.data || [];
+      },
+      error: (error) => {
+        console.error('Error fetching tags:', error);
+      },
+    });
+  }
+
+  loadWorkspaceWorkflows(){
+    this.workflowService.getAllWorkspaceWorkflows().subscribe({
+      next: (resData) => {
+        this.workflows = resData.data || [];
+        this.processWorkflows();
+      },
+      error: (error) => {
+        console.error('Error fetching workflows:', error);
+      },
+    });
+  }
+
+  private processWorkflows(): void {
+    this.workflows = this.workflows.sort((a, b) => a.seqn - b.seqn);
+    this.nonSystemDefinedWorkflows = this.workflows.filter((w) => !w.isSystemDefined);
+    this.systemDefinedWorkflow =  this.workflows.find((c) => c.isSystemDefined);
   }
 
   loadWorkspace(){
@@ -86,7 +128,8 @@ export class WorkspaceSettings implements OnInit {
 
   onTriggerRefreshAfterSave() {
     this.loadWorkspaceCategories();
-    this.loadStatuses();
+    this.loadWorkspaceWorkflows();
+    this.loadTags();
   }
 
   loadStatuses() {
@@ -131,6 +174,29 @@ export class WorkspaceSettings implements OnInit {
   }
   onEditTypesModalClose() {
     this.isEditTypesModalOpen = false;
+  }
+
+  // Edit tags modal events
+  isCreateTagModalOpen = false;
+  openEditTagModal() {
+    this.isCreateTagModalOpen = true;
+  }
+  onEditTagModalClose() {
+    this.isCreateTagModalOpen = false;
+  }
+  removeTag(id: number, name: string){
+    if(confirm('Are you sure to delte tag '+name+'?')){
+      this.tagService.deleteTag(id).subscribe({
+        next: (resData) => {
+          this.alertService.success('Success!','Tag deleted successfully');
+          this.loadTags();
+        },
+        error: (error) => {
+          console.error('Error deleting tag:', error);
+          this.alertService.error('Error!', 'Cant delete tag');
+        }
+      });
+    }
   }
 
   // Edit status modal events

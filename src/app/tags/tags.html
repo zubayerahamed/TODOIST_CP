@@ -1,0 +1,33 @@
+<div class="modal-backdrop" *ngIf="isCreateTagModalOpen" (click)="onCreateTagModalBackdropClick($event)">
+  <div class="modal-container workspace-modal d-flex flex-column" style="max-width: 500px;">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <h4 class="modal-title m-0 p-0">Create Tag</h4>
+      </div>
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeCreateTagModal()">
+        <i class="ph ph-x fs-4"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="mb-3">
+          <input
+                 type="text"
+                 class="form-control"
+                 name="tagName"
+                 [(ngModel)]="enteredTagName"
+                 placeholder="Tag name">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeCreateTagModal()">Cancel</button>
+      <button
+              type="button"
+              class="btn btn-primary"
+              (click)="createTag()">
+        Create Tag
+      </button>
+    </div>
+  </div>
+</div>

@@ -150,17 +150,17 @@ export class Layouts implements OnInit {
   draggedSubtaskIndex: number | null = null;
 
   availableTags: Tag[] = [
-    { id: 1, name: 'DSA', color: '#28a745' },
-    { id: 2, name: 'Spring Security', color: '#17a2b8' },
-    { id: 3, name: 'Spring Cloud', color: '#6f42c1' },
-    { id: 4, name: 'AWS', color: '#fd7e14' },
+    { id: 1, name: 'DSA', workspaceId: 1, color: '#28a745' },
+    { id: 2, name: 'Spring Security', workspaceId: 1, color: '#17a2b8' },
+    { id: 3, name: 'Spring Cloud', workspaceId: 1, color: '#6f42c1' },
+    { id: 4, name: 'AWS', workspaceId: 1, color: '#fd7e14' },
   ];
 
   selectedTags: Tag[] = [
-    { id: 1, name: 'DSA', color: '#28a745' },
-    { id: 2, name: 'Spring Security', color: '#17a2b8' },
-    { id: 3, name: 'Spring Cloud', color: '#6f42c1' },
-    { id: 4, name: 'AWS', color: '#fd7e14' },
+    { id: 1, name: 'DSA', workspaceId: 1, color: '#28a745' },
+    { id: 2, name: 'Spring Security', workspaceId: 1, color: '#17a2b8' },
+    { id: 3, name: 'Spring Cloud', workspaceId: 1, color: '#6f42c1' },
+    { id: 4, name: 'AWS', workspaceId: 1, color: '#fd7e14' },
   ];
 
   toggleSidebar() {

@@ -15,11 +15,10 @@
         <!-- Status Rows -->
         <div class="statuses-editor-rows pt-2">
           @for (status of statuses; track status.id; let i = $index) {
-            <div class="status-editor-row d-flex align-items-center mb-3 p-3 border rounded"
-                 [class.completed-status]="status.isCompleted">
+            <div class="status-editor-row d-flex align-items-center mb-3 p-3 border rounded" [class.completed-status]="status.isSystemDefined">
 
               <!-- Arrow Buttons -->
-              <div class="col-arrows" *ngIf="!status.isCompleted">
+              <div class="col-arrows" *ngIf="!status.isSystemDefined">
                 <button type="button"
                         class="btn btn-outline-secondary btn-sm me-1"
                         [disabled]="!canMoveUp(i)"
@@ -35,7 +34,7 @@
                   <i class="ph ph-arrow-down"></i>
                 </button>
               </div>
-              <div class="col-arrows" *ngIf="status.isCompleted">
+              <div class="col-arrows" *ngIf="status.isSystemDefined">
                 <!-- Empty space for completed status -->
               </div>
 
@@ -44,7 +43,7 @@
                 <input type="color"
                        class="form-control form-control-color color-picker"
                        [value]="status.color"
-                       [disabled]="status.isCompleted"
+                       [disabled]="status.isSystemDefined"
                        (change)="updateStatusColor(status.id, $any($event.target).value)"
                        title="Choose color">
               </div>
@@ -54,8 +53,8 @@
                 <input type="text"
                        class="form-control"
                        [value]="status.name"
-                       [readonly]="status.isCompleted"
-                       [class.readonly]="status.isCompleted"
+                       [readonly]="status.isSystemDefined"
+                       [class.readonly]="status.isSystemDefined"
                        (input)="updateStatusName(status.id, $any($event.target).value)"
                        placeholder="Enter status name">
               </div>
@@ -64,12 +63,12 @@
               <div class="col-action">
                 <button type="button"
                         class="btn btn-outline-danger btn-sm"
-                        *ngIf="!status.isCompleted"
+                        *ngIf="!status.isSystemDefined"
                         (click)="removeStatus(status.id, status.name)"
                         title="Delete status">
                   <i class="ph ph-trash"></i>
                 </button>
-                <span *ngIf="status.isCompleted" class="text-muted small">Fixed</span>
+                <span *ngIf="status.isSystemDefined" class="text-muted small">System Defined</span>
               </div>
             </div>
           }
