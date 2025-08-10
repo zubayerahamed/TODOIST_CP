@@ -30,6 +30,12 @@ export class Register {
   confirmPasswordError: string = "";
   hasFormError: boolean = false;
 
+  constructor(){
+    if (AuthHelper.isAuthenticated()) {
+      this.router.navigate(['/']);
+    }
+  }
+
   resetForm(){
     this.enteredFirstName = "";
     this.enteredLastName = "";
