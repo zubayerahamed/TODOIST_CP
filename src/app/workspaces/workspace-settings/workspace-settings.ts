@@ -6,6 +6,7 @@ import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
 import { AlertService } from '../../core/services/alert.service';
 import { CategoryService } from '../../core/services/category.service';
 import { WorkspaceService } from '../../core/services/workspace.service';
+import { WorkspaceStateService } from '../../core/services/workspace-state.service';
 import { Types } from '../../types/types';
 
 @Component({
@@ -21,6 +22,7 @@ export class WorkspaceSettings implements OnInit {
   private categoryService = inject(CategoryService);
   private workspaceService = inject(WorkspaceService);
   private alertService = inject(AlertService);
+  private workspaceStateService = inject(WorkspaceStateService);
 
   public categories: Category[] = [];
   public taskCategories: Category[] = [];
@@ -59,7 +61,10 @@ export class WorkspaceSettings implements OnInit {
         this.alertService.success('Success!', 'Workspace updated successfully');
         this.workspace = resData.data;
         this.enteredWorkspaceName = this.workspace!.name;
-        sessionStorage.setItem("workspaceName", this.workspace!.name);
+        
+        // Use WorkspaceStateService to update workspace name
+        // This will automatically notify all subscribers (like left-sidebar)
+        this.workspaceStateService.updateWorkspaceName(this.workspace!.name);
       },
       error: (resErr) => {
         console.error(resErr);

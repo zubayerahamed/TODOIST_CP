@@ -7,13 +7,16 @@ import {
   Input,
   OnChanges,
   OnInit,
+  OnDestroy,
   Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Project } from '../../core/models/project.model';
 import { Workspace } from '../../core/models/workspace.model';
 import { ProjectService } from '../../core/services/project.service';
+import { WorkspaceStateService } from '../../core/services/workspace-state.service';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -22,7 +25,7 @@ import { ProjectService } from '../../core/services/project.service';
   templateUrl: './left-sidebar.html',
   styleUrl: './left-sidebar.css',
 })
-export class LeftSidebar implements OnInit, OnChanges {
+export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   @Input() triggeRrefreshProjectsOfSidebar?: number;
   @Input() isSidebarOpen = false;
   @Input() currentWorkspace: Workspace = {
@@ -49,6 +52,8 @@ export class LeftSidebar implements OnInit, OnChanges {
   @Output() addProjectModalOpen = new EventEmitter<void>();
 
   public projectService = inject(ProjectService);
+  private workspaceStateService = inject(WorkspaceStateService);
+  private workspaceNameSubscription?: Subscription;
 
   public workspace!: Workspace;
   public workspaceName: string = "";
@@ -70,8 +75,24 @@ export class LeftSidebar implements OnInit, OnChanges {
     this.loadProjects();
   }
 
+  ngOnDestroy() {
+    if (this.workspaceNameSubscription) {
+      this.workspaceNameSubscription.unsubscribe();
+    }
+  }
+
   loadWorkspace(){
-    this.workspaceName = sessionStorage.getItem("workspaceName")?? "";
+    // Subscribe to workspace name changes
+    this.workspaceNameSubscription = this.workspaceStateService.workspaceName$.subscribe(
+      (name: string) => {
+        this.workspaceName = name;
+      }
+    );
+    
+    // Initialize from storage if not already set
+    if (!this.workspaceName) {
+      this.workspaceName = this.workspaceStateService.getWorkspaceName();
+    }
   }
 
   ngOnChanges(){
