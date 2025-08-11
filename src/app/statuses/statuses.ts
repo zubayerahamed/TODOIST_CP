@@ -15,6 +15,8 @@ import { WorkflowService } from '../core/services/workflow.service';
 })
 export class Statuses {
   // Modal state
+  @Input({ required: true }) projectId!: number;
+  @Input({ required: true }) isProjectType!: boolean;
   @Input({ required: true }) isEditStatusesModalOpen!: boolean;
   @Input({ required: true }) statuses!: Workflow[];
   @Output() onEditStatusesModalClose = new EventEmitter<void>();
@@ -48,7 +50,7 @@ export class Statuses {
         : Math.min(...this.statuses.map(s => s.id)) - 1 >= 0
         ? -1
         : Math.min(...this.statuses.map(s => s.id)) - 1,
-      referenceId: 0,
+      referenceId: this.projectId,
       referenceType: 'WORKSPACE',
       name: '',
       color: '#dddddd',
@@ -134,7 +136,7 @@ export class Statuses {
     const createStatusList: CreateWorkflow[] = this.statuses
       .filter((status) => status.id < 0)
       .map((status) => ({
-        referenceId: 0,
+        referenceId: status.referenceId,
         name: status.name,
         color: status.color,
         seqn: status.seqn,

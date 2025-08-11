@@ -40,6 +40,10 @@ export class ProjectService extends BaseService {
     return this.http.post(`${this.baseUrl}/projects/inherit-workspace-settings/${id}`, null);
   }
 
+  disableInheightSettingsFromWorkspace(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/projects/disable-inherit-workspace-settings/${id}`, null);
+  }
+
   // Helper Methods
   getFilteredSystemDefinedProjects(projects: Project[]): Project[] {
     return projects.filter((project: Project) => project.isSystemDefined);

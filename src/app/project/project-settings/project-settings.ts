@@ -1,27 +1,25 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { Types } from '../../types/types';
-import { Statuses } from '../../statuses/statuses';
 import { FormsModule } from '@angular/forms';
-import { Tags } from '../../tags/tags';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Category } from '../../core/models/category,model';
-import { CategoryService } from '../../core/services/category.service';
-import { StatusService } from '../../core/services/status.service';
-import { WorkspaceService } from '../../core/services/workspace.service';
-import { AlertService } from '../../core/services/alert.service';
-import { WorkspaceStateService } from '../../core/services/workspace-state.service';
-import { WorkflowService } from '../../core/services/workflow.service';
-import { TagService } from '../../core/services/tag.service';
+import { Project } from '../../core/models/project.model';
+import { Status } from '../../core/models/status.model';
 import { Workflow } from '../../core/models/workflow.model';
 import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
-import { Status } from '../../core/models/status.model';
-import { AuthHelper } from '../../core/helpers/auth.helper';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AlertService } from '../../core/services/alert.service';
+import { CategoryService } from '../../core/services/category.service';
 import { ProjectService } from '../../core/services/project.service';
-import { Project } from '../../core/models/project.model';
+import { StatusService } from '../../core/services/status.service';
+import { TagService } from '../../core/services/tag.service';
+import { WorkflowService } from '../../core/services/workflow.service';
+import { WorkspaceStateService } from '../../core/services/workspace-state.service';
+import { WorkspaceService } from '../../core/services/workspace.service';
+import { Statuses } from '../../statuses/statuses';
+import { Types } from '../../types/types';
 
 @Component({
   selector: 'app-project-settings',
-  imports: [Types, Statuses, FormsModule, Tags, RouterLink],
+  imports: [Types, Statuses, FormsModule, RouterLink],
   templateUrl: './project-settings.html',
   styleUrl: './project-settings.css',
   host: {
@@ -127,19 +125,30 @@ export class ProjectSettings implements OnInit {
 
   onInheritSettings(event: Event){
     const checked = (event.target as HTMLInputElement).checked;
-    if (!checked) return;
-    // Do something when checked
-
-    this.projectService.inheightSettingsFromWorkspace(this.projectId).subscribe({
-      next: (resData) => {
-        this.alertService.success('Success!', 'Settings inherited successfully');
-        this.loadAllData();
-      }, 
-      error: (err) => {
-        console.log(err);
-        this.alertService.error('Error!', 'Failted to inherit settings from workspace');
-      }
-    });
+    if (checked) {
+      this.projectService.inheightSettingsFromWorkspace(this.projectId).subscribe({
+        next: (resData) => {
+          this.alertService.success('Success!', 'Settings inherited successfully');
+          this.loadAllData();
+        }, 
+        error: (err) => {
+          console.log(err);
+          this.alertService.error('Error!', 'Failted to inherit settings from workspace');
+        }
+      }); 
+    } else {
+      this.projectService.disableInheightSettingsFromWorkspace(this.projectId).subscribe({
+        next: (resData) => {
+          this.alertService.success('Success!', 'Disable settings inheritence successfully');
+          this.loadAllData();
+        }, 
+        error: (err) => {
+          console.log(err);
+          this.alertService.error('Error!', 'Failted to disable inherit settings');
+        }
+      }); 
+    }
+    
   }
 
   private processWorkflows(): void {
@@ -265,7 +274,7 @@ export class ProjectSettings implements OnInit {
   }
 
   onSelectDefaultTask(category: Category) {
-    this.categoryService.addToDefaultTask(0, category.id).subscribe({
+    this.categoryService.addToDefaultTask(this.projectId, category.id).subscribe({
       next: () => {
         this.defaultTaskCategory = category;
         this.isTaskDropdownOpen = false;
@@ -280,7 +289,7 @@ export class ProjectSettings implements OnInit {
   }
 
   onSelectDefaultEvent(category: Category) {
-    this.categoryService.addToDefaultEvent(0, category.id).subscribe({
+    this.categoryService.addToDefaultEvent(this.projectId, category.id).subscribe({
       next: () => {
         this.defaultEventCategory = category;
         this.isEventDropdownOpen = false;

@@ -17,6 +17,8 @@ import { AlertService } from '../core/services/alert.service';
 })
 export class Types {
   // Modal state
+  @Input({ required: true }) projectId!: number;
+  @Input({ required: true }) isProjectType!: boolean;
   @Input({ required: true }) isEditTypesModalOpen!: boolean;
   @Input({ required: true }) categories!: Category[];
   @Output() onEditTypesModalClose = new EventEmitter<void>();
@@ -50,7 +52,7 @@ export class Types {
           : Math.min(...this.categories.map((c) => c.id)) - 1 >= 0
           ? -1
           : Math.min(...this.categories.map((c) => c.id)) - 1,
-      referenceId: 0,
+      referenceId: this.projectId,
       name: '',
       color: '#dddddd',
       isForTask: false,
@@ -60,7 +62,6 @@ export class Types {
       isDefaultForTask: false
     };
     this.categories.push(newCategory);
-    console.log(this.categories);
   }
 
   removeCategory(id: number, name: string) {

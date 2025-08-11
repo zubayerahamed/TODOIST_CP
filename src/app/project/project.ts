@@ -1,9 +1,9 @@
 import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-project',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './project.html',
   styleUrls: ['./project.css'],
   host: {

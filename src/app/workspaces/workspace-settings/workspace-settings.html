@@ -30,7 +30,7 @@
           <div class="rounded" [style.background-color]="category.color" style="height: 20px; width: 20px;"></div>
           <div>{{ category.name }}</div>
         </div>
-      }
+        }
     </div>
   </div>
   <div class="mb-2">
@@ -45,12 +45,12 @@
             <div class="color-circle" [style.background-color]="defaultTaskCategory.color"></div>
             <span>{{ defaultTaskCategory.name }}</span>
           </div>
-        } @else {
+          } @else {
           <div class="selected-option">
             <span>-- Select default task type --</span>
           </div>
-        }
-        <span class="dropdown-arrow">▼</span>
+          }
+          <span class="dropdown-arrow">▼</span>
       </div>
       <div class="dropdown-options" id="defaultTaskTypeOptions" [style.display]="isTaskDropdownOpen ? 'flex' : 'none'">
         @for(category of taskCategories; track category.id) {
@@ -58,7 +58,7 @@
             <div class="color-circle" [style.background-color]="category.color"></div>
             <span>{{ category.name }}</span>
           </div>
-        }
+          }
       </div>
     </div>
   </div>
@@ -98,12 +98,12 @@
 <div class="d-flex flex-column gap-3">
   <h5>Tags</h5>
   <div class="tags-container align-items-center">
-    @for (tag of tags; track tag.id) {
+    @for(tag of tags; track tag.id) {
       <div class="tag-pill">
-        <span>{{ tag.name }}</span> 
+        <span>{{ tag.name }}</span>
         <i class="ph ph-trash text-danger ms-3" (click)="removeTag(tag.id, tag.name)"></i>
       </div>
-    }
+      }
   </div>
   <div class="create-tag-section">
     <button type="button" class="btn-create-tag" (click)="openEditTagModal()">
@@ -119,15 +119,15 @@
 <div class="d-flex flex-column gap-3">
   <h5>Task statuses</h5>
   <div class="status-flow-container">
-    @for (workflow of nonSystemDefinedWorkflows; track workflow.id) {
+    @for(workflow of nonSystemDefinedWorkflows; track workflow.id) {
       <div class="status-pill status-new-task" [style.background-color]="workflow.color">{{ workflow.name }}</div>
       <div class="status-arrow">
         <i class="ph ph-arrow-right fw-bold"></i>
       </div>
-    }
-    @if (systemDefinedWorkflow) {
-      <div class="status-pill status-completed" [style.background-color]="systemDefinedWorkflow.color">{{ systemDefinedWorkflow.name }}</div>
-    }
+      }
+      @if(systemDefinedWorkflow) {
+        <div class="status-pill status-completed" [style.background-color]="systemDefinedWorkflow.color">{{ systemDefinedWorkflow.name }}</div>
+        }
   </div>
   <div>
     <button type="button" class="btn btn-primary" (click)="openEditStatusesModal()">Edit statuses</button>
@@ -136,6 +136,8 @@
 
 <!-- Edit Types Modal -->
 <app-types
+           [projectId]="0"
+           [isProjectType]="false"
            [isEditTypesModalOpen]="isEditTypesModalOpen"
            [categories]="categories"
            (onEditTypesModalClose)="onEditTypesModalClose()"
@@ -143,14 +145,15 @@
 
 <!-- Edit Statuses Modal -->
 <app-statuses
+              [projectId]="0"
+              [isProjectType]="false"
               [isEditStatusesModalOpen]="isEditStatusesModalOpen"
               [statuses]="workflows"
               (onEditStatusesModalClose)="onEditStatusesModalClose()"
               (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()" />
 
 <!-- Edit tag modal -->
- <app-tags
-  [isCreateTagModalOpen]="isCreateTagModalOpen"
-  (closeTagModal)="onEditTagModalClose()"
-  (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()"
- />
+<app-tags
+          [isCreateTagModalOpen]="isCreateTagModalOpen"
+          (closeTagModal)="onEditTagModalClose()"
+          (triggerRefreshAfterSave)="onTriggerRefreshAfterSave()" />
