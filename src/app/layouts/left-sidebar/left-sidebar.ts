@@ -71,6 +71,12 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   // Context menu states - section-specific
   public activeContextMenuProjectId: number | null = null;
   public activeContextMenuSection: 'favourites' | 'projects' | null = null;
+  public contextMenuPosition: {
+    showAbove: boolean;
+    showOutside: boolean;
+    top?: string;
+    left?: string;
+  } = { showAbove: false, showOutside: false };
 
   ngOnInit() {
     this.loadWorkspace();
@@ -254,12 +260,40 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
     } else {
       this.activeContextMenuProjectId = projectId;
       this.activeContextMenuSection = section;
+      
+      // Calculate optimal position for context menu
+      this.calculateContextMenuPosition(event.target as HTMLElement);
     }
+  }
+
+  private calculateContextMenuPosition(triggerElement: HTMLElement) {
+    const triggerRect = triggerElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const contextMenuHeight = 280; // Approximate height of context menu
+    
+    // Calculate space above and below trigger
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
+    
+    // Determine if menu should show above (if not enough space below)
+    const showAbove = spaceBelow < contextMenuHeight && spaceAbove > contextMenuHeight;
+    
+    // For now, let's keep it simple and not show outside sidebar
+    // We'll focus on fixing the above/below positioning first
+    const showOutside = false;
+    
+    this.contextMenuPosition = {
+      showAbove,
+      showOutside,
+      top: '',
+      left: ''
+    };
   }
 
   closeProjectContextMenu() {
     this.activeContextMenuProjectId = null;
     this.activeContextMenuSection = null;
+    this.contextMenuPosition = { showAbove: false, showOutside: false, top: '', left: '' };
   }
 
   // Helper method to check if context menu should be shown

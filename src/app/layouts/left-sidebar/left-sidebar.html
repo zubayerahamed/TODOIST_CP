@@ -131,7 +131,9 @@
         
         <!-- Context Menu for Favourite Projects -->
         @if (isContextMenuActive(project.id, 'favourites')) {
-          <div class="project-context-menu">
+          <div class="project-context-menu"
+               [class.project-context-menu-above]="contextMenuPosition.showAbove"
+               [class.project-context-menu-below]="!contextMenuPosition.showAbove">
             @if (project.isFavourite) {
               <div class="context-menu-item" (click)="removeFavourites(project, $event)">
                 <i class="ph ph-heart-break fs-5 me-2"></i>
@@ -194,7 +196,9 @@
         
         <!-- Context Menu for My Projects -->
         @if (isContextMenuActive(project.id, 'projects')) {
-          <div class="project-context-menu">
+          <div class="project-context-menu"
+               [class.project-context-menu-above]="contextMenuPosition.showAbove"
+               [class.project-context-menu-below]="!contextMenuPosition.showAbove">
             @if (project.isFavourite) {
               <div class="context-menu-item" (click)="removeFavourites(project, $event)">
                 <i class="ph ph-heart-break fs-5 me-2"></i>
