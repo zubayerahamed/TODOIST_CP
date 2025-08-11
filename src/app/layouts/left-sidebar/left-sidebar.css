@@ -71,3 +71,117 @@
 .project-item {
   position: relative;
 }
+
+/* Mobile responsive improvements for sidebar spacing */
+@media (max-width: 767.98px) {
+  /* Reduce excessive spacing between sidebar items */
+  .sidebar-wrapper {
+    row-gap: 4px !important;
+    padding: 15px !important;
+  }
+  
+  /* Compact ALL navigation items - more aggressive targeting */
+  .sidebar-wrapper > div,
+  .sidebar-wrapper .d-flex.align-items-center {
+    padding: 2px 0 !important;
+    margin: 1px 0 !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Reduce button spacing */
+  .sidebar-wrapper .d-grid {
+    gap: 6px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  /* Compact project items */
+  .project-item {
+    padding: 2px 0 !important;
+    margin: 1px 0 !important;
+  }
+  
+  /* Reduce divider and spacer margins */
+  .divider {
+    margin: 4px 0 !important;
+  }
+  
+  .spacer {
+    margin: 4px 0 !important;
+  }
+  
+  /* Compact section headers */
+  .section-favourites,
+  .section-my-projects {
+    padding: 3px 0 !important;
+    margin: 2px 0 !important;
+  }
+  
+  /* Reduce user content spacing */
+  .user-content {
+    margin-bottom: 8px !important;
+    padding: 2px 0 !important;
+  }
+  
+  /* Target specific menu items that are showing gaps - using more specific selectors */
+  .sidebar-wrapper > div.d-flex.align-items-center:not(.project-item):not(.section-favourites):not(.section-my-projects):not(.user-content) {
+    padding: 2px 0 !important;
+    margin: 1px 0 !important;
+  }
+  
+  /* Override any Bootstrap or global spacing for these specific items */
+  .sidebar-wrapper > div.d-flex.align-items-center {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Reduce icon and text spacing */
+  .sidebar-wrapper i {
+    margin-right: 8px !important;
+  }
+  
+  /* Compact page links */
+  .sidebar-wrapper .page-link {
+    padding: 2px 0 !important;
+    line-height: 1.3 !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* Even more compact for small mobile */
+  .sidebar-wrapper {
+    row-gap: 6px !important;
+    padding: 12px !important;
+  }
+  
+  .sidebar-wrapper > div {
+    padding: 3px 0 !important;
+  }
+  
+  .sidebar-wrapper .d-grid {
+    gap: 6px !important;
+    margin-bottom: 6px;
+  }
+  
+  .project-item {
+    padding: 4px 0 !important;
+    margin: 1px 0 !important;
+  }
+  
+  .divider {
+    margin: 6px 0 !important;
+  }
+  
+  .spacer {
+    margin: 6px 0 !important;
+  }
+  
+  .section-favourites,
+  .section-my-projects {
+    padding: 4px 0 !important;
+    margin: 3px 0 !important;
+  }
+  
+  .user-content {
+    margin-bottom: 8px !important;
+  }
+}
