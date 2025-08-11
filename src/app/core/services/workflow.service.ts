@@ -13,8 +13,11 @@ export class WorkflowService extends BaseService {
   }
 
   getAllWorkspaceWorkflows(): Observable<any> {
-    console.log('Fetching all workspace workflows from the server...');
     return this.http.get(`${this.baseUrl}/workflows/all/workspace`);
+  }
+
+  getAllProjectWorkflows(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/workflows/all/project/${id}`);
   }
 
   createWorkflow(data: CreateWorkflow): Observable<any> {

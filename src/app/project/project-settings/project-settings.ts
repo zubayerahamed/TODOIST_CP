@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Types } from '../../types/types';
 import { Statuses } from '../../statuses/statuses';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { Workflow } from '../../core/models/workflow.model';
 import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
 import { Status } from '../../core/models/status.model';
 import { AuthHelper } from '../../core/helpers/auth.helper';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProjectService } from '../../core/services/project.service';
 import { Project } from '../../core/models/project.model';
 
@@ -29,9 +29,11 @@ import { Project } from '../../core/models/project.model';
   },
 })
 export class ProjectSettings implements OnInit {
-  @Input({required: true}) projectId!: number;
+  public projectId!: number;
 
   private projectService = inject(ProjectService);
+  private activatedRoute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   private categoryService = inject(CategoryService);
   private statusService = inject(StatusService);
@@ -64,14 +66,27 @@ export class ProjectSettings implements OnInit {
 
   ngOnInit(): void {
     console.log("On init called");
+    
+    // Subscribe to route parameter changes to handle navigation between different projects
+    const routeParamsSub = this.activatedRoute.params.subscribe(params => {
+      const newProjectId = +params['projectId']; // Convert string to number
+      if (newProjectId && newProjectId !== this.projectId) {
+        this.projectId = newProjectId;
+        console.log("Project ID changed to:", this.projectId);
+        this.loadAllData();
+      }
+    });
+
+    // Clean up subscription when component is destroyed
+    this.destroyRef.onDestroy(() => {
+      routeParamsSub.unsubscribe();
+    });
+  }
+
+  private loadAllData(): void {
     this.loadProject();
-
-
-
-    this.loadTags();
-    this.loadWorkspaceCategories();
-    this.loadWorkspaceWorkflows();
-    //this.loadStatuses();
+    this.loadProjectCategories();
+    this.loadProjectWorkflows();
   }
 
   loadProject(){
@@ -86,19 +101,20 @@ export class ProjectSettings implements OnInit {
     });
   }
 
-  loadTags(){
-    this.tagService.getAllTags().subscribe({
+  loadProjectCategories() {
+    this.categoryService.getAllProjectCategories(this.projectId).subscribe({
       next: (resData) => {
-        this.tags = resData.data || [];
+        this.categories = resData.data || [];
+        this.processCategories();
       },
       error: (error) => {
-        console.error('Error fetching tags:', error);
+        console.error('Error fetching projects:', error);
       },
     });
   }
 
-  loadWorkspaceWorkflows(){
-    this.workflowService.getAllWorkspaceWorkflows().subscribe({
+  loadProjectWorkflows(){
+    this.workflowService.getAllProjectWorkflows(this.projectId).subscribe({
       next: (resData) => {
         this.workflows = resData.data || [];
         this.processWorkflows();
@@ -106,6 +122,23 @@ export class ProjectSettings implements OnInit {
       error: (error) => {
         console.error('Error fetching workflows:', error);
       },
+    });
+  }
+
+  onInheritSettings(event: Event){
+    const checked = (event.target as HTMLInputElement).checked;
+    if (!checked) return;
+    // Do something when checked
+
+    this.projectService.inheightSettingsFromWorkspace(this.projectId).subscribe({
+      next: (resData) => {
+        this.alertService.success('Success!', 'Settings inherited successfully');
+        this.loadAllData();
+      }, 
+      error: (err) => {
+        console.log(err);
+        this.alertService.error('Error!', 'Failted to inherit settings from workspace');
+      }
     });
   }
 
@@ -142,9 +175,8 @@ export class ProjectSettings implements OnInit {
   }
 
   onTriggerRefreshAfterSave() {
-    this.loadWorkspaceCategories();
-    this.loadWorkspaceWorkflows();
-    this.loadTags();
+    this.loadProjectCategories();
+    this.loadProjectWorkflows();
   }
 
   loadStatuses() {
@@ -158,17 +190,7 @@ export class ProjectSettings implements OnInit {
     });
   }
 
-  loadWorkspaceCategories() {
-    this.categoryService.getAllWorkspaceCategories().subscribe({
-      next: (resData) => {
-        this.categories = resData.data || [];
-        this.processCategories();
-      },
-      error: (error) => {
-        console.error('Error fetching projects:', error);
-      },
-    });
-  }
+  
 
   private processCategories(): void {
     this.taskCategories = this.categoryService.getFilteredTaskCategories(
@@ -204,7 +226,6 @@ export class ProjectSettings implements OnInit {
       this.tagService.deleteTag(id).subscribe({
         next: (resData) => {
           this.alertService.success('Success!','Tag deleted successfully');
-          this.loadTags();
         },
         error: (error) => {
           console.error('Error deleting tag:', error);
@@ -249,7 +270,7 @@ export class ProjectSettings implements OnInit {
         this.defaultTaskCategory = category;
         this.isTaskDropdownOpen = false;
         this.alertService.success('Success!', 'Default task type updated successfully');
-        this.loadWorkspaceCategories();
+        this.loadProjectCategories();
       },
       error: (error) => {
         console.error('Error updating default task type:', error);
@@ -264,7 +285,7 @@ export class ProjectSettings implements OnInit {
         this.defaultEventCategory = category;
         this.isEventDropdownOpen = false;
         this.alertService.success('Success!', 'Default event type updated successfully');
-        this.loadWorkspaceCategories();
+        this.loadProjectCategories();
       },
       error: (error) => {
         console.error('Error updating default event type:', error);

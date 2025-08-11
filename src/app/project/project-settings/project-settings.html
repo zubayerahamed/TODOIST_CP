@@ -11,7 +11,7 @@
 <div class="divider"></div>
 <div class="d-flex flex-column gap-3">
   <div class="mb-3">
-    <input type="checkbox"/> Inherit settings from workspace <a routerLink="/workspace-settings">Go to workspace settings</a>
+    <input type="checkbox" (change)="onInheritSettings($event)"/> Inherit settings from workspace <a routerLink="/workspace-settings">Go to workspace settings</a>
   </div>
   <h5>Types & Colors</h5>
   <div class="mb-2">
@@ -93,27 +93,6 @@
     </div>
   </div>
 
-</div>
-
-<div class="divider"></div>
-
-<!-- Tags Section -->
-<div class="d-flex flex-column gap-3">
-  <h5>Tags</h5>
-  <div class="tags-container align-items-center">
-    @for (tag of tags; track tag.id) {
-      <div class="tag-pill">
-        <span>{{ tag.name }}</span> 
-        <i class="ph ph-trash text-danger ms-3" (click)="removeTag(tag.id, tag.name)"></i>
-      </div>
-    }
-  </div>
-  <div class="create-tag-section">
-    <button type="button" class="btn-create-tag" (click)="openEditTagModal()">
-      <i class="ph ph-plus fw-bold"></i>
-      <span>Create tag</span>
-    </button>
-  </div>
 </div>
 
 <div class="divider"></div>

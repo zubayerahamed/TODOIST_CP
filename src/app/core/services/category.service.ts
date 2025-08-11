@@ -17,8 +17,11 @@ export class CategoryService extends BaseService {
   }
 
   getAllWorkspaceCategories(): Observable<any> {
-    console.log('Fetching all workspace categories from the server...');
     return this.http.get(`${this.baseUrl}/categories/all/workspace`);
+  }
+
+  getAllProjectCategories(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/categories/all/project/${id}`);
   }
 
   createCategory(data: CreateCategory): Observable<any> {
