@@ -11,6 +11,7 @@ import { Project } from './project/project';
 import { Upcoming } from './upcoming/upcoming';
 import { Completed } from './completed/completed';
 import { WorkspaceSettings } from './workspaces/workspace-settings/workspace-settings';
+import { ProjectSettings } from './project/project-settings/project-settings';
 
 
 export const routes: Routes = [
@@ -31,6 +32,10 @@ export const routes: Routes = [
       {
         path: 'project/:projectId',
         component: Project,
+      },
+      {
+        path: 'project-settings/:projectId',
+        component: ProjectSettings,
       },
       {
         path: 'upcoming',

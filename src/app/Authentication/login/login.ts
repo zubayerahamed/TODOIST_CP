@@ -46,7 +46,7 @@ export class Login {
 
         setTimeout(() => {
           this.loginErrorMessage = ''; // Clear the error message after a while
-        }, 2000); // Clear after 5 seconds
+        }, 3000); // Clear after 5 seconds
       },
     });
   }

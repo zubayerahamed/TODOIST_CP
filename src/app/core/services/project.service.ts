@@ -13,8 +13,11 @@ export class ProjectService extends BaseService {
   }
 
   getAllProjects(): Observable<any> {
-    console.log('Fetching all projects from the server...');
     return this.http.get(`${this.baseUrl}/projects`);
+  }
+
+  findProject(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/projects/${id}`);
   }
 
   createProject(data: AddProject): Observable<any> {
@@ -31,6 +34,10 @@ export class ProjectService extends BaseService {
 
   deleteProject(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/projects/${id}`);
+  }
+
+  inheightSettingsFromWorkspace(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/projects/inherit-workspace-settings/${id}`, null);
   }
 
   // Helper Methods

@@ -219,9 +219,9 @@
               <span>Leave from project</span>
             </div>
             <div class="context-menu-divider"></div>
-            <div class="context-menu-item" (click)="addToFavourites(project, $event)">
+            <div class="context-menu-item">
               <i class="ph ph-gear fs-5 me-2"></i>
-              <span>Project settings</span>
+              <a class="page-link" [routerLink]="['/project-settings', project.id]">Project settings</a>
             </div>
             <div class="context-menu-divider"></div>
             <div class="context-menu-item context-menu-item-danger" (click)="deleteProject(project, $event)">
