@@ -1,8 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LeftSidebar } from './left-sidebar/left-sidebar';
-import { ActivatedRoute, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import {
+  ActivatedRoute,
+  NavigationStart,
+  Router,
+  RouterOutlet,
+} from '@angular/router';
 import { Header } from './header/header';
 import { CreateEvent } from '../events/create-event/create-event';
 import { CreateTask } from '../tasks/create-task/create-task';
@@ -12,7 +23,9 @@ import { Workspace } from '../core/models/workspace.model';
 import { Participant } from '../core/models/participant.model';
 import { Tag } from '../core/models/tag.model';
 import { AuthHelper } from '../core/helpers/auth.helper';
-import { CreateProject } from "../project/create-project/create-project";
+import { CreateProject } from '../project/create-project/create-project';
+import { WorkspaceService } from '../core/services/workspace.service';
+import { JwtPayload } from 'jwt-decode';
 
 @Component({
   selector: 'app-layouts',
@@ -28,37 +41,54 @@ import { CreateProject } from "../project/create-project/create-project";
     CreateEvent,
     CreateTask,
     CreateWorkspace,
-    CreateProject
-]
+    CreateProject,
+  ],
 })
 export class Layouts implements OnInit {
-
   appTitle: string = 'TASKNEST';
   isSidebarOpen = false;
 
-  private authService = inject(AuthService); 
-  private router= inject(Router); 
-  private activatedRoute= inject(ActivatedRoute);
+  private authService = inject(AuthService);
+  private workspaceService = inject(WorkspaceService);
+
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
   constructor() {
-    if(this.router.url == '/'){
+    this.initializeDefaultRoute();
+  }
+
+  ngOnInit(): void {
+    // Initialize Route
+    this.initializeRoute();
+
+    // Load workspaces here
+    this.loadCurrentWorkspace();
+    this.loadAvailableWorkspaces();
+  }
+
+  // choose default route at the very beginning
+  initializeDefaultRoute(){
+    console.log("%cInitialized Default Route", "color: green");
+    if (this.router.url == '/') {
       this.router.navigate(['/today']);
     }
   }
 
-  ngOnInit(): void {
-
+  // Initialize Route
+  initializeRoute(){
+    console.log("%cRest sidebar state when navigating to a new route", "color: green");
     const routerSubs = this.router.events.subscribe({
       next: (event) => {
         if (event instanceof NavigationStart) {
           // Reset sidebar state when navigating to a new route
           const url = event.url;
-          if(url === '/'){
+          if (url === '/') {
             this.router.navigate(['/today']);
           }
         }
-      }
+      },
     });
 
     this.destroyRef.onDestroy(() => {
@@ -66,22 +96,63 @@ export class Layouts implements OnInit {
     });
   }
 
-  // Workspace dropdown properties
-  isWorkspaceDropdownOpen = false;
 
 
-  // Available workspaces
+
+
+
+
+  /**
+   * ===== Workspace =====
+   */
+  // Workspace properties
+  isCreateWorkspaceModalOpen: boolean = false;
+  isWorkspaceDropdownOpen: boolean = false;
+  availableWorkspaces: Workspace[] = [];
   newWorkspaceName: string = '';
-  currentWorkspace: Workspace = {
-    id: 1,
-    name: "Zubayer's Workspace",
-    avatar: '/assets/images/zubayer.jpg',
-  };
-  availableWorkspaces: Workspace[] = [
-    { id: 2, name: 'Metatude', avatar: '/assets/images/zubayer.jpg' },
-    { id: 3, name: 'ASL', avatar: '/assets/images/zubayer.jpg' },
-    { id: 4, name: 'LIRA', avatar: '/assets/images/zubayer.jpg' },
-  ];
+  currentWorkspace!: Workspace;
+
+  // Load Current Workspace
+  loadCurrentWorkspace(){
+    console.log("%cLoading current workspaces", "color: green");
+    const workspaceId =  AuthHelper.getJwtPayloads()?.workspaceId;
+    if(workspaceId == null) return;
+
+    this.workspaceService.findWorkspace(workspaceId).subscribe({
+      next: (resData) => {
+        this.currentWorkspace = resData.data;
+      }, 
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  // Load available other workspaces here
+  loadAvailableWorkspaces(){
+    console.log("%cLoading all available other workspaces", "color: green");
+    this.workspaceService.getAllOtherWorkspaces().subscribe({
+      next: (resData) => {
+        this.availableWorkspaces = resData.data;
+      }, 
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  // Open create workspace modal
+  openCreateWorkspaceModal() {
+    this.isCreateWorkspaceModalOpen = true;
+    this.newWorkspaceName = '';
+  }
+
+  closeCreateWorkspaceModal(){
+    this.isCreateWorkspaceModalOpen = false;
+    this.newWorkspaceName = '';
+  }
+
+  
 
   // User profile dropdown properties
   isUserProfileDropdownOpen = false;
@@ -91,8 +162,6 @@ export class Layouts implements OnInit {
     avatar: '/assets/images/zubayer.jpg',
   };
 
-  // Create Workspace modal properties
-  isCreateWorkspaceModalOpen: boolean = false;
 
   // Dummy participants data
   allParticipants: Participant[] = [
@@ -145,8 +214,7 @@ export class Layouts implements OnInit {
       avatar: '/assets/images/zubayer.jpg',
     },
   ];
-  
-  
+
   draggedSubtaskIndex: number | null = null;
 
   availableTags: Tag[] = [
@@ -176,7 +244,7 @@ export class Layouts implements OnInit {
   openAddEventModal() {
     this.isAddEventModalOpen = true;
   }
-  onCloseAddEventModal(){
+  onCloseAddEventModal() {
     this.isAddEventModalOpen = false;
   }
 
@@ -185,25 +253,22 @@ export class Layouts implements OnInit {
   openAddTaskModal() {
     this.isAddTaskModalOpen = true;
   }
-  onCloseAddTaskModal(){
+  onCloseAddTaskModal() {
     this.isAddTaskModalOpen = false;
   }
 
   // Project Modal Methods
   isAddProjectModalOpen = false;
   triggeRrefreshProjectsOfSidebar = 0;
-  openAddProjectModal(){
+  openAddProjectModal() {
     this.isAddProjectModalOpen = true;
   }
-  onCloseAddProjectModal(){
+  onCloseAddProjectModal() {
     this.isAddProjectModalOpen = false;
   }
-  onTriggeRrefreshProjectsOfSidebar(){
+  onTriggeRrefreshProjectsOfSidebar() {
     this.triggeRrefreshProjectsOfSidebar++;
   }
-
-
- 
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
@@ -232,9 +297,7 @@ export class Layouts implements OnInit {
         this.closeUserProfileDropdown();
       }
     }
-
   }
-
 
   // Workspace dropdown methods
   toggleWorkspaceDropdown() {
@@ -280,7 +343,7 @@ export class Layouts implements OnInit {
   logout() {
     this.closeUserProfileDropdown();
     console.log('Logging out...');
-    if(!AuthHelper.isAuthenticated()) return;
+    if (!AuthHelper.isAuthenticated()) return;
 
     this.authService.logout().subscribe({
       next: () => {
@@ -296,14 +359,7 @@ export class Layouts implements OnInit {
     });
   }
 
-  // Create Workspace modal methods
-  openCreateWorkspaceModal() {
-    this.isCreateWorkspaceModalOpen = true;
-    this.newWorkspaceName = '';
-    this.closeWorkspaceDropdown();
-  }
-
- 
+  
 
   // Left sidebar event handlers
   onSidebarToggle() {
@@ -344,9 +400,6 @@ export class Layouts implements OnInit {
     this.newWorkspaceName = name;
   }
 
-
-
-
   // Handlers for header component events
   onToggleSidebar() {
     this.toggleSidebar();
@@ -363,5 +416,4 @@ export class Layouts implements OnInit {
   onLogout() {
     this.logout();
   }
-  
 }

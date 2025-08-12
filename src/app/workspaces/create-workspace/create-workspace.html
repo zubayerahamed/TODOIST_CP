@@ -4,23 +4,25 @@
       <div class="d-flex align-items-center">
         <h4 class="modal-title m-0 p-0">Create Workspace</h4>
       </div>
-      <button type="button" class="btn-close d-flex align-items-center justify-content-center"
-              (click)="closeCreateWorkspaceModal()">
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeCreateWorkspaceModal()">
         <i class="ph ph-x fs-4"></i>
       </button>
     </div>
     <div class="modal-body">
       <form>
-        <div class="mb-3">
+        <div class="">
           <input
                  type="text"
                  class="form-control"
                  placeholder="Workspace name"
-                 [value]="newWorkspaceName"
-                 (input)="onWorkspaceNameInputChange($event)"
+                 name="workspaceName"
+                 [(ngModel)]="enteredWorkspaceName"
                  (keypress)="onWorkspaceNameKeyPress($event)"
                  #workspaceNameInput>
         </div>
+        @if (worskapceNameErr) {
+          <span class="text-danger">{{ worskapceNameErr }}</span>
+        }
       </form>
     </div>
     <div class="modal-footer">
@@ -28,8 +30,7 @@
       <button
               type="button"
               class="btn btn-primary"
-              (click)="createWorkspace()"
-              [disabled]="!newWorkspaceName.trim()">
+              (click)="createWorkspace()">
         Create Workspace
       </button>
     </div>

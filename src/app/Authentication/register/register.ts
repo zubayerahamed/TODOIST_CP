@@ -103,15 +103,15 @@ export class Register {
         this.resetForm();
         this.alterService.success('Success!', 'Registered successfully');
         
-        const accessToken = response.data.access_token;
-        const refreshToken = response.data.refresh_token;
+        // const accessToken = response.data.access_token;
+        // const refreshToken = response.data.refresh_token;
 
-        // Store tokens or user info (you can store just token or a user object)
-        AuthHelper.setAuthData(accessToken, refreshToken);
-        AuthHelper.loadWorkspace();
+        // // Store tokens or user info (you can store just token or a user object)
+        // AuthHelper.setAuthData(accessToken, refreshToken);
+        // AuthHelper.loadWorkspace();
 
         // Redirect to dashboard or your default route
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
       },
       error: (error: any) => {
         console.error(error);

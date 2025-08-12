@@ -4,7 +4,7 @@
 <div class="sidebar-wrapper vh-100 d-flex flex-column" [class.sidebar-open]="isSidebarOpen">
   <div class="user-content d-flex justify-content-between align-items-center position-relative">
     <img
-         [src]="currentWorkspace.avatar"
+         [src]="'/assets/images/dummy-user.png'"
          class="rounded-circle user-content-user-image"
          alt="Workspace Avatar" />
     <h5 class="user-content-workspace-title text-truncate fw-bold">
@@ -19,7 +19,6 @@
       <div class="workspace-dropdown-content">
         <!-- Current Workspace Header -->
         <div class="workspace-dropdown-header">
-          <img [src]="currentWorkspace.avatar" class="rounded-circle workspace-avatar" [alt]="currentWorkspace.name">
           <span class="workspace-name">{{ workspaceName }}</span>
         </div>
 
@@ -29,14 +28,15 @@
           <a routerLink="/workspace-settings" class="page-link">Workspace settings</a>
         </div>
 
-        <!-- Divider -->
-        <div class="workspace-dropdown-divider"></div>
-
         <!-- Switch to Section -->
-        <div class="workspace-dropdown-section-title">
-          <i class="ph ph-arrows-clockwise me-3"></i>
-          <span>Switch to</span>
-        </div>
+        @if (availableWorkspaces.length > 0) {
+          <!-- Divider -->
+          <div class="workspace-dropdown-divider"></div>
+          <div class="workspace-dropdown-section-title">
+            <i class="ph ph-arrows-clockwise me-3"></i>
+            <span>Switch to</span>
+          </div>
+        }
 
         <!-- Available Workspaces -->
         @for(workspace of availableWorkspaces; track workspace.id) {

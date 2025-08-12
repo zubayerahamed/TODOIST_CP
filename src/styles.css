@@ -1352,7 +1352,3 @@ MODAL STYLES
 .user-content.position-relative {
   position: relative;
 }
-
-.workspace-modal{
-  max-height: 218px;
-}

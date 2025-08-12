@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthHelper } from '../helpers/auth.helper';
 import { BaseService } from './base.service';
 import { RegisterRequest } from '../models/register-request.model';
+import { SwitchWorkspaceRequest } from '../models/switch-workspace-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,10 @@ export class AuthService extends BaseService {
 
   login(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/authenticate`, data);
+  }
+
+  switchWorkspace(data: SwitchWorkspaceRequest): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/switch-workspace`, data);
   }
 
   logout(): Observable<any> {

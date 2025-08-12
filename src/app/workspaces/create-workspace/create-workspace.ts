@@ -1,10 +1,13 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { Workspace } from '../../core/models/workspace.model';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AddWorkspace, Workspace } from '../../core/models/workspace.model';
+import { AlertService } from '../../core/services/alert.service';
+import { WorkspaceService } from '../../core/services/workspace.service';
 
 @Component({
   selector: 'app-create-workspace',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './create-workspace.html',
   styleUrl: './create-workspace.css',
@@ -12,13 +15,18 @@ import { FormsModule } from '@angular/forms';
 export class CreateWorkspace {
   @Input({required:true}) isCreateWorkspaceModalOpen!: boolean;
   @Input({required:true}) availableWorkspaces!: Workspace[];
-  @Input({required:true}) currentWorkspace!: Workspace;
-  @Input({required:true}) newWorkspaceName!: string;
   @Output() closeWorkspaceModal = new EventEmitter<void>();
+
+  private alterService = inject(AlertService);
+  private workspaceService = inject(WorkspaceService);
+
+  enteredWorkspaceName: string = '';
+  worskapceNameErr: string = "";
 
   closeCreateWorkspaceModal() {
     this.isCreateWorkspaceModalOpen = false;
-    this.newWorkspaceName = '';
+    this.enteredWorkspaceName = '';
+    this.worskapceNameErr = "";
     this.closeWorkspaceModal.emit();
   }
 
@@ -26,11 +34,6 @@ export class CreateWorkspace {
     if (event.target === event.currentTarget) {
       this.closeCreateWorkspaceModal();
     }
-  }
-
-  onWorkspaceNameInputChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.newWorkspaceName = target.value;
   }
 
   onWorkspaceNameKeyPress(event: KeyboardEvent) {
@@ -41,38 +44,30 @@ export class CreateWorkspace {
   }
 
   createWorkspace() {
-    console.log('hi');
-    if (this.newWorkspaceName.trim()) {
-      const newWorkspace: Workspace = {
-        id: Date.now(),
-        name: this.newWorkspaceName.trim(),
-        avatar: '/assets/images/zubayer.jpg',
-      };
-
-      // Add to available workspaces
-      this.availableWorkspaces.push(newWorkspace);
-
-      // Switch to the new workspace
-      this.currentWorkspace = newWorkspace;
-
-      // Close the modal
-      this.closeCreateWorkspaceModal();
-
-      console.log('Created new workspace:', newWorkspace.name);
+    this.worskapceNameErr = "";
+    if(this.enteredWorkspaceName == ''){
+      this.worskapceNameErr = "Workspace name required";
+      return;
     }
-  }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const target = event.target as HTMLElement;
+    const newWorkspace: AddWorkspace = {
+      name: this.enteredWorkspaceName.trim(),
+    };
 
-    // Check if create workspace modal should be closed when clicking outside
-    if (this.isCreateWorkspaceModalOpen) {
-      const isClickInsideModal = target.closest('.modal-container');
+    this.workspaceService.createWorkspace(newWorkspace).subscribe({
+      next: (resData) => {
+        this.alterService.success('Success!', 'Workspace created successfully');
 
-      if (!isClickInsideModal) {
+        const savedWorkspace: Workspace = resData.data;
+
+        // Add to available workspaces
+        this.availableWorkspaces.push(savedWorkspace);
+        // Close the modal
         this.closeCreateWorkspaceModal();
+      },
+      error: (err) => {
+        this.alterService.error("Error!", "Failed to create workspace");
       }
-    }
+    });
   }
 }

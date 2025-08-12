@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthHelper } from '../../core/helpers/auth.helper';
 import { AuthService } from '../../core/services/auth.service';
+import { WorkspaceStateService } from '../../core/services/workspace-state.service';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +13,8 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class Login {
   public loginErrorMessage: string = '';
+
+  private workspaceStateService = inject(WorkspaceStateService);
 
   constructor(private authService: AuthService, private router: Router) {
     if (AuthHelper.isAuthenticated()) {
@@ -30,7 +33,11 @@ export class Login {
 
         // Store tokens or user info (you can store just token or a user object)
         AuthHelper.setAuthData(accessToken, refreshToken);
-        AuthHelper.loadWorkspace();
+        // AuthHelper.loadWorkspace();
+        
+        // Use WorkspaceStateService to update workspace name
+        // This will automatically notify all subscribers (like left-sidebar)
+        this.workspaceStateService.updateWorkspaceName(AuthHelper.getJwtPayloads()?.workspaceName?? "");
 
         // Redirect to dashboard or your default route
         this.router.navigate(['/']);

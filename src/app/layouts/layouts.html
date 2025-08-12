@@ -5,14 +5,10 @@
       [isSidebarOpen]="isSidebarOpen"
       [currentWorkspace]="currentWorkspace"
       [availableWorkspaces]="availableWorkspaces"
-      [isWorkspaceDropdownOpen]="isWorkspaceDropdownOpen"
       [isCreateWorkspaceModalOpen]="isCreateWorkspaceModalOpen"
       [newWorkspaceName]="newWorkspaceName"
       (sidebarToggle)="onSidebarToggle()"
       (sidebarClose)="onSidebarClose()"
-      (workspaceDropdownToggle)="onWorkspaceDropdownToggle()"
-      (workspaceDropdownClose)="onWorkspaceDropdownClose()"
-      (workspaceSwitch)="onWorkspaceSwitch($event)"
       (createWorkspaceModalOpen)="onCreateWorkspaceModalOpen()"
       (createWorkspaceModalClose)="onCreateWorkspaceModalClose()"
       (workspaceCreate)="onWorkspaceCreate($event)"
@@ -57,9 +53,7 @@
     <app-create-workspace
       [isCreateWorkspaceModalOpen]="isCreateWorkspaceModalOpen"
       [availableWorkspaces]="availableWorkspaces"
-      [currentWorkspace]="currentWorkspace"
-      [newWorkspaceName]="newWorkspaceName"
-      (closeWorkspaceModal)="closeWorkspaceDropdown()"
+      (closeWorkspaceModal)="closeCreateWorkspaceModal()"
     />
 
     <!-- Create Project Modal -->

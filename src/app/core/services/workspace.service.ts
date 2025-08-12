@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
-import { BaseService } from './base.service';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UpdateWorkspace, Workspace } from '../models/workspace.model';
-import { CreateWorkspace } from '../../workspaces/create-workspace/create-workspace';
+import { AddWorkspace, UpdateWorkspace } from '../models/workspace.model';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +17,11 @@ export class WorkspaceService extends BaseService {
     return this.http.get(`${this.baseUrl}/workspaces`);
   }
 
-  createWorkspace(data: CreateWorkspace): Observable<any> {
+  getAllOtherWorkspaces(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/workspaces/all/others`);
+  }
+
+  createWorkspace(data: AddWorkspace): Observable<any> {
     return this.http.post(`${this.baseUrl}/workspaces`, data);
   }
 

@@ -11,13 +11,17 @@ import {
   Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Project } from '../../core/models/project.model';
 import { Workspace } from '../../core/models/workspace.model';
 import { ProjectService } from '../../core/services/project.service';
 import { WorkspaceStateService } from '../../core/services/workspace-state.service';
 import { AlertService } from '../../core/services/alert.service';
+import { WorkspaceService } from '../../core/services/workspace.service';
+import { AuthService } from '../../core/services/auth.service';
+import { AuthHelper } from '../../core/helpers/auth.helper';
+import { SwitchWorkspaceRequest } from '../../core/models/switch-workspace-request.model';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -29,20 +33,14 @@ import { AlertService } from '../../core/services/alert.service';
 export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   @Input() triggeRrefreshProjectsOfSidebar?: number;
   @Input() isSidebarOpen = false;
-  @Input() currentWorkspace: Workspace = {
-    id: 1,
-    name: "Zubayer's Workspace",
-    avatar: '/assets/images/zubayer.jpg',
-  };
-  @Input() availableWorkspaces: Workspace[] = [];
-  @Input() isWorkspaceDropdownOpen = false;
+  @Input({required: true}) currentWorkspace!: Workspace;
+  @Input({required : true}) availableWorkspaces!: Workspace[];
   @Input() isCreateWorkspaceModalOpen = false;
   @Input() newWorkspaceName = '';
-
+  
   @Output() sidebarToggle = new EventEmitter<void>();
   @Output() sidebarClose = new EventEmitter<void>();
   @Output() workspaceDropdownToggle = new EventEmitter<void>();
-  @Output() workspaceDropdownClose = new EventEmitter<void>();
   @Output() workspaceSwitch = new EventEmitter<Workspace>();
   @Output() createWorkspaceModalOpen = new EventEmitter<void>();
   @Output() createWorkspaceModalClose = new EventEmitter<void>();
@@ -51,7 +49,12 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   @Output() addTaskModalOpen = new EventEmitter<void>();
   @Output() addEventModalOpen = new EventEmitter<void>();
   @Output() addProjectModalOpen = new EventEmitter<void>();
+  
+  isWorkspaceDropdownOpen = false;
 
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private workspaceService = inject(WorkspaceService);
   private projectService = inject(ProjectService);
   private workspaceStateService = inject(WorkspaceStateService);
   private alertService = inject(AlertService);
@@ -140,15 +143,65 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleWorkspaceDropdown() {
-    this.workspaceDropdownToggle.emit();
+    if(this.isWorkspaceDropdownOpen){
+      this.isWorkspaceDropdownOpen = false;
+    } else {
+      this.isWorkspaceDropdownOpen = true;
+    }
   }
 
   closeWorkspaceDropdown() {
-    this.workspaceDropdownClose.emit();
+    this.isWorkspaceDropdownOpen = false;
   }
 
   switchWorkspace(workspace: Workspace) {
-    this.workspaceSwitch.emit(workspace);
+    console.log('%cAttempting to Switching workspace', 'color: green');
+    // Check user is authenticated first
+    if (!AuthHelper.isAuthenticated()) {
+      this.alertService.error('Error!', 'User not authenticated');
+      return;
+    }
+
+    const email: string  = AuthHelper.getJwtPayloads()?.email?? "";
+    if(email == null || email == ''){
+      this.alertService.error('Error!', 'User not authenticated');
+      return;
+    }
+    
+    // create a switch request with user information and workspace id
+    const switchRequest: SwitchWorkspaceRequest = {
+      workspaceId: workspace.id,
+      email: email
+    };
+
+    this.authService.switchWorkspace(switchRequest).subscribe({
+      next: (response) => {
+        this.alertService.success('Success!', 'Switched to workspace: ' + workspace.name);
+
+        const accessToken = response.data.access_token;
+        const refreshToken = response.data.refresh_token;
+
+        // Logout from existing first only from frontend part
+        AuthHelper.clearAuthData();
+
+        // Store tokens or user info (you can store just token or a user object)
+        AuthHelper.setAuthData(accessToken, refreshToken);
+        this.workspaceStateService.updateWorkspaceName(AuthHelper.getJwtPayloads()?.workspaceName?? "");
+        // this.router.navigate(['/']);
+
+        // Reload page completely to reflect new session
+        window.location.reload();
+      }, 
+      error: (err) => {
+        console.log(err);
+        this.alertService.error('Error!', 'Workspace switch failed');
+      }
+    });
+
+    // after get response back, update the session with new credentials
+    // reload the entire page to reflect the change
+    
+    //this.workspaceSwitch.emit(workspace);
   }
 
   onWorkspaceDropdownBackdropClick(event: Event) {

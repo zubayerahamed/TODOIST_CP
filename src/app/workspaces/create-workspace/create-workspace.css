@@ -1,3 +1,6 @@
 /* Component-specific styles for create-workspace component */
 /* This component uses global styles from app.css */
 /* Add any create-workspace specific styles here if needed */
+.workspace-modal{
+    height: auto;
+}
