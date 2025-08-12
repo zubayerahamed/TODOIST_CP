@@ -1,4 +1,3 @@
-<!-- Create Event Modal -->
 <div class="modal-backdrop" *ngIf="isAddEventModalOpen" (click)="onEventModalBackdropClick($event)">
   <div class="modal-container modal-lg d-flex flex-column">
     <div class="modal-header d-flex justify-content-between align-items-center">
@@ -12,69 +11,85 @@
       </button>
     </div>
     <div class="modal-body flex-grow-1">
-      <form>
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+
+        <!-- Date & Time -->
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
               <label for="eventDate" class="form-label">Date *</label>
-              <input type="date" class="form-control" id="eventDate">
+              <input type="date" class="form-control" id="eventDate" formControlName="eventDate">
+              <div *ngIf="eventForm.get('eventDate')?.invalid && eventForm.get('eventDate')?.touched" class="text-danger">
+                Date is required
+              </div>
             </div>
           </div>
           <div class="col-md-3">
             <div class="mb-3">
               <label for="eventStartTime" class="form-label">Start Time *</label>
-              <input type="time" class="form-control" id="eventStartTime">
+              <input type="time" class="form-control" id="eventStartTime" formControlName="startTime">
+              <div *ngIf="eventForm.get('startTime')?.invalid && eventForm.get('startTime')?.touched" class="text-danger">
+                Start time is required
+              </div>
             </div>
           </div>
           <div class="col-md-3">
             <div class="mb-3">
               <label for="eventEndTime" class="form-label">End Time *</label>
-              <input type="time" class="form-control" id="eventEndTime">
+              <input type="time" class="form-control" id="eventEndTime" formControlName="endTime">
+              <div *ngIf="eventForm.get('endTime')?.invalid && eventForm.get('endTime')?.touched" class="text-danger">
+                End time is required
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Title, Project, Category -->
         <div class="row">
           <div class="col-md-4">
             <div class="mb-3">
               <label for="eventTitle" class="form-label">Event Title *</label>
-              <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
+              <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title" formControlName="title">
+              <div *ngIf="eventForm.get('title')?.invalid && eventForm.get('title')?.touched" class="text-danger">
+                Title is required
+              </div>
             </div>
           </div>
           <div class="col-md-4">
             <div class="mb-3">
               <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
-              <select class="form-select" id="eventProject">
+              <select class="form-select" id="eventProject" formControlName="projectId">
                 <option value="">-- Select Project --</option>
-                <option value="office">Office Work</option>
-                <option value="house">House Work</option>
+                <option [value]="1">Office Work</option>
+                <option [value]="2">House Work</option>
               </select>
             </div>
           </div>
           <div class="col-md-4">
             <div class="mb-3">
               <label for="eventCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
-              <select class="form-select" id="eventCategory">
+              <select class="form-select" id="eventCategory" formControlName="categoryId">
                 <option value="">-- Select Category --</option>
-                <option value="Software Development">Software Development</option>
-                <option value="Iterview">Interview</option>
-                <option value="Exam">Exam</option>
+                <option [value]="10">Software Development</option>
+                <option [value]="11">Interview</option>
+                <option [value]="12">Exam</option>
               </select>
             </div>
           </div>
         </div>
 
+        <!-- Description -->
         <div class="mb-3">
           <label for="eventDescription" class="form-label">Description</label>
-          <textarea class="form-control" id="eventDescription" rows="3"
-                    placeholder="Enter event description"></textarea>
+          <textarea class="form-control" id="eventDescription" rows="3" placeholder="Enter event description" formControlName="description"></textarea>
         </div>
 
+        <!-- Location & Reminder -->
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
               <label for="eventLocation" class="form-label"><i class="ph ph-map-pin me-2"></i>Location</label>
-              <input type="text" class="form-control" id="eventLocation" placeholder="Enter location">
+              <input type="text" class="form-control" id="eventLocation" placeholder="Enter location" formControlName="location">
             </div>
           </div>
           <div class="col-md-6">
@@ -82,22 +97,86 @@
               <label for="reminder" class="form-label d-flex align-items-center">
                 <i class="ph ph-bell me-2"></i>Reminder
               </label>
-              <select class="form-select" id="reminder">
-                <option value="">-- Select Reminder --</option>
-                <option value="0">At the time of event</option>
-                <option value="5">5 minute before</option>
-                <option value="10">10 minute before</option>
-                <option value="15">15 minute before</option>
-                <option value="30">30 minute before</option>
-                <option value="60">1 hour before</option>
-                <option value="120">2 hour before</option>
-                <option value="360">6 hour before</option>
-                <option value="720">12 hour before</option>
-                <option value="1440">1 day before</option>
-              </select>
+              <div class="d-flex gap-2 align-items-center">
+                <input type="checkbox" formControlName="isReminderEnabled" id="reminderToggle" />
+                <select class="form-select" id="reminder" formControlName="reminderBefore" [disabled]="!eventForm.get('isReminderEnabled')?.value">
+                  <option value="0">At the time of event</option>
+                  <option value="5">5 minute before</option>
+                  <option value="10">10 minute before</option>
+                  <option value="15">15 minute before</option>
+                  <option value="30">30 minute before</option>
+                  <option value="60">1 hour before</option>
+                  <option value="120">2 hour before</option>
+                  <option value="360">6 hour before</option>
+                  <option value="720">12 hour before</option>
+                  <option value="1440">1 day before</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
+
+                <!-- Divider -->
+        <div class="divider mb-3"></div>
+
+        <!-- File Attachments Section -->
+        <div class="mb-3">
+          <label class="form-label d-flex align-items-center">
+            <i class="ph ph-paperclip me-2"></i>Attachments
+          </label>
+
+          <!-- Attached Files Display -->
+          <div class="attached-files-container" *ngIf="attachedFiles.length > 0">
+            <div *ngFor="let file of attachedFiles" class="attached-file-item">
+              <div class="file-icon">
+                {{ file.icon }}
+              </div>
+              <div class="file-info">
+                <div class="file-name">{{ file.name }}</div>
+                <div class="file-size">{{ formatFileSize(file.size) }}</div>
+              </div>
+              <button type="button" class="file-remove-btn" (click)="removeFile(file.id)">
+                <i class="ph ph-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Add File Button -->
+          <div class="attach-file-section">
+            <input
+                   type="file"
+                   id="fileInput"
+                   class="file-input"
+                   multiple
+                   (change)="onFileSelect($event)"
+                   #fileInput>
+            <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
+                    (click)="fileInput.click()">
+              <i class="ph ph-plus me-1"></i><span>Attach file</span>
+            </button>
+          </div>
+        </div>
+
+
+<div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid || submitting">
+            <i class="ph ph-calendar-plus me-2"></i>
+            <span *ngIf="!submitting">Create Event</span>
+            <span *ngIf="submitting">Creating...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
         <div class="mb-3">
           <label class="form-label"><i class="ph ph-users-three me-2"></i>Participants</label>
@@ -238,55 +317,5 @@
 
         </div>
 
-        <!-- Divider -->
-        <div class="divider mb-3"></div>
 
-        <!-- File Attachments Section -->
-        <div class="mb-3">
-          <label class="form-label d-flex align-items-center">
-            <i class="ph ph-paperclip me-2"></i>Attachments
-          </label>
 
-          <!-- Attached Files Display -->
-          <div class="attached-files-container" *ngIf="attachedFiles.length > 0">
-            <div *ngFor="let file of attachedFiles" class="attached-file-item">
-              <div class="file-icon">
-                {{ file.icon }}
-              </div>
-              <div class="file-info">
-                <div class="file-name">{{ file.name }}</div>
-                <div class="file-size">{{ formatFileSize(file.size) }}</div>
-              </div>
-              <button type="button" class="file-remove-btn" (click)="removeFile(file.id)">
-                <i class="ph ph-trash"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Add File Button -->
-          <div class="attach-file-section">
-            <input
-                   type="file"
-                   id="fileInput"
-                   class="file-input"
-                   multiple
-                   (change)="onFileSelect($event)"
-                   #fileInput>
-            <button
-                    type="button"
-                    class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
-                    (click)="fileInput.click()">
-              <i class="ph ph-plus me-1"></i><span>Attach file</span>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
-      <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
-        <i class="ph ph-calendar-plus me-2"></i><span>Create Event</span>
-      </button>
-    </div>
-  </div>
-</div>

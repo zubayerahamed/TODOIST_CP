@@ -1,19 +1,115 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Participant } from '../../core/models/participant.model';
 import { ChecklistItem } from '../../core/models/checklist-item.model';
 import { AttachedFile } from '../../core/models/attached-file.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
+interface EventRequest {
+  title: string;
+  description?: string | null;
+  projectId?: number | null;
+  categoryId?: number | null;
+  eventDate: string; // yyyy-MM-dd
+  startTime: string; // HH:mm
+  endTime: string;   // HH:mm
+  location?: string | null;
+  isReminderEnabled: boolean;
+  reminderBefore: number;
+  documents?: number[] ;
+}
 @Component({
   selector: 'app-create-event',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './create-event.html',
   styleUrl: './create-event.css',
 })
-export class CreateEvent {
-  @Input({required : true}) isAddEventModalOpen!: boolean;
+export class CreateEvent implements OnInit {
+
+  @Input() isAddEventModalOpen = false;
+  @Output() closed = new EventEmitter<void>();
+  @Output() created = new EventEmitter<any>();
+  // @Input({required : true}) isAddEventModalOpen!: boolean;
   @Output() isAddEventModalClose = new EventEmitter<void>();
+
+  eventForm!: FormGroup;
+  submitting = false;
+
+    constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private host: ElementRef<HTMLElement>
+  ) {}
+
+  ngOnInit(): void {
+    this.eventForm = this.fb.group({
+      eventDate: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      title: ['', Validators.required],
+      projectId: [null],
+      categoryId: [null],
+      description: [''],
+      location: [''],
+      isReminderEnabled: [false],
+      reminderBefore: [0]
+    });
+  }
+
+    closeAddEventModal() {
+    this.isAddEventModalOpen = false;
+    this.closed.emit();
+  }
+
+  onEventModalBackdropClick(e: MouseEvent) {
+    if (e.target === this.host.nativeElement.querySelector('.modal-backdrop')) {
+      this.closeAddEventModal();
+    }
+  }
+
+
+  private formToPayload(): EventRequest {
+    const v = this.eventForm.value;
+    return {
+      title: v.title,
+      description: v.description || null,
+      projectId: v.projectId ? Number(v.projectId) : null,
+      categoryId: v.categoryId ? Number(v.categoryId) : null,
+      eventDate: v.eventDate,
+      startTime: v.startTime || '00:00',
+      endTime: v.endTime || '23:59',
+      location: v.location || null,
+      isReminderEnabled: !!v.isReminderEnabled,
+      reminderBefore: v.reminderBefore == null ? 0 : Number(v.reminderBefore),
+      documents: this.attachedFiles
+  .filter(f => f.docId !== undefined)
+  .map(f => f.docId!)
+
+    };
+  }
+
+  onSubmit() {
+    if (this.eventForm.invalid) {
+      this.eventForm.markAllAsTouched();
+      return;
+    }
+
+    this.submitting = true;
+    const payload = this.formToPayload();
+
+    this.http.post('http://localhost:8081/api/v1/events', payload).subscribe({
+      next: (res) => {
+        this.submitting = false;
+        this.created.emit(res);
+        this.closeAddEventModal();
+      },
+      error: (err) => {
+        this.submitting = false;
+        console.error('Create event failed', err);
+      }
+    });
+  }
 
   allParticipants: Participant[] = [
     {
@@ -93,18 +189,7 @@ export class CreateEvent {
     );
   }
 
-  closeAddEventModal() {
-    this.isAddEventModalOpen = false;
-    this.isParticipantSearchOpen = false;
-    this.participantSearchQuery = '';
-    this.isAddEventModalClose.emit();
-  }
 
-  onEventModalBackdropClick(event: Event) {
-    if (event.target === event.currentTarget) {
-      this.closeAddEventModal();
-    }
-  }
 
   openParticipantSearch() {
     this.isParticipantSearchOpen = true;
@@ -206,26 +291,61 @@ export class CreateEvent {
     this.attachedFiles = this.attachedFiles.filter((f) => f.id !== fileId);
   }
 
-  onFileSelect(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
+onFileSelect(event: Event) {
+  const target = event.target as HTMLInputElement;
+  const files = target.files;
 
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const attachedFile: AttachedFile = {
-          id: Date.now() + i,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          icon: this.getFileIcon(file.name, file.type),
-        };
-        this.attachedFiles.push(attachedFile);
-      }
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Create a temporary attachedFile entry with a temporary id
+      const tempId = Date.now() + i;
+      const attachedFile: AttachedFile = {
+        id: tempId,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        icon: this.getFileIcon(file.name, file.type),
+      };
+      this.attachedFiles.push(attachedFile);
+
+      // Upload file to backend and update attachedFile with real docId
+      this.uploadFile(file).subscribe({
+  next: (response: any) => {
+    // Extract document id from the response
+    const docId = response?.data?.id;
+
+    if (!docId) {
+      alert(`Failed to get document ID from upload response for file: ${file.name}`);
+      this.attachedFiles = this.attachedFiles.filter(f => f.id !== tempId);
+      return;
     }
 
-    target.value = '';
+    const fileToUpdate = this.attachedFiles.find(f => f.id === tempId);
+    if (fileToUpdate) {
+      fileToUpdate.docId = docId;
+    }
+  },
+        error: () => {
+          alert(`Failed to upload file: ${file.name}`);
+          // Remove file from attachedFiles on failure
+          this.attachedFiles = this.attachedFiles.filter(f => f.id !== tempId);
+        }
+      });
+    }
   }
+
+  target.value = '';
+}
+
+uploadFile(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  // Adjust URL to your backend file upload endpoint
+  return this.http.post<number>('http://localhost:8081/api/v1/documents/upload', formData);
+}
+
 
   getFileIcon(fileName: string, fileType: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase();
