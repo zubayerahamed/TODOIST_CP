@@ -3,7 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseService } from './base.service';
 
+export interface EventParticipant {
+  id: number;
+  name: string;
+  avatarUrl: string;
+}
+
 export interface EventRequest {
+  id?: number;
   title: string;
   description?: string | null;
   projectId?: number | null;
@@ -14,8 +21,10 @@ export interface EventRequest {
   location?: string | null;
   isReminderEnabled: boolean;
   reminderBefore: number;
+  isReminderSent?: boolean;  // optional
+  isCompleted?: boolean;       // needed for template
   documents?: number[];
-  perticipants: number[];
+  perticipants?: EventParticipant[];
 }
 
 @Injectable({
@@ -28,6 +37,9 @@ export class EventService extends BaseService {
 
   getAllEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}/events`);
+  }
+    getAllByProject(projectId: number): Observable<EventRequest[]> {
+    return this.http.get<EventRequest[]>(`${this.baseUrl}/events/all/${projectId}`);
   }
 
   createEvent(payload: EventRequest): Observable<any> {
