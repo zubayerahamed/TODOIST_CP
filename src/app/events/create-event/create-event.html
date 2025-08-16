@@ -1,22 +1,20 @@
-<div
-  class="modal-backdrop"
-  *ngIf="isAddEventModalOpen"
-  (click)="onEventModalBackdropClick($event)"
->
-  <div class="modal-container modal-lg d-flex flex-column">
-    <div class="modal-header d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <i class="ph ph-calendar-plus me-2 fs-4"></i>
-        <h4 class="modal-title">Create New Event</h4>
-      </div>
-      <button
-        type="button"
-        class="btn-close d-flex align-items-center justify-content-center"
-        (click)="closeAddEventModal()"
-      >
-        <i class="ph ph-x fs-4"></i>
-      </button>
-    </div>
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show"
+     *ngIf="isAddEventModalOpen"
+     (click)="closeAddEventModal()"></div>
+
+<!-- Keep this modal structure but remove any Bootstrap JS attributes -->
+<div #addEventModal
+     class="modal fade"
+     [class.show]="isAddEventModalOpen"
+     [style.display]="isAddEventModalOpen ? 'block' : 'none'"
+     tabindex="-1"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitle">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      
     <div class="modal-body flex-grow-1">
       <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
         <!-- Date & Time -->
@@ -427,15 +425,16 @@
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="eventForm.invalid || submitting"
-          >
-            <i class="ph ph-calendar-plus me-2"></i>
-            <span *ngIf="!submitting">Create Event</span>
-            <span *ngIf="submitting">Creating...</span>
-          </button>
+          <button type="submit" class="btn btn-primary"
+        [disabled]="eventForm.invalid || submitting">
+  <span *ngIf="!submitting">
+    <i class="ph ph-calendar-plus me-1"></i> Create Event
+  </span>
+  <span *ngIf="submitting" class="d-flex align-items-center">
+    <span class="spinner-border spinner-border-sm me-2"></span>
+    Creating...
+  </span>
+</button>
         </div>
       </form>
     </div>

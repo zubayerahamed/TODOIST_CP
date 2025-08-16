@@ -1,11 +1,22 @@
-
-
-import { Toast } from 'bootstrap';
-
-
-import { Component, ElementRef,  EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import * as bootstrap from 'bootstrap';
+import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 
@@ -20,8 +31,9 @@ import { ChecklistItem } from '../../core/models/checklist-item.model';
 
 // Constants
 import { FILE_ICON_MAPPING } from '../../core/constants/file-icons.const';
-
-
+import { Project } from '../../core/models/project.model';
+import { ProjectService } from '../../core/services/project.service';
+import { CanDeactivate, NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-event',
@@ -30,23 +42,24 @@ import { FILE_ICON_MAPPING } from '../../core/constants/file-icons.const';
   templateUrl: './create-event.html',
   styleUrls: ['./create-event.css'],
 })
-
 export class CreateEvent implements OnInit {
+
   // Input/Output properties
-  @Input() isAddEventModalOpen = false;
+  @Input() isAddEventModalOpen = true;
   @Output() closed = new EventEmitter<void>();
   @Output() created = new EventEmitter<any>();
 
   // View children
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild('successToast') successToast!: ElementRef;
-
+  @ViewChild('addEventModal') addEventModal!: ElementRef;
 
   // Form properties
   eventForm!: FormGroup;
   submitting = false;
 
   // Data properties
+  projects: Project[] = [];
   attachedFiles: AttachedFile[] = [];
   allParticipants: Participant[] = [
     {
@@ -98,7 +111,7 @@ export class CreateEvent implements OnInit {
       avatar: '/assets/images/zubayer.jpg',
     },
   ];
-    selectedParticipants: Participant[] = [
+  selectedParticipants: Participant[] = [
     {
       id: 1,
       name: 'John Doe',
@@ -113,21 +126,52 @@ export class CreateEvent implements OnInit {
     },
   ];
 
-    // UI state properties
+  // UI state properties
   isParticipantSearchOpen = false;
   participantSearchQuery = '';
   checklistItems: ChecklistItem[] = [];
   newChecklistItem = '';
 
   constructor(
+    private router: Router,
     private fb: FormBuilder,
     private http: HttpClient,
     private eventService: EventService,
+    private projectService: ProjectService,
     private host: ElementRef<HTMLElement>
-  ) {}
+  ) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.handleRouteChange(event.url);
+      }
+    });
+  }
+
+    private handleRouteChange(newUrl: string) {
+    console.log('Route changing to:', newUrl);
+    if (this.isAddEventModalOpen) {
+      if (this.eventForm.dirty) {
+        if (!confirm('You have unsaved changes. Leave page?')) {
+          this.router.navigateByUrl(this.router.url); // Cancel navigation
+          return;
+        }
+      }
+      // Only close if user confirms or form is pristine
+      this.closeAddEventModal();
+    }
+  }
+
+    @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(event: Event) {
+    if (this.isAddEventModalOpen && this.eventForm.dirty) {
+      event.preventDefault();
+      event.returnValue = false;
+    }
+  }
 
   ngOnInit(): void {
     this.initializeForm();
+    this.getAllProjects();
   }
 
   private initializeForm(): void {
@@ -142,26 +186,80 @@ export class CreateEvent implements OnInit {
       location: ['', Validators.maxLength(100)],
       isReminderEnabled: [false],
       reminderBefore: [0, [Validators.min(0), Validators.max(1440)]],
-      participants: [[]]
+      participants: [[]],
     });
   }
 
   /**
    * Closes the add event modal and resets the form
    */
-  closeAddEventModal() {
-    this.isAddEventModalOpen = false;
-    this.closed.emit();
+// Replace your current open/close methods with these:
+
+  openAddEventModal() {
+    console.log('Opening modal - current URL:', this.router.url);
+    this.isAddEventModalOpen = true;
+    document.body.classList.add('modal-open');
+    this.initializeForm();
+
+  setTimeout(() => {
+    console.log('After timeout - DOM should be updated:', {
+      isOpen: this.isAddEventModalOpen,
+      modalDisplay: this.addEventModal?.nativeElement?.style.display,
+      modalVisibility: window.getComputedStyle(this.addEventModal?.nativeElement).visibility
+    });
+    this.focusFirstInput();
+  });
   }
 
-  /**
-   * Handles backdrop click to close modal
-   */
-  onEventModalBackdropClick(event: MouseEvent): void {
-    if (event.target === this.host.nativeElement.querySelector('.modal-backdrop')) {
-      this.closeAddEventModal();
-    }
+closeAddEventModal() {
+  console.group('Closing Modal');
+  console.log('Current modal state before closing:', {
+    isOpen: this.isAddEventModalOpen,
+    bodyClass: document.body.classList.contains('modal-open')
+  });
+
+  this.isAddEventModalOpen = false;
+  document.body.classList.remove('modal-open');
+  this.closed.emit();
+
+  setTimeout(() => {
+    console.log('After close - verify state:', {
+      isOpen: this.isAddEventModalOpen,
+      bodyClass: document.body.classList.contains('modal-open')
+    });
+  });
+
+  console.groupEnd();
+}
+
+// Add this method to check modal DOM state
+checkModalDOM() {
+  if (!this.addEventModal?.nativeElement) {
+    console.error('Modal element not found in DOM');
+    return;
   }
+
+  const styles = window.getComputedStyle(this.addEventModal.nativeElement);
+  console.log('Modal DOM state:', {
+    display: styles.display,
+    visibility: styles.visibility,
+    opacity: styles.opacity,
+    zIndex: styles.zIndex
+  });
+
+  const backdrop = document.querySelector('.modal-backdrop');
+  console.log('Backdrop state:', {
+    exists: !!backdrop,
+    styles: backdrop ? window.getComputedStyle(backdrop) : null
+  });
+}
+
+private focusFirstInput() {
+  const firstInput = this.addEventModal?.nativeElement?.querySelector('input');
+  if (firstInput) {
+    firstInput.focus();
+  }
+}
 
   private formToPayload(): EventRequest {
     const v = this.eventForm.value;
@@ -177,14 +275,18 @@ export class CreateEvent implements OnInit {
       isReminderEnabled: !!v.isReminderEnabled,
       reminderBefore: v.reminderBefore == null ? 0 : Number(v.reminderBefore),
       perticipants: this.eventForm.value.perticipants || [],
-      documents: this.attachedFiles.filter((f) => f.docId !== undefined).map((f) => f.docId!),
+      documents: this.attachedFiles
+        .filter((f) => f.docId !== undefined)
+        .map((f) => f.docId!),
     };
   }
 
-/**
+  /**
    * Handles form submission
    */
   onSubmit(): void {
+      console.log('Before submit');
+  this.checkModalDOM();
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       return;
@@ -193,22 +295,20 @@ export class CreateEvent implements OnInit {
     this.submitting = true;
     const payload = this.formToPayload();
 
-    this.eventService.createEvent(payload)
-      .pipe(
-        finalize(() => this.submitting = false)
-      )
+    this.eventService
+      .createEvent(payload)
+      .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: (response) => this.handleSuccess(response),
-        error: (error) => this.handleError(error)
+        error: (error) => this.handleError(error),
       });
   }
 
-    /**
+  /**
    * Handles successful event creation
    * @param response - API response
    */
   private handleSuccess(response: any): void {
-    this.showSuccessToast(response.message);
     this.created.emit(response);
     this.closeAddEventModal();
   }
@@ -221,24 +321,6 @@ export class CreateEvent implements OnInit {
     console.error('Create event failed', error);
     // Implement proper error handling (e.g., show error toast)
   }
-
-  /**
-   * Displays success toast message
-   * @param message - Message to display
-   */
-  private showSuccessToast(message: string): void {
-    if (this.successToast) {
-      const toastElement = this.successToast.nativeElement;
-      const toastBody = toastElement.querySelector('.toast-body');
-
-      if (toastBody) {
-        toastBody.textContent = message;
-        const toast = new Toast(toastElement);
-        toast.show();
-      }
-    }
-  }
-
 
   // Participant management methods
 
@@ -273,18 +355,21 @@ export class CreateEvent implements OnInit {
   get filteredParticipants(): Participant[] {
     if (!this.participantSearchQuery.trim()) {
       return this.allParticipants.filter(
-        participant => !this.selectedParticipants.some(
-          selected => selected.id === participant.id
-        )
+        (participant) =>
+          !this.selectedParticipants.some(
+            (selected) => selected.id === participant.id
+          )
       );
     }
 
     const query = this.participantSearchQuery.toLowerCase();
     return this.allParticipants.filter(
-      participant =>
-        !this.selectedParticipants.some(selected => selected.id === participant.id) &&
+      (participant) =>
+        !this.selectedParticipants.some(
+          (selected) => selected.id === participant.id
+        ) &&
         (participant.name.toLowerCase().includes(query) ||
-         participant.email.toLowerCase().includes(query))
+          participant.email.toLowerCase().includes(query))
     );
   }
 
@@ -293,7 +378,7 @@ export class CreateEvent implements OnInit {
    * @param participant - Participant to add
    */
   addParticipant(participant: Participant): void {
-    if (!this.selectedParticipants.some(p => p.id === participant.id)) {
+    if (!this.selectedParticipants.some((p) => p.id === participant.id)) {
       this.selectedParticipants.push(participant);
     }
     this.closeParticipantSearch();
@@ -305,16 +390,16 @@ export class CreateEvent implements OnInit {
    */
   removeParticipant(participantId: number): void {
     this.selectedParticipants = this.selectedParticipants.filter(
-      participant => participant.id !== participantId
+      (participant) => participant.id !== participantId
     );
   }
-// Checklist management methods
+  // Checklist management methods
 
   /**
    * Gets count of completed checklist items
    */
   get completedChecklistCount(): number {
-    return this.checklistItems.filter(item => item.completed).length;
+    return this.checklistItems.filter((item) => item.completed).length;
   }
 
   /**
@@ -366,7 +451,7 @@ export class CreateEvent implements OnInit {
    * @param itemId - ID of item to toggle
    */
   toggleChecklistItem(itemId: number): void {
-    const item = this.checklistItems.find(item => item.id === itemId);
+    const item = this.checklistItems.find((item) => item.id === itemId);
     if (item) {
       item.completed = !item.completed;
     }
@@ -378,7 +463,7 @@ export class CreateEvent implements OnInit {
    */
   removeChecklistItem(itemId: number): void {
     this.checklistItems = this.checklistItems.filter(
-      item => item.id !== itemId
+      (item) => item.id !== itemId
     );
   }
 
@@ -389,20 +474,22 @@ export class CreateEvent implements OnInit {
    * @param bytes - File size in bytes
    * @returns Formatted file size string
    */
-formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-}
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+  }
 
   /**
    * Removes file from attached files list
    * @param fileId - ID of file to remove
    */
   removeFile(fileId: number): void {
-    this.attachedFiles = this.attachedFiles.filter(file => file.id !== fileId);
+    this.attachedFiles = this.attachedFiles.filter(
+      (file) => file.id !== fileId
+    );
   }
 
   /**
@@ -434,14 +521,14 @@ formatFileSize(bytes: number): string {
       name: file.name,
       type: file.type,
       size: file.size,
-      icon: this.getFileIcon(file)
+      icon: this.getFileIcon(file),
     };
 
     this.attachedFiles.push(attachedFile);
 
     this.uploadFile(file).subscribe({
       next: (response) => this.handleFileUploadSuccess(response, tempId),
-      error: () => this.handleFileUploadError(file.name, tempId)
+      error: () => this.handleFileUploadError(file.name, tempId),
     });
   }
 
@@ -455,11 +542,13 @@ formatFileSize(bytes: number): string {
 
     if (!docId) {
       console.error('Failed to get document ID from upload response');
-      this.attachedFiles = this.attachedFiles.filter(file => file.id !== tempId);
+      this.attachedFiles = this.attachedFiles.filter(
+        (file) => file.id !== tempId
+      );
       return;
     }
 
-    const fileToUpdate = this.attachedFiles.find(file => file.id === tempId);
+    const fileToUpdate = this.attachedFiles.find((file) => file.id === tempId);
     if (fileToUpdate) {
       fileToUpdate.docId = docId;
     }
@@ -472,7 +561,9 @@ formatFileSize(bytes: number): string {
    */
   private handleFileUploadError(fileName: string, tempId: number): void {
     console.error(`Failed to upload file: ${fileName}`);
-    this.attachedFiles = this.attachedFiles.filter(file => file.id !== tempId);
+    this.attachedFiles = this.attachedFiles.filter(
+      (file) => file.id !== tempId
+    );
   }
 
   /**
@@ -483,7 +574,24 @@ formatFileSize(bytes: number): string {
   private uploadFile(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post('http://localhost:8081/api/v1/documents/upload', formData);
+    return this.http.post(
+      'http://localhost:8081/api/v1/documents/upload',
+      formData
+    );
+  }
+
+  /**
+   * Gets all projects from the server
+   */
+  getAllProjects(): void {
+    this.projectService.getAllProjects().subscribe({
+      next: (response) => {
+        this.projects = response.data || [];
+      },
+      error: (error) => {
+        console.error('Failed to fetch projects', error);
+      },
+    });
   }
 
   /**
@@ -491,21 +599,21 @@ formatFileSize(bytes: number): string {
    * @param file - File object
    * @returns Icon string
    */
- private getFileIcon(file: File): string {
-  const extension = file.name.split('.').pop()?.toLowerCase() || '';
-  const fileType = file.type.split('/')[0];
+  private getFileIcon(file: File): string {
+    const extension = file.name.split('.').pop()?.toLowerCase() || '';
+    const fileType = file.type.split('/')[0];
 
-  // First try to match by extension
-  if (FILE_ICON_MAPPING[extension]) {
-    return FILE_ICON_MAPPING[extension];
+    // First try to match by extension
+    if (FILE_ICON_MAPPING[extension]) {
+      return FILE_ICON_MAPPING[extension];
+    }
+
+    // Then try to match by file type (like 'image', 'audio', etc.)
+    if (FILE_ICON_MAPPING[fileType]) {
+      return FILE_ICON_MAPPING[fileType];
+    }
+
+    // Fallback to generic file icon
+    return 'FILE';
   }
-
-  // Then try to match by file type (like 'image', 'audio', etc.)
-  if (FILE_ICON_MAPPING[fileType]) {
-    return FILE_ICON_MAPPING[fileType];
-  }
-
-  // Fallback to generic file icon
-  return 'FILE';
-}
 }
