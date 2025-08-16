@@ -1,5 +1,5 @@
-import * as bootstrap from 'bootstrap';
-import { AfterViewInit, HostListener, OnDestroy } from '@angular/core';
+
+import {HostListener } from '@angular/core';
 import {
   Component,
   ElementRef,
@@ -34,6 +34,8 @@ import { FILE_ICON_MAPPING } from '../../core/constants/file-icons.const';
 import { Project } from '../../core/models/project.model';
 import { ProjectService } from '../../core/services/project.service';
 import { CanDeactivate, NavigationStart, Router } from '@angular/router';
+import { Category } from '../../core/models/category,model';
+import { CategoryService } from '../../core/services/category.service';
 
 @Component({
   selector: 'app-create-event',
@@ -44,10 +46,8 @@ import { CanDeactivate, NavigationStart, Router } from '@angular/router';
 })
 export class CreateEvent implements OnInit {
 
-  // Input/Output properties
-  @Input() isAddEventModalOpen = true;
-  @Output() closed = new EventEmitter<void>();
-  @Output() created = new EventEmitter<any>();
+    @Input({required : true}) isAddEventModalOpen!: boolean;
+  @Output() isAddEventModalClose = new EventEmitter<void>();
 
   // View children
   @ViewChild('fileInput') fileInput!: ElementRef;
@@ -57,9 +57,15 @@ export class CreateEvent implements OnInit {
   // Form properties
   eventForm!: FormGroup;
   submitting = false;
+    displayTime: string = '12:00';
+  hourAngle: number = 0;
+  minuteAngle: number = 0;
+
+  globalErrorMessages: string[] = [];
 
   // Data properties
   projects: Project[] = [];
+  categories: Category[] = [];
   attachedFiles: AttachedFile[] = [];
   allParticipants: Participant[] = [
     {
@@ -126,6 +132,62 @@ export class CreateEvent implements OnInit {
     },
   ];
 
+
+  today: string = new Date().toISOString().split('T')[0];
+
+    handleClockClick(event: MouseEvent) {
+    const clock = event.currentTarget as HTMLElement;
+    const rect = clock.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const clickX = event.clientX - centerX;
+    const clickY = event.clientY - centerY;
+
+    // Calculate angle (0° at top, increasing clockwise)
+    let angle = Math.atan2(clickY, clickX) * 180 / Math.PI + 90;
+    if (angle < 0) angle += 360;
+
+    // Determine if click is closer to hour or minute
+    const distance = Math.sqrt(clickX * clickX + clickY * clickY);
+    const isHour = distance < rect.width / 3;
+
+    if (isHour) {
+      this.hourAngle = Math.round(angle / 30) * 30;
+      this.updateDisplayTime();
+    } else {
+      this.minuteAngle = Math.round(angle / 6) * 6;
+      this.updateDisplayTime();
+    }
+  }
+
+  updateDisplayTime() {
+    const hours = Math.floor(this.hourAngle / 30) || 12;
+    const minutes = Math.floor(this.minuteAngle / 6);
+    this.displayTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+    // Update the form control
+    this.eventForm.get('startTime')?.setValue(this.displayTime);
+  }
+
+  onTimeInputChange() {
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
+    if (timeRegex.test(this.displayTime)) {
+      this.updateClockAngles(this.displayTime);
+    } else {
+      // Reset to previous valid time if input is invalid
+      this.displayTime = this.eventForm.get('startTime')?.value || '12:00';
+    }
+  }
+
+  updateClockAngles(time: string) {
+    const [hours, minutes] = time.split(':').map(Number);
+    this.hourAngle = (hours % 12) * 30 + (minutes / 60) * 30;
+    this.minuteAngle = minutes * 6;
+    this.displayTime = time;
+    this.eventForm.get('startTime')?.setValue(time);
+  }
+
+
   // UI state properties
   isParticipantSearchOpen = false;
   participantSearchQuery = '';
@@ -138,36 +200,10 @@ export class CreateEvent implements OnInit {
     private http: HttpClient,
     private eventService: EventService,
     private projectService: ProjectService,
-    private host: ElementRef<HTMLElement>
-  ) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.handleRouteChange(event.url);
-      }
-    });
-  }
+    private catagoryService: CategoryService,
+    private host: ElementRef<HTMLElement>,
+  ) {}
 
-    private handleRouteChange(newUrl: string) {
-    console.log('Route changing to:', newUrl);
-    if (this.isAddEventModalOpen) {
-      if (this.eventForm.dirty) {
-        if (!confirm('You have unsaved changes. Leave page?')) {
-          this.router.navigateByUrl(this.router.url); // Cancel navigation
-          return;
-        }
-      }
-      // Only close if user confirms or form is pristine
-      this.closeAddEventModal();
-    }
-  }
-
-    @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHandler(event: Event) {
-    if (this.isAddEventModalOpen && this.eventForm.dirty) {
-      event.preventDefault();
-      event.returnValue = false;
-    }
-  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -176,7 +212,7 @@ export class CreateEvent implements OnInit {
 
   private initializeForm(): void {
     this.eventForm = this.fb.group({
-      eventDate: ['', Validators.required],
+      eventDate: [this.today],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       title: ['', [Validators.required, Validators.maxLength(100)]],
@@ -195,71 +231,18 @@ export class CreateEvent implements OnInit {
    */
 // Replace your current open/close methods with these:
 
-  openAddEventModal() {
-    console.log('Opening modal - current URL:', this.router.url);
-    this.isAddEventModalOpen = true;
-    document.body.classList.add('modal-open');
-    this.initializeForm();
-
-  setTimeout(() => {
-    console.log('After timeout - DOM should be updated:', {
-      isOpen: this.isAddEventModalOpen,
-      modalDisplay: this.addEventModal?.nativeElement?.style.display,
-      modalVisibility: window.getComputedStyle(this.addEventModal?.nativeElement).visibility
-    });
-    this.focusFirstInput();
-  });
+  closeAddEventModal() {
+    this.isAddEventModalOpen = false;
+    this.isParticipantSearchOpen = false;
+    this.participantSearchQuery = '';
+    this.isAddEventModalClose.emit();
   }
 
-closeAddEventModal() {
-  console.group('Closing Modal');
-  console.log('Current modal state before closing:', {
-    isOpen: this.isAddEventModalOpen,
-    bodyClass: document.body.classList.contains('modal-open')
-  });
-
-  this.isAddEventModalOpen = false;
-  document.body.classList.remove('modal-open');
-  this.closed.emit();
-
-  setTimeout(() => {
-    console.log('After close - verify state:', {
-      isOpen: this.isAddEventModalOpen,
-      bodyClass: document.body.classList.contains('modal-open')
-    });
-  });
-
-  console.groupEnd();
-}
-
-// Add this method to check modal DOM state
-checkModalDOM() {
-  if (!this.addEventModal?.nativeElement) {
-    console.error('Modal element not found in DOM');
-    return;
+  onEventModalBackdropClick(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.closeAddEventModal();
+    }
   }
-
-  const styles = window.getComputedStyle(this.addEventModal.nativeElement);
-  console.log('Modal DOM state:', {
-    display: styles.display,
-    visibility: styles.visibility,
-    opacity: styles.opacity,
-    zIndex: styles.zIndex
-  });
-
-  const backdrop = document.querySelector('.modal-backdrop');
-  console.log('Backdrop state:', {
-    exists: !!backdrop,
-    styles: backdrop ? window.getComputedStyle(backdrop) : null
-  });
-}
-
-private focusFirstInput() {
-  const firstInput = this.addEventModal?.nativeElement?.querySelector('input');
-  if (firstInput) {
-    firstInput.focus();
-  }
-}
 
   private formToPayload(): EventRequest {
     const v = this.eventForm.value;
@@ -285,12 +268,7 @@ private focusFirstInput() {
    * Handles form submission
    */
   onSubmit(): void {
-      console.log('Before submit');
-  this.checkModalDOM();
-    if (this.eventForm.invalid) {
-      this.eventForm.markAllAsTouched();
-      return;
-    }
+
 
     this.submitting = true;
     const payload = this.formToPayload();
@@ -309,7 +287,6 @@ private focusFirstInput() {
    * @param response - API response
    */
   private handleSuccess(response: any): void {
-    this.created.emit(response);
     this.closeAddEventModal();
   }
 
@@ -317,10 +294,32 @@ private focusFirstInput() {
    * Handles creation error
    * @param error - Error object
    */
-  private handleError(error: any): void {
+private handleError(error: any): void {
     console.error('Create event failed', error);
-    // Implement proper error handling (e.g., show error toast)
+
+    this.globalErrorMessages = []; // reset before setting new ones
+
+    // ✅ Handle field errors
+    if (error.error?.fieldErrors) {
+      const fieldErrors = error.error.fieldErrors;
+
+      Object.keys(fieldErrors).forEach((field) => {
+        const control = this.eventForm.get(field);
+        if (control) {
+          control.setErrors({ serverError: fieldErrors[field] });
+          control.markAsTouched();
+        }
+      });
+    }
+
+    // ✅ Handle global errors
+    if (error.error?.globalErrors) {
+      this.globalErrorMessages = Object.values(error.error.globalErrors);
+    } else if (error.error?.message) {
+      this.globalErrorMessages = [error.error.message];
+    }
   }
+
 
   // Participant management methods
 
@@ -590,6 +589,17 @@ private focusFirstInput() {
       },
       error: (error) => {
         console.error('Failed to fetch projects', error);
+      },
+    });
+  }
+
+  getAllCategories(): void {
+    this.catagoryService.getAllWorkspaceCategories().subscribe({
+      next: (response) => {
+        this.categories = response.data || [];
+      },
+      error: (error) => {
+        console.error('Failed to fetch categories', error);
       },
     });
   }

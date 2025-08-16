@@ -1,442 +1,290 @@
 <!-- Modal Backdrop -->
-<div class="modal-backdrop fade show"
-     *ngIf="isAddEventModalOpen"
-     (click)="closeAddEventModal()"></div>
+<div class="modal-backdrop fade show" *ngIf="isAddEventModalOpen" (click)="closeAddEventModal()"></div>
 
 <!-- Keep this modal structure but remove any Bootstrap JS attributes -->
-<div #addEventModal
-     class="modal fade"
-     [class.show]="isAddEventModalOpen"
-     [style.display]="isAddEventModalOpen ? 'block' : 'none'"
-     tabindex="-1"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="modalTitle">
+<div #addEventModal class="modal fade" [class.show]="isAddEventModalOpen"
+  [style.display]="isAddEventModalOpen ? 'block' : 'none'" tabindex="-1" role="dialog" aria-modal="true"
+  aria-labelledby="modalTitle">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content" (click)="$event.stopPropagation()">
-      
-    <div class="modal-body flex-grow-1">
-      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-        <!-- Date & Time -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="eventDate" class="form-label">Date *</label>
-              <input
-                type="date"
-                class="form-control"
-                id="eventDate"
-                formControlName="eventDate"
-              />
-              <div
-                *ngIf="eventForm.get('eventDate')?.invalid && eventForm.get('eventDate')?.touched"
-                class="text-danger"
-              >
-                Date is required
+      <div class="modal-body flex-grow-1">
+        <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+          <!-- Date & Time -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="eventDate" class="form-label">Date *</label>
+                <input type="date" class="form-control" id="eventDate" formControlName="eventDate" [min]="today" />
+                <div *ngIf="eventForm.get('eventDate')?.errors as errors" class="text-danger">
+                  <div *ngIf="errors['required']">Date is required</div>
+                  <div *ngIf="errors['serverError']">
+                    {{ errors['serverError'] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label for="eventStartTime" class="form-label">Start Time *</label>
+                <input type="time" class="form-control" id="eventStartTime" formControlName="startTime" />
+                <div *ngIf="eventForm.get('startTime')?.errors as errors" class="text-danger">
+                  <div *ngIf="errors['required'] && eventForm.get('startTime')?.touched">
+                    Start time is required
+                  </div>
+                  <div *ngIf="errors['serverError']">
+                    {{ errors['serverError'] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label for="eventEndTime" class="form-label">End Time *</label>
+                <input type="time" class="form-control" id="eventEndTime" formControlName="endTime" />
+                <div *ngIf="eventForm.get('endTime')?.errors as errors" class="text-danger">
+                  <div *ngIf="errors['required'] && eventForm.get('endTime')?.touched">
+                    End time is required
+                  </div>
+                  <div *ngIf="errors['serverError']">
+                    {{ errors['serverError'] }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="mb-3">
-              <label for="eventStartTime" class="form-label"
-                >Start Time *</label
-              >
-              <input
-                type="time"
-                class="form-control"
-                id="eventStartTime"
-                formControlName="startTime"
-              />
-              <div
-                *ngIf="eventForm.get('startTime')?.invalid && eventForm.get('startTime')?.touched"
-                class="text-danger"
-              >
-                Start time is required
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="mb-3">
-              <label for="eventEndTime" class="form-label">End Time *</label>
-              <input
-                type="time"
-                class="form-control"
-                id="eventEndTime"
-                formControlName="endTime"
-              />
-              <div
-                *ngIf="eventForm.get('endTime')?.invalid && eventForm.get('endTime')?.touched"
-                class="text-danger"
-              >
-                End time is required
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Title, Project, Category -->
-        <div class="row">
-          <div class="col-md-4">
-            <div class="mb-3">
-              <label for="eventTitle" class="form-label">Event Title *</label>
-              <input
-                type="text"
-                class="form-control"
-                id="eventTitle"
-                placeholder="Enter event title"
-                formControlName="title"
-              />
-              <div
-                *ngIf="eventForm.get('title')?.invalid && eventForm.get('title')?.touched"
-                class="text-danger"
-              >
-                Title is required
+          <!-- Title, Project, Category -->
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventTitle" class="form-label">Event Title *</label>
+                <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title"
+                  formControlName="title" />
+                <div *ngIf="eventForm.get('title')?.invalid && eventForm.get('title')?.touched" class="text-danger">
+                  Title is required
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-3">
-              <label for="eventProject" class="form-label"
-                ><i class="ph ph-hash me-2"></i>Project</label
-              >
-              <select
-                class="form-select"
-                id="eventProject"
-                formControlName="projectId"
-              >
-                <option value="">-- Select Project --</option>
-                <option [value]="1">Office Work</option>
-                <option [value]="2">House Work</option>
-              </select>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
+                <select class="form-select" id="eventProject" formControlName="projectId">
+                  <option value="">-- Select Project --</option>
+                  <option *ngFor="let project of projects" [value]="project.id">
+                    {{ project.name }}
+                  </option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-3">
-              <label for="eventCategory" class="form-label"
-                ><i class="ph ph-tag me-2"></i>Category</label
-              >
-              <select
-                class="form-select"
-                id="eventCategory"
-                formControlName="categoryId"
-              >
-                <option value="">-- Select Category --</option>
-                <option [value]="10">Software Development</option>
-                <option [value]="11">Interview</option>
-                <option [value]="12">Exam</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="mb-3">
-          <label for="eventDescription" class="form-label">Description</label>
-          <textarea
-            class="form-control"
-            id="eventDescription"
-            rows="3"
-            placeholder="Enter event description"
-            formControlName="description"
-          ></textarea>
-        </div>
-
-        <!-- Location & Reminder -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label for="eventLocation" class="form-label"
-                ><i class="ph ph-map-pin me-2"></i>Location</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="eventLocation"
-                placeholder="Enter location"
-                formControlName="location"
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-3">
-              <label
-                for="reminder"
-                class="form-label d-flex align-items-center"
-              >
-                <i class="ph ph-bell me-2"></i>Reminder
-              </label>
-              <div class="d-flex gap-2 align-items-center">
-                <input
-                  type="checkbox"
-                  formControlName="isReminderEnabled"
-                  id="reminderToggle"
-                />
-                <select
-                  class="form-select"
-                  id="reminder"
-                  formControlName="reminderBefore"
-                  [disabled]="!eventForm.get('isReminderEnabled')?.value"
-                >
-                  <option value="0">At the time of event</option>
-                  <option value="5">5 minute before</option>
-                  <option value="10">10 minute before</option>
-                  <option value="15">15 minute before</option>
-                  <option value="30">30 minute before</option>
-                  <option value="60">1 hour before</option>
-                  <option value="120">2 hour before</option>
-                  <option value="360">6 hour before</option>
-                  <option value="720">12 hour before</option>
-                  <option value="1440">1 day before</option>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="eventCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
+                <select class="form-select" id="eventCategory" formControlName="categoryId">
+                  <option value="">-- Select Category --</option>
+                  <option *ngFor="let category of categories" [value]="category.id">
+                    {{ category.name }}
+                  </option>
                 </select>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Divider -->
-        <div class="divider mb-3"></div>
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="eventDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="eventDescription" rows="3" placeholder="Enter event description"
+              formControlName="description"></textarea>
+          </div>
 
-        <!-- File Attachments Section -->
-        <div class="mb-3">
-          <label class="form-label d-flex align-items-center">
-            <i class="ph ph-paperclip me-2"></i>Attachments
-          </label>
-
-          <!-- Attached Files Display -->
-          <div
-            class="attached-files-container"
-            *ngIf="attachedFiles.length > 0"
-          >
-            <div *ngFor="let file of attachedFiles" class="attached-file-item">
-              <div class="file-icon">{{ file.icon }}</div>
-              <div class="file-info">
-                <div class="file-name">{{ file.name }}</div>
-                <div class="file-size">{{ formatFileSize(file.size) }}</div>
+          <!-- Location & Reminder -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="eventLocation" class="form-label"><i class="ph ph-map-pin me-2"></i>Location</label>
+                <input type="text" class="form-control" id="eventLocation" placeholder="Enter location"
+                  formControlName="location" />
               </div>
-              <button
-                type="button"
-                class="file-remove-btn"
-                (click)="removeFile(file.id)"
-              >
-                <i class="ph ph-trash"></i>
-              </button>
             </div>
-          </div>
-
-          <!-- Add File Button -->
-          <div class="attach-file-section">
-            <input
-              type="file"
-              id="fileInput"
-              class="file-input"
-              multiple
-              (change)="onFileSelect($event)"
-              #fileInput
-            />
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
-              (click)="fileInput.click()"
-            >
-              <i class="ph ph-plus me-1"></i><span>Attach file</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label"
-            ><i class="ph ph-users-three me-2"></i>Participants</label
-          >
-          <div class="d-flex align-items-center gap-3 flex-wrap">
-            @for(participant of selectedParticipants; track participant.id) {
-            <div class="participant-item">
-              <img
-                [src]="participant.avatar"
-                class="rounded-circle participant-avatar"
-                [alt]="participant.name"
-                [title]="participant.name + ' - ' + participant.email"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-              />
-              <button
-                type="button"
-                class="participant-remove-btn"
-                (click)="removeParticipant(participant.id)"
-              >
-                <i class="ph ph-x"></i>
-              </button>
-            </div>
-            }
-            <div class="participant-search-container">
-              <button
-                type="button"
-                class="btn btn-outline-secondary btn-sm d-flex align-items-center"
-                (click)="openParticipantSearch()"
-              >
-                <i class="ph ph-plus me-1"></i><span>Add Participant</span>
-              </button>
-
-              <!-- Participant Search Dropdown -->
-              <div
-                class="participant-search-dropdown"
-                *ngIf="isParticipantSearchOpen"
-              >
-                <div class="participant-search-header">
-                  <input
-                    type="text"
-                    class="form-control participant-search-input"
-                    placeholder="Search participants..."
-                    [value]="participantSearchQuery"
-                    (input)="onParticipantSearchInput($event)"
-                    #searchInput
-                  />
-                  <button
-                    type="button"
-                    class="btn-close-search"
-                    (click)="closeParticipantSearch()"
-                  >
-                    <i class="ph ph-x"></i>
-                  </button>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="reminder" class="form-label d-flex align-items-center">
+                  <i class="ph ph-bell me-2"></i>Reminder
+                </label>
+                <div class="d-flex gap-2 align-items-center">
+                  <input type="checkbox" formControlName="isReminderEnabled" id="reminderToggle" />
+                  <select class="form-select" id="reminder" formControlName="reminderBefore"
+                    [disabled]="!eventForm.get('isReminderEnabled')?.value">
+                    <option value="0">At the time of event</option>
+                    <option value="5">5 minute before</option>
+                    <option value="10">10 minute before</option>
+                    <option value="15">15 minute before</option>
+                    <option value="30">30 minute before</option>
+                    <option value="60">1 hour before</option>
+                    <option value="120">2 hour before</option>
+                    <option value="360">6 hour before</option>
+                    <option value="720">12 hour before</option>
+                    <option value="1440">1 day before</option>
+                  </select>
                 </div>
-                <div class="participant-search-results">
-                  @for(participant of filteredParticipants; track
-                  participant.id) {
-                  <div
-                    class="participant-search-item"
-                    (click)="addParticipant(participant)"
-                  >
-                    <img
-                      [src]="participant.avatar"
-                      class="rounded-circle participant-search-avatar"
-                      [alt]="participant.name"
-                    />
-                    <div class="participant-info">
-                      <div class="participant-name">{{ participant.name }}</div>
-                      <div class="participant-email">
-                        {{ participant.email }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="divider mb-3"></div>
+
+          <!-- File Attachments Section -->
+          <div class="mb-3">
+            <label class="form-label d-flex align-items-center">
+              <i class="ph ph-paperclip me-2"></i>Attachments
+            </label>
+
+            <!-- Attached Files Display -->
+            <div class="attached-files-container" *ngIf="attachedFiles.length > 0">
+              <div *ngFor="let file of attachedFiles" class="attached-file-item">
+                <div class="file-icon">{{ file.icon }}</div>
+                <div class="file-info">
+                  <div class="file-name">{{ file.name }}</div>
+                  <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                </div>
+                <button type="button" class="file-remove-btn" (click)="removeFile(file.id)">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Add File Button -->
+            <div class="attach-file-section">
+              <input type="file" id="fileInput" class="file-input" multiple (change)="onFileSelect($event)"
+                #fileInput />
+              <button type="button" class="btn btn-outline-secondary btn-sm attach-file-btn d-flex align-items-center"
+                (click)="fileInput.click()">
+                <i class="ph ph-plus me-1"></i><span>Attach file</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><i class="ph ph-users-three me-2"></i>Participants</label>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              @for(participant of selectedParticipants; track participant.id) {
+              <div class="participant-item">
+                <img [src]="participant.avatar" class="rounded-circle participant-avatar" [alt]="participant.name"
+                  [title]="participant.name + ' - ' + participant.email" data-bs-toggle="tooltip"
+                  data-bs-placement="top" />
+                <button type="button" class="participant-remove-btn" (click)="removeParticipant(participant.id)">
+                  <i class="ph ph-x"></i>
+                </button>
+              </div>
+              }
+              <div class="participant-search-container">
+                <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center"
+                  (click)="openParticipantSearch()">
+                  <i class="ph ph-plus me-1"></i><span>Add Participant</span>
+                </button>
+
+                <!-- Participant Search Dropdown -->
+                <div class="participant-search-dropdown" *ngIf="isParticipantSearchOpen">
+                  <div class="participant-search-header">
+                    <input type="text" class="form-control participant-search-input"
+                      placeholder="Search participants..." [value]="participantSearchQuery"
+                      (input)="onParticipantSearchInput($event)" #searchInput />
+                    <button type="button" class="btn-close-search" (click)="closeParticipantSearch()">
+                      <i class="ph ph-x"></i>
+                    </button>
+                  </div>
+                  <div class="participant-search-results">
+                    @for(participant of filteredParticipants; track
+                    participant.id) {
+                    <div class="participant-search-item" (click)="addParticipant(participant)">
+                      <img [src]="participant.avatar" class="rounded-circle participant-search-avatar"
+                        [alt]="participant.name" />
+                      <div class="participant-info">
+                        <div class="participant-name">
+                          {{ participant.name }}
+                        </div>
+                        <div class="participant-email">
+                          {{ participant.email }}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  } @if(filteredParticipants.length === 0) {
-                  <div class="no-participants">No participants found</div>
-                  }
+                    } @if(filteredParticipants.length === 0) {
+                    <div class="no-participants">No participants found</div>
+                    }
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Divider -->
-        <div class="divider mb-3"></div>
+          <!-- Divider -->
+          <div class="divider mb-3"></div>
 
-        <!-- Checklist Section -->
-        <div class="mb-3">
-          <label
-            class="form-label d-flex align-items-center justify-content-between"
-          >
-            <span class="d-flex align-items-center">
-              <i class="ph ph-list-checks me-2"></i>Checklist
-            </span>
-            <span
-              class="checklist-progress-info"
-              *ngIf="checklistItems.length > 0"
-            >
-              {{ completedChecklistCount }}/{{ checklistItems.length }}
-              completed ({{ checklistProgress }}%)
-            </span>
-          </label>
+          <!-- Checklist Section -->
+          <div class="mb-3">
+            <label class="form-label d-flex align-items-center justify-content-between">
+              <span class="d-flex align-items-center">
+                <i class="ph ph-list-checks me-2"></i>Checklist
+              </span>
+              <span class="checklist-progress-info" *ngIf="checklistItems.length > 0">
+                {{ completedChecklistCount }}/{{ checklistItems.length }}
+                completed ({{ checklistProgress }}%)
+              </span>
+            </label>
 
-          <!-- Progress Bar -->
-          <div class="progress mb-3" *ngIf="checklistItems.length > 0">
-            <div
-              class="progress-bar bg-success"
-              role="progressbar"
-              [style.width.%]="checklistProgress"
-              [attr.aria-valuenow]="checklistProgress"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            ></div>
-          </div>
-
-          <!-- Add New Checklist Item -->
-          <div class="add-checklist-section mb-3">
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Add checklist item..."
-                [value]="newChecklistItem"
-                (input)="onChecklistInputChange($event)"
-                (keypress)="onChecklistInputKeyPress($event)"
-              />
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                (click)="addChecklistItem()"
-                [disabled]="!newChecklistItem.trim()"
-              >
-                <i class="ph ph-plus"></i>
-              </button>
+            <!-- Progress Bar -->
+            <div class="progress mb-3" *ngIf="checklistItems.length > 0">
+              <div class="progress-bar bg-success" role="progressbar" [style.width.%]="checklistProgress"
+                [attr.aria-valuenow]="checklistProgress" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-          </div>
 
-          <!-- Checklist Items -->
-          <div
-            class="checklist-items-container"
-            *ngIf="checklistItems.length > 0"
-          >
-            <div
-              *ngFor="let item of checklistItems"
-              class="checklist-item d-flex align-items-center justify-content-between"
-            >
-              <div class="d-flex align-items-center fex-grow-1">
-                <input
-                  class="form-check-input me-2"
-                  type="checkbox"
-                  [id]="'checklist-' + item.id"
-                  [checked]="item.completed"
-                  (change)="toggleChecklistItem(item.id)"
-                />
-                <label
-                  class="form-check-label"
-                  [for]="'checklist-' + item.id"
-                  [class.text-decoration-line-through]="item.completed"
-                  [class.text-muted]="item.completed"
-                >
-                  {{ item.text }}
-                </label>
+            <!-- Add New Checklist Item -->
+            <div class="add-checklist-section mb-3">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Add checklist item..." [value]="newChecklistItem"
+                  (input)="onChecklistInputChange($event)" (keypress)="onChecklistInputKeyPress($event)" />
+                <button type="button" class="btn btn-outline-secondary" (click)="addChecklistItem()"
+                  [disabled]="!newChecklistItem.trim()">
+                  <i class="ph ph-plus"></i>
+                </button>
               </div>
-              <button
-                type="button"
-                class="checklist-remove-btn"
-                (click)="removeChecklistItem(item.id)"
-              >
-                <i class="ph ph-x"></i>
-              </button>
+            </div>
+
+            <!-- Checklist Items -->
+            <div class="checklist-items-container" *ngIf="checklistItems.length > 0">
+              <div *ngFor="let item of checklistItems"
+                class="checklist-item d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center fex-grow-1">
+                  <input class="form-check-input me-2" type="checkbox" [id]="'checklist-' + item.id"
+                    [checked]="item.completed" (change)="toggleChecklistItem(item.id)" />
+                  <label class="form-check-label" [for]="'checklist-' + item.id"
+                    [class.text-decoration-line-through]="item.completed" [class.text-muted]="item.completed">
+                    {{ item.text }}
+                  </label>
+                </div>
+                <button type="button" class="checklist-remove-btn" (click)="removeChecklistItem(item.id)">
+                  <i class="ph ph-x"></i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="closeAddEventModal()"
-          >
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary"
-        [disabled]="eventForm.invalid || submitting">
-  <span *ngIf="!submitting">
-    <i class="ph ph-calendar-plus me-1"></i> Create Event
-  </span>
-  <span *ngIf="submitting" class="d-flex align-items-center">
-    <span class="spinner-border spinner-border-sm me-2"></span>
-    Creating...
-  </span>
-</button>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid || submitting">
+              <span *ngIf="!submitting">
+                <i class="ph ph-calendar-plus me-1"></i> Create Event
+              </span>
+              <span *ngIf="submitting" class="d-flex align-items-center">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Creating...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
