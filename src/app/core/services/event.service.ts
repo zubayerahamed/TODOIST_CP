@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { BaseService } from './base.service';
+import { ApiResponse } from '../models/api-response.model';
 
 export interface EventParticipant {
   id: number;
@@ -21,8 +22,8 @@ export interface EventRequest {
   location?: string | null;
   isReminderEnabled: boolean;
   reminderBefore: number;
-  isReminderSent?: boolean;  // optional
-  isCompleted?: boolean;       // needed for template
+  isReminderSent?: boolean;
+  isCompleted?: boolean;
   documents?: number[];
   perticipants?: EventParticipant[];
 }
@@ -38,9 +39,19 @@ export class EventService extends BaseService {
   getAllEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}/events`);
   }
-    getAllByProject(projectId: number): Observable<EventRequest[]> {
-    return this.http.get<EventRequest[]>(`${this.baseUrl}/events/all/${projectId}`);
-  }
+
+getAllTodaysEvents(): Observable<EventRequest[]> {
+  return this.http
+    .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/today`)
+    .pipe(map(res => res.data)); // pick only the array
+}
+
+
+  getAllByProject(projectId: number): Observable<EventRequest[]> {
+  return this.http
+    .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/all/${projectId}`)
+    .pipe(map(res => res.data));
+}
 
   createEvent(payload: EventRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/events`, payload);

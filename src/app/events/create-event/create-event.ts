@@ -288,6 +288,7 @@ export class CreateEvent implements OnInit {
    */
   private handleSuccess(response: any): void {
     this.closeAddEventModal();
+    
   }
 
   /**

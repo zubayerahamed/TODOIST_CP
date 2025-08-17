@@ -30,29 +30,29 @@ export class Header implements OnInit, OnDestroy{
   @Output() toggleSidebar = new EventEmitter<void>();
 
     private updateTime() {
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
 
-    hours = hours % 12;
-    hours = hours ? hours : 12; // convert 0 -> 12
-    const hoursStr = hours.toString().padStart(2, '0');
+  hours = hours % 12;
+  hours = hours ? hours : 12; // convert 0 -> 12
+  const hoursStr = hours.toString().padStart(2, '0');
 
-    this.time = `${hoursStr} : ${minutes} : ${seconds} ${ampm}`;
+  this.time = `${hoursStr} : ${minutes} : ${seconds} ${ampm}`;
+}
+
+ngOnInit() {
+  this.updateTime(); // initial call
+  this.intervalId = setInterval(() => this.updateTime(), 1000); // update every second
+}
+
+ngOnDestroy() {
+  if (this.intervalId) {
+    clearInterval(this.intervalId);
   }
-
-    ngOnInit() {
-    this.updateTime(); // initial call
-    this.intervalId = setInterval(() => this.updateTime(), 1000); // update every second
-  }
-
-    ngOnDestroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  }
+}
 
   onToggleUserProfileDropdown(){
     this.toggleUserProfileDropdown.emit();
