@@ -17,7 +17,8 @@ import { map } from 'rxjs/operators';
 })
 export class Today {
 
-  constructor(private eventService: EventService,
+  constructor(
+    private eventService: EventService,
   ) { }
 
   pageTitle: string = 'Today';
@@ -25,38 +26,36 @@ export class Today {
 
   tasks: string = '';
   events: EventRequest[] = [];
-  projectId = 2;
+  // projectId = 2;
 
-ngOnInit(): void {
-  this.eventService.getAllTodaysEvents().subscribe({
-    next: (events) => {
-      this.events = events.map(ev => ({
-        ...ev,
-        perticipants: ev.perticipants ?? []
-      }));
-      console.log("Events loaded:", this.events);
-    },
-    error: (err) => console.error(err),
-  });
-}
+  ngOnInit(): void {
+    this.eventService.getAllTodaysEvents().subscribe({
+      next: (events) => {
+        this.events = events.map(ev => ({
+          ...ev,
+          perticipants: ev.perticipants ?? []
+        }));
+        console.log("Events loaded:", this.events);
+      },
+      error: (err) => console.error(err),
+    });
+  }
 
-// in component
-getEventDuration(event: EventRequest): string {
-  const start = event.startTime.split(':').map(Number);
-  const end = event.endTime.split(':').map(Number);
+  // in component
+  getEventDuration(event: EventRequest): string {
+    const start = event.startTime.split(':').map(Number);
+    const end = event.endTime.split(':').map(Number);
 
-  const startMinutes = start[0] * 60 + start[1];
-  const endMinutes = end[0] * 60 + end[1];
+    const startMinutes = start[0] * 60 + start[1];
+    const endMinutes = end[0] * 60 + end[1];
 
-  let diffMinutes = endMinutes - startMinutes;
-  if (diffMinutes < 0) diffMinutes += 24 * 60; // handle overnight events
+    let diffMinutes = endMinutes - startMinutes;
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
 
-  const hours = Math.floor(diffMinutes / 60);
-  const minutes = diffMinutes % 60;
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
 
-  return minutes === 0 ? `${hours} hr` : `${hours} hr ${minutes} min`;
-}
-
-
+    return minutes === 0 ? `${hours} hr` : `${hours} hr ${minutes} min`;
+  }
 
 }

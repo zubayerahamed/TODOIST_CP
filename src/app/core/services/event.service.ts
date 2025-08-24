@@ -40,18 +40,23 @@ export class EventService extends BaseService {
     return this.http.get(`${this.baseUrl}/events`);
   }
 
-getAllTodaysEvents(): Observable<EventRequest[]> {
-  return this.http
-    .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/today`)
-    .pipe(map(res => res.data)); // pick only the array
-}
+  getAllTodaysEvents(): Observable<EventRequest[]> {
+    return this.http
+      .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/upcoming`)
+      .pipe(map(res => res.data));
+  }
 
+  getAllUpcomingEvents(): Observable<EventRequest[]> {
+    return this.http
+      .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/today`)
+      .pipe(map(res => res.data));
+  }
 
   getAllByProject(projectId: number): Observable<EventRequest[]> {
-  return this.http
-    .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/all/${projectId}`)
-    .pipe(map(res => res.data));
-}
+    return this.http
+      .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/all/${projectId}`)
+      .pipe(map(res => res.data));
+  }
 
   createEvent(payload: EventRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/events`, payload);
