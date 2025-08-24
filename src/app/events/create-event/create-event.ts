@@ -1,11 +1,22 @@
 
-
-import { Toast } from 'bootstrap';
-
-
-import { Component, ElementRef,  EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {HostListener } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 
@@ -20,8 +31,11 @@ import { ChecklistItem } from '../../core/models/checklist-item.model';
 
 // Constants
 import { FILE_ICON_MAPPING } from '../../core/constants/file-icons.const';
-
-
+import { Project } from '../../core/models/project.model';
+import { ProjectService } from '../../core/services/project.service';
+import { CanDeactivate, NavigationStart, Router } from '@angular/router';
+import { Category } from '../../core/models/category,model';
+import { CategoryService } from '../../core/services/category.service';
 
 @Component({
   selector: 'app-create-event',
@@ -30,23 +44,28 @@ import { FILE_ICON_MAPPING } from '../../core/constants/file-icons.const';
   templateUrl: './create-event.html',
   styleUrls: ['./create-event.css'],
 })
-
 export class CreateEvent implements OnInit {
-  // Input/Output properties
-  @Input() isAddEventModalOpen = false;
-  @Output() closed = new EventEmitter<void>();
-  @Output() created = new EventEmitter<any>();
+
+    @Input({required : true}) isAddEventModalOpen!: boolean;
+  @Output() isAddEventModalClose = new EventEmitter<void>();
 
   // View children
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild('successToast') successToast!: ElementRef;
-
+  @ViewChild('addEventModal') addEventModal!: ElementRef;
 
   // Form properties
   eventForm!: FormGroup;
   submitting = false;
+    displayTime: string = '12:00';
+  hourAngle: number = 0;
+  minuteAngle: number = 0;
+
+  globalErrorMessages: string[] = [];
 
   // Data properties
+  projects: Project[] = [];
+  categories: Category[] = [];
   attachedFiles: AttachedFile[] = [];
   allParticipants: Participant[] = [
     {
@@ -98,7 +117,7 @@ export class CreateEvent implements OnInit {
       avatar: '/assets/images/zubayer.jpg',
     },
   ];
-    selectedParticipants: Participant[] = [
+  selectedParticipants: Participant[] = [
     {
       id: 1,
       name: 'John Doe',
@@ -113,26 +132,87 @@ export class CreateEvent implements OnInit {
     },
   ];
 
-    // UI state properties
+
+  today: string = new Date().toISOString().split('T')[0];
+
+    handleClockClick(event: MouseEvent) {
+    const clock = event.currentTarget as HTMLElement;
+    const rect = clock.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const clickX = event.clientX - centerX;
+    const clickY = event.clientY - centerY;
+
+    // Calculate angle (0° at top, increasing clockwise)
+    let angle = Math.atan2(clickY, clickX) * 180 / Math.PI + 90;
+    if (angle < 0) angle += 360;
+
+    // Determine if click is closer to hour or minute
+    const distance = Math.sqrt(clickX * clickX + clickY * clickY);
+    const isHour = distance < rect.width / 3;
+
+    if (isHour) {
+      this.hourAngle = Math.round(angle / 30) * 30;
+      this.updateDisplayTime();
+    } else {
+      this.minuteAngle = Math.round(angle / 6) * 6;
+      this.updateDisplayTime();
+    }
+  }
+
+  updateDisplayTime() {
+    const hours = Math.floor(this.hourAngle / 30) || 12;
+    const minutes = Math.floor(this.minuteAngle / 6);
+    this.displayTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+    // Update the form control
+    this.eventForm.get('startTime')?.setValue(this.displayTime);
+  }
+
+  onTimeInputChange() {
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
+    if (timeRegex.test(this.displayTime)) {
+      this.updateClockAngles(this.displayTime);
+    } else {
+      // Reset to previous valid time if input is invalid
+      this.displayTime = this.eventForm.get('startTime')?.value || '12:00';
+    }
+  }
+
+  updateClockAngles(time: string) {
+    const [hours, minutes] = time.split(':').map(Number);
+    this.hourAngle = (hours % 12) * 30 + (minutes / 60) * 30;
+    this.minuteAngle = minutes * 6;
+    this.displayTime = time;
+    this.eventForm.get('startTime')?.setValue(time);
+  }
+
+
+  // UI state properties
   isParticipantSearchOpen = false;
   participantSearchQuery = '';
   checklistItems: ChecklistItem[] = [];
   newChecklistItem = '';
 
   constructor(
+    private router: Router,
     private fb: FormBuilder,
     private http: HttpClient,
     private eventService: EventService,
-    private host: ElementRef<HTMLElement>
+    private projectService: ProjectService,
+    private catagoryService: CategoryService,
+    private host: ElementRef<HTMLElement>,
   ) {}
+
 
   ngOnInit(): void {
     this.initializeForm();
+    this.getAllProjects();
   }
 
   private initializeForm(): void {
     this.eventForm = this.fb.group({
-      eventDate: ['', Validators.required],
+      eventDate: [this.today],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       title: ['', [Validators.required, Validators.maxLength(100)]],
@@ -142,23 +222,24 @@ export class CreateEvent implements OnInit {
       location: ['', Validators.maxLength(100)],
       isReminderEnabled: [false],
       reminderBefore: [0, [Validators.min(0), Validators.max(1440)]],
-      participants: [[]]
+      participants: [[]],
     });
   }
 
   /**
    * Closes the add event modal and resets the form
    */
+// Replace your current open/close methods with these:
+
   closeAddEventModal() {
     this.isAddEventModalOpen = false;
-    this.closed.emit();
+    this.isParticipantSearchOpen = false;
+    this.participantSearchQuery = '';
+    this.isAddEventModalClose.emit();
   }
 
-  /**
-   * Handles backdrop click to close modal
-   */
-  onEventModalBackdropClick(event: MouseEvent): void {
-    if (event.target === this.host.nativeElement.querySelector('.modal-backdrop')) {
+  onEventModalBackdropClick(event: Event) {
+    if (event.target === event.currentTarget) {
       this.closeAddEventModal();
     }
   }
@@ -177,65 +258,66 @@ export class CreateEvent implements OnInit {
       isReminderEnabled: !!v.isReminderEnabled,
       reminderBefore: v.reminderBefore == null ? 0 : Number(v.reminderBefore),
       perticipants: this.eventForm.value.perticipants || [],
-      documents: this.attachedFiles.filter((f) => f.docId !== undefined).map((f) => f.docId!),
+      documents: this.attachedFiles
+        .filter((f) => f.docId !== undefined)
+        .map((f) => f.docId!),
     };
   }
 
-/**
+  /**
    * Handles form submission
    */
   onSubmit(): void {
-    if (this.eventForm.invalid) {
-      this.eventForm.markAllAsTouched();
-      return;
-    }
+
 
     this.submitting = true;
     const payload = this.formToPayload();
 
-    this.eventService.createEvent(payload)
-      .pipe(
-        finalize(() => this.submitting = false)
-      )
+    this.eventService
+      .createEvent(payload)
+      .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: (response) => this.handleSuccess(response),
-        error: (error) => this.handleError(error)
+        error: (error) => this.handleError(error),
       });
   }
 
-    /**
+  /**
    * Handles successful event creation
    * @param response - API response
    */
   private handleSuccess(response: any): void {
-    this.showSuccessToast(response.message);
-    this.created.emit(response);
     this.closeAddEventModal();
+    
   }
 
   /**
    * Handles creation error
    * @param error - Error object
    */
-  private handleError(error: any): void {
+private handleError(error: any): void {
     console.error('Create event failed', error);
-    // Implement proper error handling (e.g., show error toast)
-  }
 
-  /**
-   * Displays success toast message
-   * @param message - Message to display
-   */
-  private showSuccessToast(message: string): void {
-    if (this.successToast) {
-      const toastElement = this.successToast.nativeElement;
-      const toastBody = toastElement.querySelector('.toast-body');
+    this.globalErrorMessages = []; // reset before setting new ones
 
-      if (toastBody) {
-        toastBody.textContent = message;
-        const toast = new Toast(toastElement);
-        toast.show();
-      }
+    // ✅ Handle field errors
+    if (error.error?.fieldErrors) {
+      const fieldErrors = error.error.fieldErrors;
+
+      Object.keys(fieldErrors).forEach((field) => {
+        const control = this.eventForm.get(field);
+        if (control) {
+          control.setErrors({ serverError: fieldErrors[field] });
+          control.markAsTouched();
+        }
+      });
+    }
+
+    // ✅ Handle global errors
+    if (error.error?.globalErrors) {
+      this.globalErrorMessages = Object.values(error.error.globalErrors);
+    } else if (error.error?.message) {
+      this.globalErrorMessages = [error.error.message];
     }
   }
 
@@ -273,18 +355,21 @@ export class CreateEvent implements OnInit {
   get filteredParticipants(): Participant[] {
     if (!this.participantSearchQuery.trim()) {
       return this.allParticipants.filter(
-        participant => !this.selectedParticipants.some(
-          selected => selected.id === participant.id
-        )
+        (participant) =>
+          !this.selectedParticipants.some(
+            (selected) => selected.id === participant.id
+          )
       );
     }
 
     const query = this.participantSearchQuery.toLowerCase();
     return this.allParticipants.filter(
-      participant =>
-        !this.selectedParticipants.some(selected => selected.id === participant.id) &&
+      (participant) =>
+        !this.selectedParticipants.some(
+          (selected) => selected.id === participant.id
+        ) &&
         (participant.name.toLowerCase().includes(query) ||
-         participant.email.toLowerCase().includes(query))
+          participant.email.toLowerCase().includes(query))
     );
   }
 
@@ -293,7 +378,7 @@ export class CreateEvent implements OnInit {
    * @param participant - Participant to add
    */
   addParticipant(participant: Participant): void {
-    if (!this.selectedParticipants.some(p => p.id === participant.id)) {
+    if (!this.selectedParticipants.some((p) => p.id === participant.id)) {
       this.selectedParticipants.push(participant);
     }
     this.closeParticipantSearch();
@@ -305,16 +390,16 @@ export class CreateEvent implements OnInit {
    */
   removeParticipant(participantId: number): void {
     this.selectedParticipants = this.selectedParticipants.filter(
-      participant => participant.id !== participantId
+      (participant) => participant.id !== participantId
     );
   }
-// Checklist management methods
+  // Checklist management methods
 
   /**
    * Gets count of completed checklist items
    */
   get completedChecklistCount(): number {
-    return this.checklistItems.filter(item => item.completed).length;
+    return this.checklistItems.filter((item) => item.completed).length;
   }
 
   /**
@@ -366,7 +451,7 @@ export class CreateEvent implements OnInit {
    * @param itemId - ID of item to toggle
    */
   toggleChecklistItem(itemId: number): void {
-    const item = this.checklistItems.find(item => item.id === itemId);
+    const item = this.checklistItems.find((item) => item.id === itemId);
     if (item) {
       item.completed = !item.completed;
     }
@@ -378,7 +463,7 @@ export class CreateEvent implements OnInit {
    */
   removeChecklistItem(itemId: number): void {
     this.checklistItems = this.checklistItems.filter(
-      item => item.id !== itemId
+      (item) => item.id !== itemId
     );
   }
 
@@ -389,20 +474,22 @@ export class CreateEvent implements OnInit {
    * @param bytes - File size in bytes
    * @returns Formatted file size string
    */
-formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-}
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+  }
 
   /**
    * Removes file from attached files list
    * @param fileId - ID of file to remove
    */
   removeFile(fileId: number): void {
-    this.attachedFiles = this.attachedFiles.filter(file => file.id !== fileId);
+    this.attachedFiles = this.attachedFiles.filter(
+      (file) => file.id !== fileId
+    );
   }
 
   /**
@@ -434,14 +521,14 @@ formatFileSize(bytes: number): string {
       name: file.name,
       type: file.type,
       size: file.size,
-      icon: this.getFileIcon(file)
+      icon: this.getFileIcon(file),
     };
 
     this.attachedFiles.push(attachedFile);
 
     this.uploadFile(file).subscribe({
       next: (response) => this.handleFileUploadSuccess(response, tempId),
-      error: () => this.handleFileUploadError(file.name, tempId)
+      error: () => this.handleFileUploadError(file.name, tempId),
     });
   }
 
@@ -455,11 +542,13 @@ formatFileSize(bytes: number): string {
 
     if (!docId) {
       console.error('Failed to get document ID from upload response');
-      this.attachedFiles = this.attachedFiles.filter(file => file.id !== tempId);
+      this.attachedFiles = this.attachedFiles.filter(
+        (file) => file.id !== tempId
+      );
       return;
     }
 
-    const fileToUpdate = this.attachedFiles.find(file => file.id === tempId);
+    const fileToUpdate = this.attachedFiles.find((file) => file.id === tempId);
     if (fileToUpdate) {
       fileToUpdate.docId = docId;
     }
@@ -472,7 +561,9 @@ formatFileSize(bytes: number): string {
    */
   private handleFileUploadError(fileName: string, tempId: number): void {
     console.error(`Failed to upload file: ${fileName}`);
-    this.attachedFiles = this.attachedFiles.filter(file => file.id !== tempId);
+    this.attachedFiles = this.attachedFiles.filter(
+      (file) => file.id !== tempId
+    );
   }
 
   /**
@@ -483,7 +574,35 @@ formatFileSize(bytes: number): string {
   private uploadFile(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post('http://localhost:8081/api/v1/documents/upload', formData);
+    return this.http.post(
+      'http://localhost:8081/api/v1/documents/upload',
+      formData
+    );
+  }
+
+  /**
+   * Gets all projects from the server
+   */
+  getAllProjects(): void {
+    this.projectService.getAllProjects().subscribe({
+      next: (response) => {
+        this.projects = response.data || [];
+      },
+      error: (error) => {
+        console.error('Failed to fetch projects', error);
+      },
+    });
+  }
+
+  getAllCategories(): void {
+    this.catagoryService.getAllWorkspaceCategories().subscribe({
+      next: (response) => {
+        this.categories = response.data || [];
+      },
+      error: (error) => {
+        console.error('Failed to fetch categories', error);
+      },
+    });
   }
 
   /**
@@ -491,21 +610,21 @@ formatFileSize(bytes: number): string {
    * @param file - File object
    * @returns Icon string
    */
- private getFileIcon(file: File): string {
-  const extension = file.name.split('.').pop()?.toLowerCase() || '';
-  const fileType = file.type.split('/')[0];
+  private getFileIcon(file: File): string {
+    const extension = file.name.split('.').pop()?.toLowerCase() || '';
+    const fileType = file.type.split('/')[0];
 
-  // First try to match by extension
-  if (FILE_ICON_MAPPING[extension]) {
-    return FILE_ICON_MAPPING[extension];
+    // First try to match by extension
+    if (FILE_ICON_MAPPING[extension]) {
+      return FILE_ICON_MAPPING[extension];
+    }
+
+    // Then try to match by file type (like 'image', 'audio', etc.)
+    if (FILE_ICON_MAPPING[fileType]) {
+      return FILE_ICON_MAPPING[fileType];
+    }
+
+    // Fallback to generic file icon
+    return 'FILE';
   }
-
-  // Then try to match by file type (like 'image', 'audio', etc.)
-  if (FILE_ICON_MAPPING[fileType]) {
-    return FILE_ICON_MAPPING[fileType];
-  }
-
-  // Fallback to generic file icon
-  return 'FILE';
-}
 }
