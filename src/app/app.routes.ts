@@ -12,6 +12,7 @@ import { Upcoming } from './upcoming/upcoming';
 import { Completed } from './completed/completed';
 import { WorkspaceSettings } from './workspaces/workspace-settings/workspace-settings';
 import { ProjectSettings } from './project/project-settings/project-settings';
+import { ModalGuard } from './core/guards/modal.guard';
 
 
 export const routes: Routes = [
@@ -24,6 +25,7 @@ export const routes: Routes = [
       {
         path: 'today',
         component: Today,
+        canDeactivate: [ModalGuard] 
       },
       {
         path: 'workspace-settings',

@@ -1,9 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { BaseService } from './base.service';
+import { ApiResponse } from '../models/api-response.model';
+
+export interface EventParticipant {
+  id: number;
+  name: string;
+  avatarUrl: string;
+}
 
 export interface EventRequest {
+  id?: number;
   title: string;
   description?: string | null;
   projectId?: number | null;
@@ -14,8 +22,10 @@ export interface EventRequest {
   location?: string | null;
   isReminderEnabled: boolean;
   reminderBefore: number;
+  isReminderSent?: boolean;
+  isCompleted?: boolean;
   documents?: number[];
-  perticipants: number[];
+  perticipants?: EventParticipant[];
 }
 
 @Injectable({
@@ -28,6 +38,24 @@ export class EventService extends BaseService {
 
   getAllEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}/events`);
+  }
+
+  getAllTodaysEvents(): Observable<EventRequest[]> {
+    return this.http
+      .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/upcoming`)
+      .pipe(map(res => res.data));
+  }
+
+  getAllUpcomingEvents(): Observable<EventRequest[]> {
+    return this.http
+      .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/today`)
+      .pipe(map(res => res.data));
+  }
+
+  getAllByProject(projectId: number): Observable<EventRequest[]> {
+    return this.http
+      .get<ApiResponse<EventRequest[]>>(`${this.baseUrl}/events/all/${projectId}`)
+      .pipe(map(res => res.data));
   }
 
   createEvent(payload: EventRequest): Observable<any> {

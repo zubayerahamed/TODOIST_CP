@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -8,7 +8,12 @@ import { RouterLink } from '@angular/router';
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class Header {
+export class Header implements OnInit, OnDestroy{
+
+    time: string = '';
+  private intervalId: any;
+
+
   @Input({required : true}) appTitle!: string;
   @Input() isUserProfileDropdownOpen = false;
   @Input() currentUser = {
@@ -23,6 +28,31 @@ export class Header {
   @Output() openProfileSettings = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
   @Output() toggleSidebar = new EventEmitter<void>();
+
+    private updateTime() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  hours = hours % 12;
+  hours = hours ? hours : 12; // convert 0 -> 12
+  const hoursStr = hours.toString().padStart(2, '0');
+
+  this.time = `${hoursStr} : ${minutes} : ${seconds} ${ampm}`;
+}
+
+ngOnInit() {
+  this.updateTime(); // initial call
+  this.intervalId = setInterval(() => this.updateTime(), 1000); // update every second
+}
+
+ngOnDestroy() {
+  if (this.intervalId) {
+    clearInterval(this.intervalId);
+  }
+}
 
   onToggleUserProfileDropdown(){
     this.toggleUserProfileDropdown.emit();
