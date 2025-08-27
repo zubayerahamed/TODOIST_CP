@@ -6,8 +6,7 @@
         <i class="ph ph-calendar-plus me-2 fs-4"></i>
         <h4 class="modal-title">Create New Event</h4>
       </div>
-      <button type="button" class="btn-close d-flex align-items-center justify-content-center"
-              (click)="closeAddEventModal()">
+      <button type="button" class="btn-close d-flex align-items-center justify-content-center" (click)="closeAddEventModal()">
         <i class="ph ph-x fs-4"></i>
       </button>
     </div>
@@ -17,83 +16,83 @@
           <div class="col-md-6">
             <div class="mb-3">
               <label for="eventDate" class="form-label">Date *</label>
-              <input type="date" class="form-control" id="eventDate">
+              <input type="date" class="form-control" id="eventDate" name="eventDate" [(ngModel)]="enteredEventDate">
             </div>
           </div>
           <div class="col-md-3">
             <div class="mb-3">
               <label for="eventStartTime" class="form-label">Start Time *</label>
-              <input type="time" class="form-control" id="eventStartTime">
+              <input type="time" class="form-control" id="eventStartTime" name="eventStartTime" [(ngModel)]="enteredEventStartTime">
             </div>
           </div>
           <div class="col-md-3">
             <div class="mb-3">
               <label for="eventEndTime" class="form-label">End Time *</label>
-              <input type="time" class="form-control" id="eventEndTime">
+              <input type="time" class="form-control" id="eventEndTime" name="eventEndTime" [(ngModel)]="enteredEventEndTime">
             </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <div class="mb-3">
               <label for="eventTitle" class="form-label">Event Title *</label>
-              <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title">
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-3">
-              <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
-              <select class="form-select" id="eventProject">
-                <option value="">-- Select Project --</option>
-                <option value="office">Office Work</option>
-                <option value="house">House Work</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-3">
-              <label for="eventCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
-              <select class="form-select" id="eventCategory">
-                <option value="">-- Select Category --</option>
-                <option value="Software Development">Software Development</option>
-                <option value="Iterview">Interview</option>
-                <option value="Exam">Exam</option>
-              </select>
+              <input type="text" class="form-control" id="eventTitle" name="eventTitle" [(ngModel)]="enteredEventTitle" placeholder="Enter event title">
             </div>
           </div>
         </div>
 
         <div class="mb-3">
           <label for="eventDescription" class="form-label">Description</label>
-          <textarea class="form-control" id="eventDescription" rows="3"
-                    placeholder="Enter event description"></textarea>
+          <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3" [(ngModel)]="enteredEventDescription" placeholder="Enter event description"></textarea>
         </div>
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-3">
             <div class="mb-3">
-              <label for="eventLocation" class="form-label"><i class="ph ph-map-pin me-2"></i>Location</label>
-              <input type="text" class="form-control" id="eventLocation" placeholder="Enter location">
+              <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
+              <select class="form-select" id="eventProject" name="eventProject" [(ngModel)]="selectedProjectId" (ngModelChange)="onProjectChange($event)">
+                <option [ngValue]="null">-- Select Project --</option>
+                @for (project of projects; track project.id) {
+                  <option [value]="project.id">{{ project.name }}</option>
+                }
+              </select>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label for="eventCategory" class="form-label"><i class="ph ph-tag me-2"></i>Category</label>
+              <select class="form-select" id="eventCategory" name="eventCategory" [(ngModel)]="selectedCategoryId">
+                <option [ngValue]="null">-- Select Category --</option>
+                @for (category of categories; track category.id) {
+                  <option [value]="category.id">{{ category.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label for="eventLocation" class="form-label"><i class="ph ph-map-pin me-2"></i>Location</label>
+              <input type="text" class="form-control" id="eventLocation" name="eventLocation" [(ngModel)]="enteredEventLocation"  placeholder="Enter location">
+            </div>
+          </div>
+          <div class="col-md-3">
             <div class="mb-3">
               <label for="reminder" class="form-label d-flex align-items-center">
                 <i class="ph ph-bell me-2"></i>Reminder
               </label>
-              <select class="form-select" id="reminder">
-                <option value="">-- Select Reminder --</option>
-                <option value="0">At the time of event</option>
-                <option value="5">5 minute before</option>
-                <option value="10">10 minute before</option>
-                <option value="15">15 minute before</option>
-                <option value="30">30 minute before</option>
-                <option value="60">1 hour before</option>
-                <option value="120">2 hour before</option>
-                <option value="360">6 hour before</option>
-                <option value="720">12 hour before</option>
-                <option value="1440">1 day before</option>
+              <select class="form-select" id="reminder" name="reminder" [(ngModel)]="selectedReminder">
+                <option [ngValue]="null">-- Select Reminder --</option>
+                <option [value]="0">At the time of event</option>
+                <option [value]="5">5 minute before</option>
+                <option [value]="10">10 minute before</option>
+                <option [value]="15">15 minute before</option>
+                <option [value]="30">30 minute before</option>
+                <option [value]="60">1 hour before</option>
+                <option [value]="120">2 hour before</option>
+                <option [value]="360">6 hour before</option>
+                <option [value]="720">12 hour before</option>
+                <option [value]="1440">1 day before</option>
               </select>
             </div>
           </div>
@@ -170,22 +169,27 @@
             <span class="d-flex align-items-center">
               <i class="ph ph-list-checks me-2"></i>Checklist
             </span>
-            <span class="checklist-progress-info" *ngIf="checklistItems.length > 0">
-              {{ completedChecklistCount }}/{{ checklistItems.length }} completed ({{ checklistProgress }}%)
-            </span>
+            @if (checklistItems.length > 0) {
+              <span class="checklist-progress-info">
+                {{ completedChecklistCount }}/{{ checklistItems.length }} completed ({{ checklistProgress }}%)
+              </span>
+            }
           </label>
 
           <!-- Progress Bar -->
-          <div class="progress mb-3" *ngIf="checklistItems.length > 0">
-            <div
-                 class="progress-bar bg-success"
-                 role="progressbar"
-                 [style.width.%]="checklistProgress"
-                 [attr.aria-valuenow]="checklistProgress"
-                 aria-valuemin="0"
-                 aria-valuemax="100">
+          @if (checklistItems.length > 0) {
+            <div class="progress mb-3">
+              <div
+                  class="progress-bar bg-success"
+                  role="progressbar"
+                  [style.width.%]="checklistProgress"
+                  [attr.aria-valuenow]="checklistProgress"
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+              </div>
             </div>
-          </div>
+          }
+          
 
           <!-- Add New Checklist Item -->
           <div class="add-checklist-section mb-3">
@@ -208,32 +212,36 @@
           </div>
 
           <!-- Checklist Items -->
-          <div class="checklist-items-container" *ngIf="checklistItems.length > 0">
-            <div *ngFor="let item of checklistItems"
-                 class="checklist-item d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center fex-grow-1">
-                <input
-                       class="form-check-input me-2"
-                       type="checkbox"
-                       [id]="'checklist-' + item.id"
-                       [checked]="item.completed"
-                       (change)="toggleChecklistItem(item.id)">
-                <label
-                       class="form-check-label"
-                       [for]="'checklist-' + item.id"
-                       [class.text-decoration-line-through]="item.completed"
-                       [class.text-muted]="item.completed">
-                  {{ item.text }}
-                </label>
-              </div>
-              <button
-                      type="button"
-                      class="checklist-remove-btn"
-                      (click)="removeChecklistItem(item.id)">
-                <i class="ph ph-x"></i>
-              </button>
+          @if(checklistItems.length > 0){
+            <div class="checklist-items-container">
+              @for (item of checklistItems; track item.id) {
+                <div class="checklist-item d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center fex-grow-1">
+                    <input
+                          class="form-check-input me-2 mt-0"
+                          type="checkbox"
+                          [id]="'checklist-' + item.id"
+                          [checked]="item.completed"
+                          (change)="toggleChecklistItem(item.id)">
+                    <label
+                          class="form-check-label"
+                          [for]="'checklist-' + item.id"
+                          [class.text-decoration-line-through]="item.completed"
+                          [class.text-muted]="item.completed">
+                      {{ item.text }}
+                    </label>
+                  </div>
+                  <button
+                          type="button"
+                          class="checklist-remove-btn"
+                          (click)="removeChecklistItem(item.id)">
+                    <i class="ph ph-x"></i>
+                  </button>
+                </div>
+              }
             </div>
-          </div>
+          }
+          
 
 
         </div>
@@ -284,7 +292,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="closeAddEventModal()">Cancel</button>
-      <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center">
+      <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center" (click)="onCreateEvent()">
         <i class="ph ph-calendar-plus me-2"></i><span>Create Event</span>
       </button>
     </div>

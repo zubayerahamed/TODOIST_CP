@@ -4,7 +4,7 @@ import {
   Category,
   CreateCategory,
   UpdateCategory,
-} from '../core/models/category,model';
+} from '../core/models/category.model';
 import { CategoryService } from '../core/services/category.service';
 import { forkJoin } from 'rxjs';
 import { AlertService } from '../core/services/alert.service';

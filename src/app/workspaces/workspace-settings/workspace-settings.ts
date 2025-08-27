@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthHelper } from '../../core/helpers/auth.helper';
-import { Category } from '../../core/models/category,model';
+import { Category } from '../../core/models/category.model';
 import { Status } from '../../core/models/status.model';
 import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
 import { AlertService } from '../../core/services/alert.service';

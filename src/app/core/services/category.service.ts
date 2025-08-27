@@ -6,7 +6,7 @@ import {
   Category,
   CreateCategory,
   UpdateCategory,
-} from '../models/category,model';
+} from '../models/category.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,9 +1,16 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { Participant } from '../../core/models/participant.model';
 import { ChecklistItem } from '../../core/models/checklist-item.model';
 import { AttachedFile } from '../../core/models/attached-file.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ProjectService } from '../../core/services/project.service';
+import { Project } from '../../core/models/project.model';
+import { CategoryService } from '../../core/services/category.service';
+import { Category } from '../../core/models/category.model';
+import { AddEvent } from '../../core/models/event.model';
+import { EventService } from '../../core/services/event.service';
+import { AlertService } from '../../core/services/alert.service';
 
 @Component({
   selector: 'app-create-event',
@@ -11,9 +18,185 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './create-event.html',
   styleUrl: './create-event.css',
 })
-export class CreateEvent {
+export class CreateEvent implements OnInit {
   @Input({required : true}) isAddEventModalOpen!: boolean;
   @Output() isAddEventModalClose = new EventEmitter<void>();
+
+  private alterService = inject(AlertService);
+  private projectService = inject(ProjectService);
+  private categoryService = inject(CategoryService);
+  private eventService = inject(EventService);
+
+  public projects: Project[] = [];
+  public categories: Category[] = [];
+  public checklistItems: ChecklistItem[] = [];
+
+  // Form properties
+  enteredEventDate: string = new Date().toISOString().split('T')[0];
+  enteredEventStartTime: string = '';
+  enteredEventEndTime: string = '';
+  enteredEventTitle: string = '';
+  enteredEventDescription: string = '';
+  selectedProjectId: number | null = null;
+  selectedCategoryId: number | null = null;
+  enteredEventLocation: string = '';
+  selectedReminder: number | null = null;
+
+  // Form error properties
+  eventDateError: string = '';
+  eventStartTimeError: string = '';
+  eventEndTimeError: string = '';
+  eventTitleError: string = '';
+  eventProjectError: string = '';
+
+  ngOnInit() {
+    const now = new Date();
+
+    // Format as HH:mm for <input type="time">
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+
+    this.enteredEventStartTime = `${hours}:${minutes}`;
+
+    // Set end time to one hour later
+    const endTime = new Date(now.getTime() + 60 * 60 * 1000);
+    const endHours = endTime.getHours().toString().padStart(2, '0');
+    const endMinutes = endTime.getMinutes().toString().padStart(2, '0');
+    this.enteredEventEndTime = `${endHours}:${endMinutes}`;
+
+    // Fetch projects from the service
+    this.projectService.getAllProjects().subscribe({
+      next: (resData) => {
+        this.projects = resData.data || [];
+      }, 
+      error: (error) => {
+        console.error('Error fetching projects:', error);
+      }
+    });
+  }
+
+  onProjectChange(event: Event) {
+    if(this.selectedProjectId == null) return;
+
+    // Fetch the categories for the selected project. 
+    this.categoryService.getAllProjectCategories(this.selectedProjectId).subscribe({
+      next: (resData) => {
+        this.categories = resData.data || [];
+        this.categories = this.categories.filter(cat => cat.isForEvent);
+      }, 
+      error: (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    });
+  }
+
+  resetForm(){
+    this.enteredEventDate = new Date().toISOString().split('T')[0];
+    this.enteredEventStartTime = '';
+    this.enteredEventEndTime = '';
+    this.enteredEventTitle = '';
+    this.enteredEventDescription = '';
+    this.selectedProjectId = null;
+    this.selectedCategoryId = null;
+    this.enteredEventLocation = '';
+    this.selectedReminder = null;
+
+    this.resetErrorMessages();
+  }
+
+  resetErrorMessages(){
+    this.eventDateError = '';
+    this.eventStartTimeError = '';
+    this.eventEndTimeError = '';
+    this.eventTitleError = '';
+    this.eventProjectError = '';
+  }
+
+  validateForm(): boolean {
+
+    // Reset errors
+    this.resetErrorMessages();
+    let isValid = true;
+  
+    if(this.enteredEventTitle.trim().length === 0){
+      this.eventTitleError = 'Event title is required.';
+      isValid = false;
+    }
+
+    if(this.enteredEventDate.trim().length === 0){
+      this.eventDateError = 'Event date is required.';
+      isValid = false;
+    }
+  
+    if(this.enteredEventStartTime.trim().length === 0){
+      this.eventStartTimeError = 'Event start time is required.';
+      isValid = false;
+    }
+
+    if(this.enteredEventEndTime.trim().length === 0){
+      this.eventEndTimeError = 'Event end time is required.';
+      isValid = false;
+    }
+
+    // check if end time is after start time
+    if(this.enteredEventStartTime && this.enteredEventEndTime){
+      const start = this.enteredEventStartTime;
+      const end = this.enteredEventEndTime;
+
+      if(start >= end){
+        this.eventEndTimeError = 'End time must be after start time.';
+        isValid = false;
+      }
+    }
+
+    if(this.selectedProjectId == null){
+      this.eventProjectError = 'Please select a project.';
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  onCreateEvent(){
+    if(!this.validateForm()) return;
+
+    // Prepare event data
+    let eventDate = new Date(this.enteredEventDate);
+    let formattedDate = eventDate.toISOString().split('T')[0];
+
+    const eventData : AddEvent = { 
+      title: this.enteredEventTitle,
+      description: this.enteredEventDescription,
+      projectId: this.selectedProjectId!,
+      categoryId: this.selectedCategoryId!,
+      eventDate: formattedDate,
+      startTime: this.enteredEventStartTime,
+      endTime: this.enteredEventEndTime,
+      location: this.enteredEventLocation,
+      isReminderEnabled: this.selectedReminder != null,
+      reminderBefore: this.selectedReminder || 0,
+      perticipants: [],
+      documents: [],
+      checklists: this.checklistItems? this.checklistItems.map(item => ({ description: item.text, isCompleted: item.completed })) : [],
+    };
+
+    console.log(eventData);
+
+    this.eventService.createEvent(eventData).subscribe({
+      next: (resData) => {
+        this.alterService.success('Success!', 'Event created successfully!');
+        this.closeAddEventModal();
+      },
+      error: (error) => {
+        console.error('Error creating event:', error);
+        this.alterService.error('Error!', 'Failed to create event. Please try again.');
+      }
+    });
+
+  }
+
+
+
 
   allParticipants: Participant[] = [
     {
@@ -68,7 +251,6 @@ export class CreateEvent {
 
   isParticipantSearchOpen = false;
   participantSearchQuery = '';
-  checklistItems: ChecklistItem[] = [];
   newChecklistItem = '';
   attachedFiles: AttachedFile[] = [];
 
@@ -94,6 +276,7 @@ export class CreateEvent {
   }
 
   closeAddEventModal() {
+    this.resetForm();
     this.isAddEventModalOpen = false;
     this.isParticipantSearchOpen = false;
     this.participantSearchQuery = '';

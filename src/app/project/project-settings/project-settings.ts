@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Category } from '../../core/models/category,model';
+import { Category } from '../../core/models/category.model';
 import { Project } from '../../core/models/project.model';
 import { Status } from '../../core/models/status.model';
 import { Workflow } from '../../core/models/workflow.model';
