@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Participant } from '../../core/models/participant.model';
 import { ChecklistItem } from '../../core/models/checklist-item.model';
 import { AttachedFile } from '../../core/models/attached-file.model';
@@ -18,7 +18,7 @@ import { AlertService } from '../../core/services/alert.service';
   templateUrl: './create-event.html',
   styleUrl: './create-event.css',
 })
-export class CreateEvent implements OnInit {
+export class CreateEvent implements OnInit, OnChanges {
   @Input({required : true}) isAddEventModalOpen!: boolean;
   @Output() isAddEventModalClose = new EventEmitter<void>();
 
@@ -53,6 +53,13 @@ export class CreateEvent implements OnInit {
   ngOnInit() {
     this.initializeDateTime();
     this.loadProjects();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isAddEventModalOpen'] && this.isAddEventModalOpen) {
+      this.initializeDateTime();
+      this.loadProjects();
+    }
   }
 
   initializeDateTime(){

@@ -187,10 +187,10 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
         // Store tokens or user info (you can store just token or a user object)
         AuthHelper.setAuthData(accessToken, refreshToken);
         this.workspaceStateService.updateWorkspaceName(AuthHelper.getJwtPayloads()?.workspaceName?? "");
-        // this.router.navigate(['/']);
+        this.router.navigate(['/']);
 
         // Reload page completely to reflect new session
-        window.location.reload();
+        //window.location.reload();
       }, 
       error: (err) => {
         console.log(err);
