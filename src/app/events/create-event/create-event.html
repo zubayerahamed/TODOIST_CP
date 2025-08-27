@@ -42,9 +42,22 @@
           </div>
         </div>
 
-        <div class="mb-3">
-          <label for="eventDescription" class="form-label">Description</label>
-          <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3" [(ngModel)]="enteredEventDescription" placeholder="Enter event description"></textarea>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="eventLink" class="form-label">Event Link</label>
+              <input type="text" class="form-control" id="eventLink" name="eventLink" [(ngModel)]="enteredEventLink" placeholder="Enter event link">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="eventDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3" [(ngModel)]="enteredEventDescription" placeholder="Enter event description"></textarea>
+            </div>
+          </div>
         </div>
 
         <div class="row">

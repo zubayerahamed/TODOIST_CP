@@ -41,6 +41,7 @@ export class CreateEvent implements OnInit {
   selectedCategoryId: number | null = null;
   enteredEventLocation: string = '';
   selectedReminder: number | null = null;
+  enteredEventLink: string = '';
 
   // Form error properties
   eventDateError: string = '';
@@ -50,6 +51,11 @@ export class CreateEvent implements OnInit {
   eventProjectError: string = '';
 
   ngOnInit() {
+    this.initializeDateTime();
+    this.loadProjects();
+  }
+
+  initializeDateTime(){
     const now = new Date();
 
     // Format as HH:mm for <input type="time">
@@ -63,7 +69,10 @@ export class CreateEvent implements OnInit {
     const endHours = endTime.getHours().toString().padStart(2, '0');
     const endMinutes = endTime.getMinutes().toString().padStart(2, '0');
     this.enteredEventEndTime = `${endHours}:${endMinutes}`;
+  }
 
+  loadProjects(){
+    console.log('Loading projects...');
     // Fetch projects from the service
     this.projectService.getAllProjects().subscribe({
       next: (resData) => {
@@ -100,6 +109,7 @@ export class CreateEvent implements OnInit {
     this.selectedCategoryId = null;
     this.enteredEventLocation = '';
     this.selectedReminder = null;
+    this.enteredEventLink = '';
 
     this.resetErrorMessages();
   }
@@ -178,6 +188,7 @@ export class CreateEvent implements OnInit {
       perticipants: [],
       documents: [],
       checklists: this.checklistItems? this.checklistItems.map(item => ({ description: item.text, isCompleted: item.completed })) : [],
+      eventLink: this.enteredEventLink
     };
 
     console.log(eventData);
