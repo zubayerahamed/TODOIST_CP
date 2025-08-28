@@ -49,6 +49,7 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   @Output() addTaskModalOpen = new EventEmitter<void>();
   @Output() addEventModalOpen = new EventEmitter<void>();
   @Output() addProjectModalOpen = new EventEmitter<void>();
+  @Output() loadAvailableWorkspacesAgain = new EventEmitter<void>();
   
   isWorkspaceDropdownOpen = false;
 
@@ -82,6 +83,8 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   } = { showAbove: false, showOutside: false };
 
   ngOnInit() {
+    this.isWorkspaceDropdownOpen = false;
+    this.isFavouritesExpanded = true;
     this.loadWorkspace();
     this.loadProjects();
   }
@@ -150,6 +153,8 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  
+
   closeWorkspaceDropdown() {
     this.isWorkspaceDropdownOpen = false;
   }
@@ -187,10 +192,11 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
         // Store tokens or user info (you can store just token or a user object)
         AuthHelper.setAuthData(accessToken, refreshToken);
         this.workspaceStateService.updateWorkspaceName(AuthHelper.getJwtPayloads()?.workspaceName?? "");
-        // this.router.navigate(['/']);
-
-        // Reload page completely to reflect new session
-        window.location.reload();
+        
+        // Navigate to home and loadd all workspaces again and init the sidebar
+        this.loadAvailableWorkspacesAgain.emit();
+        this.ngOnInit();
+        this.router.navigate(['/']);
       }, 
       error: (err) => {
         console.log(err);
