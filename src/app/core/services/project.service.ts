@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AddProject, Project } from '../models/project.model';
+import { AddProject, Project, UpdateProject } from '../models/project.model';
 import { BaseService } from './base.service';
 
 @Injectable({
@@ -20,8 +20,16 @@ export class ProjectService extends BaseService {
     return this.http.get(`${this.baseUrl}/projects/${id}`);
   }
 
+  totalEventAndTasksCount(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/projects/total-events-and-tasks/${id}`);
+  }
+
   createProject(data: AddProject): Observable<any> {
     return this.http.post(`${this.baseUrl}/projects`, data);
+  }
+
+  updateProject(data: UpdateProject): Observable<any> {
+    return this.http.put(`${this.baseUrl}/projects`, data);
   }
 
   addToFavoutire(id: number): Observable<any> {
@@ -42,20 +50,5 @@ export class ProjectService extends BaseService {
 
   disableInheightSettingsFromWorkspace(id: number): Observable<any> {
     return this.http.put(`${this.baseUrl}/projects/disable-inherit-workspace-settings/${id}`, null);
-  }
-
-  // Helper Methods
-  getFilteredSystemDefinedProjects(projects: Project[]): Project[] {
-    return projects.filter((project: Project) => project.isSystemDefined);
-  }
-
-  getFilteredfavouriteProjects(projects: Project[]): Project[] {
-    console.log(projects);
-    return projects.filter((project) => project.isFavourite && !project.isSystemDefined)
-  }
-
-  getFilteredallProjects(projects: Project[]){
-    //console.log(projects);
-    return projects.filter((project) => !project.isSystemDefined);
   }
 }

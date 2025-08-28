@@ -1,7 +1,10 @@
 import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EventService } from '../core/services/event.service';
-import { Event } from '../core/models/event.model';
+import { Event, EventChecklist } from '../core/models/event.model';
+import { AlertService } from '../core/services/alert.service';
+import { SidebarStateService } from '../core/services/sidebar-state.service';
+import { ProjectPageStateService } from '../core/services/porjectpage-state.service';
 
 @Component({
   selector: 'app-project',
@@ -19,6 +22,9 @@ export class Project implements OnInit {
   private destroyRef = inject(DestroyRef);
   private activatedRoute = inject(ActivatedRoute);
   private eventService = inject(EventService);
+  private alertService = inject(AlertService);
+  private sidebarStateService = inject(SidebarStateService);
+  private projectPageStateService = inject(ProjectPageStateService);
 
   public events: Event[] = [];
 
@@ -30,13 +36,20 @@ export class Project implements OnInit {
       },
     });
 
+    const projectPageSubscription = this.projectPageStateService.projectPageUpdate$.subscribe({
+      next: (data) => {
+          this.loadEvents();
+      },
+    });
+
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
+      projectPageSubscription.unsubscribe();
     });
   }
 
   loadEvents() {
-    this.eventService.getAllEvents(parseInt(this.projectId, 10)).subscribe({
+    this.eventService.getAllInCompleteEvents(parseInt(this.projectId, 10)).subscribe({
       next: (response) => {
         this.events = response.data || [];
         console.log('Events loaded:', this.events);
@@ -45,6 +58,50 @@ export class Project implements OnInit {
         console.error('Error fetching events:', error);
       },
     });
+  }
+
+  completeEvent(event: Event) {
+    if (event.isCompleted) {
+      return; // Already completed
+    }
+
+    this.eventService.markCompleteEvent(event.id).subscribe({
+      next: (response) => {
+        event.isCompleted = true;
+        this.alertService.success('Success!', 'Event marked as complete.');
+        this.sidebarStateService.updateSidebarProjects(null);
+      },
+      error: (error) => {
+        console.error('Error completing event:', error);
+        this.alertService.error('Error', 'Failed to mark event as complete.');
+      },
+    });
+  }
+
+  toggleChecklist(checklist: EventChecklist){
+    if (checklist.isCompleted) {
+      this.eventService.markInCompleteEventChecklist(checklist.id).subscribe({
+        next: (response) => {
+          checklist.isCompleted = false;
+          this.alertService.success('Success!', 'Checklist item marked as incomplete.');
+        },
+        error: (error) => {
+          console.error('Error marking checklist item as incomplete:', error);
+          this.alertService.error('Error', 'Failed to mark checklist item as incomplete.');
+        },
+      });
+    } else {
+      this.eventService.markCompleteEventChecklist(checklist.id).subscribe({
+        next: (response) => {
+          checklist.isCompleted = true;
+          this.alertService.success('Success!', 'Checklist item marked as complete.');
+        },
+        error: (error) => {
+          console.error('Error marking checklist item as complete:', error);
+          this.alertService.error('Error', 'Failed to mark checklist item as complete.');
+        },
+      });
+    }
   }
 
   getDisplayDate(eventDate: Date): string {

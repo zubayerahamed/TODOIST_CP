@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Category } from '../../core/models/category.model';
-import { Project } from '../../core/models/project.model';
+import { Project, UpdateProject } from '../../core/models/project.model';
 import { Status } from '../../core/models/status.model';
 import { Workflow } from '../../core/models/workflow.model';
 import { UpdateWorkspace, Workspace } from '../../core/models/workspace.model';
@@ -16,6 +16,7 @@ import { WorkspaceStateService } from '../../core/services/workspace-state.servi
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { Statuses } from '../../statuses/statuses';
 import { Types } from '../../types/types';
+import { SidebarStateService } from '../../core/services/sidebar-state.service';
 
 @Component({
   selector: 'app-project-settings',
@@ -35,11 +36,10 @@ export class ProjectSettings implements OnInit {
 
   private categoryService = inject(CategoryService);
   private statusService = inject(StatusService);
-  private workspaceService = inject(WorkspaceService);
   private alertService = inject(AlertService);
-  private workspaceStateService = inject(WorkspaceStateService);
   private workflowService = inject(WorkflowService);
   private tagService = inject(TagService);
+  private sidebarStateService = inject(SidebarStateService);
 
   public project?: Project;
 
@@ -159,28 +159,25 @@ export class ProjectSettings implements OnInit {
 
 
 
-  onUpdateWorkspace(){
-    const updateWorkspace: UpdateWorkspace = {
-      id: this.workspace!.id,
+  onUpdateProjectName(){
+    const updateProject: UpdateProject = {
+      id: this.project!.id,
       name: this.enteredProjectName,
+      color: null,
+      layoutType: null,
+      isFavourite: null
     };
 
-    this.workspaceService.updateWorkspace(updateWorkspace).subscribe({
+    this.projectService.updateProject(updateProject).subscribe({
       next: (resData) => {
-        this.alertService.success('Success!', 'Workspace updated successfully');
-        this.workspace = resData.data;
-        this.enteredProjectName = this.workspace!.name;
-        
-        // Use WorkspaceStateService to update workspace name
-        // This will automatically notify all subscribers (like left-sidebar)
-        this.workspaceStateService.updateWorkspaceName(this.workspace!.name);
+        this.alertService.success('Success!', 'Project name updated successfully');
+        this.sidebarStateService.updateSidebarProjects(null);
       },
       error: (resErr) => {
         console.error(resErr);
-        this.alertService.error('Error!', 'Workspace updated failed');
+        this.alertService.error('Error!', 'Project name updated failed');
       }
     });
-
   }
 
   onTriggerRefreshAfterSave() {

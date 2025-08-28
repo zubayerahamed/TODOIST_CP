@@ -11,6 +11,8 @@ import { Category } from '../../core/models/category.model';
 import { AddEvent } from '../../core/models/event.model';
 import { EventService } from '../../core/services/event.service';
 import { AlertService } from '../../core/services/alert.service';
+import { SidebarStateService } from '../../core/services/sidebar-state.service';
+import { ProjectPageStateService } from '../../core/services/porjectpage-state.service';
 
 @Component({
   selector: 'app-create-event',
@@ -26,6 +28,8 @@ export class CreateEvent implements OnInit, OnChanges {
   private projectService = inject(ProjectService);
   private categoryService = inject(CategoryService);
   private eventService = inject(EventService);
+  private sidebarStateService = inject(SidebarStateService);
+  private projectPageStateService = inject(ProjectPageStateService);
 
   public projects: Project[] = [];
   public categories: Category[] = [];
@@ -117,6 +121,7 @@ export class CreateEvent implements OnInit, OnChanges {
     this.enteredEventLocation = '';
     this.selectedReminder = null;
     this.enteredEventLink = '';
+    this.checklistItems = [];
 
     this.resetErrorMessages();
   }
@@ -198,11 +203,13 @@ export class CreateEvent implements OnInit, OnChanges {
       eventLink: this.enteredEventLink
     };
 
-    console.log(eventData);
-
     this.eventService.createEvent(eventData).subscribe({
       next: (resData) => {
         this.alterService.success('Success!', 'Event created successfully!');
+
+        // Update sidebar and project page
+        this.sidebarStateService.updateSidebarProjects(null);
+        this.projectPageStateService.updateProjectPage(null);
         this.closeAddEventModal();
       },
       error: (error) => {

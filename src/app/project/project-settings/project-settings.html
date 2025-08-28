@@ -4,10 +4,10 @@
   <div class="d-flex">
     <div class="col-md-3">
       <div class="mb-3">
-        <label for="workspaceName" class="form-label fw-bold text-muted">Project name</label>
-        <input type="text" class="form-control" id="workspaceName" [(ngModel)]="enteredProjectName">
+        <label for="projectName" class="form-label fw-bold text-muted">Project name</label>
+        <input type="text" class="form-control" id="projectName" name="projectName" [(ngModel)]="enteredProjectName">
       </div>
-      <button type="button" class="btn btn-primary" (click)="onUpdateWorkspace()">Save</button>
+      <button type="button" class="btn btn-primary" (click)="onUpdateProjectName()">Save</button>
     </div>
   </div>
   <div class="divider"></div>

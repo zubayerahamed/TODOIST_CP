@@ -1,27 +1,28 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   HostListener,
   inject,
   Input,
   OnChanges,
-  OnInit,
   OnDestroy,
+  OnInit,
   Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthHelper } from '../../core/helpers/auth.helper';
 import { Project } from '../../core/models/project.model';
+import { SwitchWorkspaceRequest } from '../../core/models/switch-workspace-request.model';
 import { Workspace } from '../../core/models/workspace.model';
+import { AlertService } from '../../core/services/alert.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ProjectService } from '../../core/services/project.service';
 import { WorkspaceStateService } from '../../core/services/workspace-state.service';
-import { AlertService } from '../../core/services/alert.service';
-import { WorkspaceService } from '../../core/services/workspace.service';
-import { AuthService } from '../../core/services/auth.service';
-import { AuthHelper } from '../../core/helpers/auth.helper';
-import { SwitchWorkspaceRequest } from '../../core/models/switch-workspace-request.model';
+import { SidebarStateService } from '../../core/services/sidebar-state.service';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -53,20 +54,18 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   
   isWorkspaceDropdownOpen = false;
 
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private authService = inject(AuthService);
-  private workspaceService = inject(WorkspaceService);
   private projectService = inject(ProjectService);
   private workspaceStateService = inject(WorkspaceStateService);
+  private sidebarStateService = inject(SidebarStateService);
   private alertService = inject(AlertService);
   private workspaceNameSubscription?: Subscription;
 
   public workspace!: Workspace;
   public workspaceName: string = "";
   public projects: Project[] = [];
-  public systemDefinedProjects: Project[] = [];
-  public favouriteProjects: Project[] = [];
-  public allProjects: Project[] = [];
 
   // Dropdown states for collapsible sections
   public isFavouritesExpanded: boolean = true;
@@ -83,6 +82,16 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   } = { showAbove: false, showOutside: false };
 
   ngOnInit() {
+    const subscription = this.sidebarStateService.sidebarUpdate$.subscribe(data => {
+      // if(data){
+        this.loadProjects();
+      // }
+    });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
+
     this.isWorkspaceDropdownOpen = false;
     this.isFavouritesExpanded = true;
     this.loadWorkspace();
@@ -119,21 +128,12 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   private loadProjects(){
     this.projectService.getAllProjects().subscribe({
       next: (resData) => {
-        //console.log('Projects fetched successfully:', resData);
         this.projects = resData.data || [];
-        this.processProjects();
       },
       error: (error) => {
         console.error('Error fetching projects:', error);
       },
     });
-  }
-
-  private processProjects(): void {
-    // Process data once and store in properties
-    this.systemDefinedProjects = this.projectService.getFilteredSystemDefinedProjects(this.projects);
-    this.favouriteProjects = this.projectService.getFilteredfavouriteProjects(this.projects);
-    this.allProjects = this.projectService.getFilteredallProjects(this.projects);
   }
   
 
@@ -194,8 +194,10 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
         this.workspaceStateService.updateWorkspaceName(AuthHelper.getJwtPayloads()?.workspaceName?? "");
         
         // Navigate to home and loadd all workspaces again and init the sidebar
+        this.isWorkspaceDropdownOpen = false;
+        this.isFavouritesExpanded = true;
         this.loadAvailableWorkspacesAgain.emit();
-        this.ngOnInit();
+        this.loadProjects();
         this.router.navigate(['/']);
       }, 
       error: (err) => {
@@ -365,20 +367,20 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   addToFavourites(project: Project, event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    
-    console.log('Adding to favourites:', project.name);
+
+    //console.log('Adding to favourites:', project.name);
     this.projectService.addToFavoutire(project.id).subscribe({
       next: (resData) => {
         // Refresh projects after update
         this.alertService.success('Success!', 'Project added to favourite');
-        this.loadProjects();
+        project.isFavourite = true;
       }, 
       error: (error) => {
         console.error('Error adding to favourites:', error);
         this.alertService.error('Error!', 'Error adding to favourites');
       }
     });
-    
+
     this.closeProjectContextMenu();
   }
 

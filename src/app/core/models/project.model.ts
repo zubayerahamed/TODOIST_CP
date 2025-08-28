@@ -8,6 +8,8 @@ export interface Project{
     isSystemDefined: boolean;
     isInheritSettings: boolean;
     layoutType: string;
+    totalActiveEvents: number | 0;
+	totalActiveTasks: number | 0;
 }
 
 export interface AddProject{
@@ -15,4 +17,12 @@ export interface AddProject{
     color: string;
     layoutType: string;
     isFavourite: boolean;
+}
+
+export interface UpdateProject{
+    id: number;
+    name: string;
+    color: string | null;
+    layoutType: string | null;
+    isFavourite: boolean | null;
 }
