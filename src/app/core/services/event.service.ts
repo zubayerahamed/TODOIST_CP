@@ -12,7 +12,11 @@ export class EventService extends BaseService {
     super();
   }
 
-  
+  getAllEvents(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/events/all/${id}`);
+  }
+
+
   createEvent(data: AddEvent): Observable<any> {
     return this.http.post(`${this.baseUrl}/events`, data);
   }

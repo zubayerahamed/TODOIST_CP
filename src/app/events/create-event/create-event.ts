@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Participant } from '../../core/models/participant.model';
 import { ChecklistItem } from '../../core/models/checklist-item.model';
 import { AttachedFile } from '../../core/models/attached-file.model';
@@ -18,7 +18,7 @@ import { AlertService } from '../../core/services/alert.service';
   templateUrl: './create-event.html',
   styleUrl: './create-event.css',
 })
-export class CreateEvent implements OnInit {
+export class CreateEvent implements OnInit, OnChanges {
   @Input({required : true}) isAddEventModalOpen!: boolean;
   @Output() isAddEventModalClose = new EventEmitter<void>();
 
@@ -41,6 +41,7 @@ export class CreateEvent implements OnInit {
   selectedCategoryId: number | null = null;
   enteredEventLocation: string = '';
   selectedReminder: number | null = null;
+  enteredEventLink: string = '';
 
   // Form error properties
   eventDateError: string = '';
@@ -50,6 +51,18 @@ export class CreateEvent implements OnInit {
   eventProjectError: string = '';
 
   ngOnInit() {
+    this.initializeDateTime();
+    this.loadProjects();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isAddEventModalOpen'] && this.isAddEventModalOpen) {
+      this.initializeDateTime();
+      this.loadProjects();
+    }
+  }
+
+  initializeDateTime(){
     const now = new Date();
 
     // Format as HH:mm for <input type="time">
@@ -63,7 +76,10 @@ export class CreateEvent implements OnInit {
     const endHours = endTime.getHours().toString().padStart(2, '0');
     const endMinutes = endTime.getMinutes().toString().padStart(2, '0');
     this.enteredEventEndTime = `${endHours}:${endMinutes}`;
+  }
 
+  loadProjects(){
+    console.log('Loading projects...');
     // Fetch projects from the service
     this.projectService.getAllProjects().subscribe({
       next: (resData) => {
@@ -100,6 +116,7 @@ export class CreateEvent implements OnInit {
     this.selectedCategoryId = null;
     this.enteredEventLocation = '';
     this.selectedReminder = null;
+    this.enteredEventLink = '';
 
     this.resetErrorMessages();
   }
@@ -178,6 +195,7 @@ export class CreateEvent implements OnInit {
       perticipants: [],
       documents: [],
       checklists: this.checklistItems? this.checklistItems.map(item => ({ description: item.text, isCompleted: item.completed })) : [],
+      eventLink: this.enteredEventLink
     };
 
     console.log(eventData);

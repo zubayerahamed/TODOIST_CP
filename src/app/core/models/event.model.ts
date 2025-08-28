@@ -12,6 +12,10 @@ export interface Event {
   reminderBefore: number;
   isReminderSent: boolean;
   isCompleted: boolean;
+  eventLink: string;
+  checklists: EventChecklist[];
+  projectName: string;
+  categoryName: string;
 }
 
 export interface AddEvent{
@@ -28,6 +32,14 @@ export interface AddEvent{
   perticipants: number[];
   documents: number[];
   checklists: AddEventChecklist[];
+  eventLink: string;
+}
+
+export interface EventChecklist{
+  id: number;
+  eventId: number;
+  description: string;
+  isCompleted: boolean;
 }
 
 export interface AddEventChecklist{
