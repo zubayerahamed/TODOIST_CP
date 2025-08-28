@@ -15,20 +15,29 @@
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="eventDate" class="form-label">Date *</label>
-              <input type="date" class="form-control" id="eventDate" name="eventDate" [(ngModel)]="enteredEventDate">
+              <label for="eventDate" class="form-label">Date <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="eventDate" name="eventDate" [(ngModel)]="enteredEventDate" required="">
+              @if (eventDateError) {
+                <span class="text-danger text-sm">{{ eventDateError }}</span>
+              }
             </div>
           </div>
           <div class="col-md-3">
             <div class="mb-3">
-              <label for="eventStartTime" class="form-label">Start Time *</label>
-              <input type="time" class="form-control" id="eventStartTime" name="eventStartTime" [(ngModel)]="enteredEventStartTime">
+              <label for="eventStartTime" class="form-label">Start Time <span class="text-danger">*</span></label>
+              <input type="time" class="form-control" id="eventStartTime" name="eventStartTime" [(ngModel)]="enteredEventStartTime" required="">
+              @if (eventStartTimeError) {
+                <span class="text-danger text-sm">{{ eventStartTimeError }}</span>
+              }
             </div>
           </div>
           <div class="col-md-3">
             <div class="mb-3">
-              <label for="eventEndTime" class="form-label">End Time *</label>
-              <input type="time" class="form-control" id="eventEndTime" name="eventEndTime" [(ngModel)]="enteredEventEndTime">
+              <label for="eventEndTime" class="form-label">End Time <span class="text-danger">*</span></label>
+              <input type="time" class="form-control" id="eventEndTime" name="eventEndTime" [(ngModel)]="enteredEventEndTime" required="">
+              @if (eventEndTimeError) {
+                <span class="text-danger text-sm">{{ eventEndTimeError }}</span>
+              }
             </div>
           </div>
         </div>
@@ -36,8 +45,11 @@
         <div class="row">
           <div class="col-md-12">
             <div class="mb-3">
-              <label for="eventTitle" class="form-label">Event Title *</label>
-              <input type="text" class="form-control" id="eventTitle" name="eventTitle" [(ngModel)]="enteredEventTitle" placeholder="Enter event title">
+              <label for="eventTitle" class="form-label">Event Title <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="eventTitle" name="eventTitle" [(ngModel)]="enteredEventTitle" placeholder="Enter event title" required="">
+              @if (eventTitleError) {
+                <span class="text-danger text-sm">{{ eventTitleError }}</span>
+              }
             </div>
           </div>
         </div>
@@ -63,13 +75,16 @@
         <div class="row">
           <div class="col-md-3">
             <div class="mb-3">
-              <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project</label>
-              <select class="form-select" id="eventProject" name="eventProject" [(ngModel)]="selectedProjectId" (ngModelChange)="onProjectChange($event)">
+              <label for="eventProject" class="form-label"><i class="ph ph-hash me-2"></i>Project <span class="text-danger">*</span></label>
+              <select class="form-select" id="eventProject" name="eventProject" [(ngModel)]="selectedProjectId" (ngModelChange)="onProjectChange($event)" required="">
                 <option [ngValue]="null">-- Select Project --</option>
                 @for (project of projects; track project.id) {
                   <option [value]="project.id">{{ project.name }}</option>
                 }
               </select>
+              @if (eventProjectError) {
+                <span class="text-danger text-sm">{{ eventProjectError }}</span>
+              }
             </div>
           </div>
           <div class="col-md-3">

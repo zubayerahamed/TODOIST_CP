@@ -23,6 +23,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { ProjectService } from '../../core/services/project.service';
 import { WorkspaceStateService } from '../../core/services/workspace-state.service';
 import { SidebarStateService } from '../../core/services/sidebar-state.service';
+import { PageService } from '../../core/services/page.service';
 
 @Component({
   selector: 'app-left-sidebar',
@@ -61,11 +62,15 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
   private workspaceStateService = inject(WorkspaceStateService);
   private sidebarStateService = inject(SidebarStateService);
   private alertService = inject(AlertService);
+  private pageService = inject(PageService);
   private workspaceNameSubscription?: Subscription;
 
   public workspace!: Workspace;
   public workspaceName: string = "";
   public projects: Project[] = [];
+  public todayPageCount: number = 0;
+  public upcomingPageCount: number = 0;
+  public completedPageCount: number = 0;
 
   // Dropdown states for collapsible sections
   public isFavouritesExpanded: boolean = true;
@@ -83,19 +88,52 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     const subscription = this.sidebarStateService.sidebarUpdate$.subscribe(data => {
-      // if(data){
-        this.loadProjects();
-      // }
+      this.loadProjects();
+    });
+
+    const pageCountSubscription = this.sidebarStateService.sidebarUpdatePageCount$.subscribe(data => {
+      this.loadPageCounts();
     });
 
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
+      pageCountSubscription.unsubscribe();
     });
 
     this.isWorkspaceDropdownOpen = false;
     this.isFavouritesExpanded = true;
     this.loadWorkspace();
     this.loadProjects();
+    this.loadPageCounts();
+  }
+
+  loadPageCounts(){
+    this.pageService.getCountOfAllTodaysEvents().subscribe({
+      next: (resData) => {
+        this.todayPageCount = resData.data || 0;
+      }, 
+      error: (err) => {
+        console.log("Error from geting todays events count");
+      }
+    });
+
+    this.pageService.getCountOfAllUpcomingEvents().subscribe({
+      next: (resData) => {
+        this.upcomingPageCount = resData.data || 0;
+      }, 
+      error: (err) => {
+        console.log("Error from geting upcoming events count");
+      }
+    });
+
+    this.pageService.getCountOfAllCompletedEvents().subscribe({
+      next: (resData) => {
+        this.completedPageCount = resData.data || 0;
+      }, 
+      error: (err) => {
+        console.log("Error from geting complted events count");
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -198,6 +236,7 @@ export class LeftSidebar implements OnInit, OnChanges, OnDestroy {
         this.isFavouritesExpanded = true;
         this.loadAvailableWorkspacesAgain.emit();
         this.loadProjects();
+        this.loadPageCounts();
         this.router.navigate(['/']);
       }, 
       error: (err) => {

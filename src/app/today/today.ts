@@ -1,12 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { PageDetail } from "../core/components/shared/page-detail/page-detail";
 import { Event } from '../core/models/event.model';
 import { PageService } from '../core/services/page.service';
-import { KeyValuePipe } from '@angular/common';
+import { TodayPageStateService } from '../core/services/todaypage-state.service';
 
 @Component({
   selector: 'app-today',
   standalone: true,
-  imports: [KeyValuePipe],
+  imports: [PageDetail],
   templateUrl: './today.html',
   styleUrls: ['./today.css'],
   host: {
@@ -17,12 +18,24 @@ export class Today implements OnInit {
   
   pageTitle: string = 'Today';
 
+  private destroyRef = inject(DestroyRef);
   private pageService = inject(PageService);
+  private todayPageStageService = inject(TodayPageStateService);
 
   public events: Event[] = [];
   public groupedEvents: { [key: string]: Event[] } = {};
   
   ngOnInit(): void {
+    const todayPageSubscription = this.todayPageStageService.todayPageUpdate$.subscribe({
+      next: (data) => {
+        this.loadEvents();
+      },
+    });
+
+    this.destroyRef.onDestroy(() => {
+      todayPageSubscription.unsubscribe();
+    });
+
     this.loadEvents();
   }
 
@@ -30,8 +43,7 @@ export class Today implements OnInit {
     this.pageService.getAllTodaysEvents().subscribe({
       next: (response) => {
         this.events = response.data || [];
-        this.groupedEvents = this.proupEventsByProjectName(this.events);
-        console.log(this.groupedEvents);
+        this.groupedEvents = this.groupEventsByProjectName(this.events);
       },
       error: (error) => {
         console.error('Error fetching today\'s events:', error);
@@ -39,7 +51,7 @@ export class Today implements OnInit {
     });
   }
 
-  proupEventsByProjectName(events: Event[]): { [key: string]: Event[] } {
+  groupEventsByProjectName(events: Event[]): { [key: string]: Event[] } {
     return events.reduce((groupedEvents, event) => {
       const projectName = event.projectName;
       if (!groupedEvents[projectName]) {

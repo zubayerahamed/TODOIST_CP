@@ -1,14 +1,20 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SidebarStateService {
-    private sidebarUpdateSource = new BehaviorSubject<any>(null);
-    sidebarUpdate$ = this.sidebarUpdateSource.asObservable();
+  private sidebarUpdateSource = new BehaviorSubject<any>(null);
+  private sidebarUpdatePageCount = new BehaviorSubject<any>(null);
+  sidebarUpdate$ = this.sidebarUpdateSource.asObservable();
+  sidebarUpdatePageCount$ = this.sidebarUpdatePageCount.asObservable();
 
-    updateSidebarProjects(data: any) {
-        this.sidebarUpdateSource.next(data);
-    }
+  updateSidebarProjects(data: any) {
+    this.sidebarUpdateSource.next(data);
+  }
+
+  updatePageCounts(data: any) {
+    this.sidebarUpdatePageCount.next(data);
+  }
 }

@@ -15,5 +15,23 @@ export class PageService extends BaseService {
     return this.http.get(`${this.baseUrl}/pages/today`);
   }
 
+  getAllUpcomingEvents(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/pages/upcoming`);
+  }
   
+  getAllCompletedEvents(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/pages/completed`);
+  }
+
+  getCountOfAllTodaysEvents(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/pages/today/count`);
+  }
+
+  getCountOfAllUpcomingEvents(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/pages/upcoming/count`);
+  }
+  
+  getCountOfAllCompletedEvents(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/pages/completed/count`);
+  }
 }

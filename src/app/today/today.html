@@ -1,65 +1,94 @@
   <h3 class="fw-bold border-bottom p-2 text-center mb-0">Today</h3>
 
-  @for (group of groupedEvents | keyvalue; track group.key) {
-    <div class="project-box d-flex gap-3 flex-column">
-      <div class="d-flex align-items-center project-box-header">
-        <i class="ph ph-hash fs-5 me-2"></i>
-        <h5 class="m-0 p-0 fw-bold">{{ group.key }}</h5>
-      </div>
+  <app-page-detail
+    [groupedEvents]="groupedEvents"
+    [ignoreCompleted]="true"
+  />
 
-      @for (event of group.value; track event.id) {
-        <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
-          <div class="task-status-check-icons-container">
-            <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
-            <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
-          </div>
-          <div class="flex-grow-1 d-flex flex-column gap-1">
-            <div class="d-flex align-items-center gap-3 task-header">
-              <span class="badge bg-primary ps-3 pe-3">Event</span>
-              <h5 class="m-0">{{ event.title }}</h5>
-              <img
-                  src="/assets/images/zubayer.jpg"
-                  class="rounded-circle task-participants-image"
-                  alt="Cinque Terre" />
-            </div>
-            <span class="mt-2 mb-2">
-              <span class="fw-bold">Checklist</span>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" checked>
-                <label class="form-check-label text-deleted" for="defaultCheck1">
-                  Fish
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
-                <label class="form-check-label" for="defaultCheck2">
-                  Meat
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="defaultCheck3">
-                <label class="form-check-label" for="defaultCheck3">
-                  Vegetables
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="defaultCheck4">
-                <label class="form-check-label" for="defaultCheck4">
-                  Rice
-                </label>
-              </div>
-            </span>
-            <div class="d-flex align-items-center gap-4 task-metadata">
-              <div class="d-flex align-items-center gap-1">
-                <i class="ph ph-calendar-dot"></i>
-                <span class="text-muted text-sm">Today: 9:00am - 10:00am (1h)</span>
-              </div>
-            </div>
-          </div>
+  <!-- @for (group of groupedEvents | keyvalue; track group.key) {
+    @if(group.value.length > 0){
+      <div class="project-box d-flex gap-3 flex-column">
+        <div class="d-flex align-items-center project-box-header">
+          <i class="ph ph-hash fs-5 me-2"></i>
+          <h5 class="m-0 p-0 fw-bold">{{ group.key }}</h5>
         </div>
-      }
-    </div>
-  }
+  
+        @for (event of group.value; track event.id) {
+          @if (!event.isCompleted) {
+            <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+              <div class="task-status-check-icons-container" (click)="completeEvent(event)">
+                <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+                <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+              </div>
+              <div class="flex-grow-1 d-flex flex-column gap-1">
+                <div class="d-flex align-items-center gap-3 task-header">
+                  <span class="badge bg-primary ps-3 pe-3">Event</span>
+                  <h5 class="m-0">{{ event.title }}</h5>
+                  <img src="/assets/images/zubayer.jpg" class="rounded-circle task-participants-image" alt="Cinque Terre" />
+                </div>
+                
+                @if(event.description){
+                  <span class="mt-2 mb-2">{{ event.description }}</span>
+                }
+
+                @if(event.checklists.length > 0){
+                  <span class="mt-2 mb-2">
+                      <span class="fw-bold">Checklist</span>
+                      @for (checklist of event.checklists; track checklist.id) {
+                          <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" [id]="checklist.id" [checked]="checklist.isCompleted" (click)="toggleChecklist(checklist)" />
+                              <label class="form-check-label {{ checklist.isCompleted ? 'text-deleted' : '' }}" [for]="checklist.id">
+                                  {{ checklist.description }}
+                              </label>
+                          </div>
+                      }
+                  </span>
+                }
+
+                <div class="d-flex align-items-center gap-4 task-metadata">
+                  <div class="d-flex align-items-center gap-1">
+                      <i class="ph ph-calendar-dot"></i>
+                      <span class="text-muted text-sm">
+                          {{ getDisplayDate(event.eventDate) }} : 
+                          {{ formatTime(event.startTime) }} - {{ formatTime(event.endTime) }}
+                          ({{ getDuration(event.startTime, event.endTime) }})
+                      </span>
+                  </div>
+
+                  @if (event.categoryId) {
+                      <div class="d-flex align-items-center gap-1">
+                          <i class="ph ph-tag"></i>
+                          <span class="text-muted text-sm">{{ event.categoryName }}</span>
+                      </div>
+                  }
+                </div>
+
+                @if (event.location) {
+                  <div class="d-flex align-items-center gap-4 task-metadata">
+                      <div class="d-flex align-items-center gap-1">
+                          <i class="ph ph-map-pin"></i>
+                          <span class="text-muted text-sm">Location: {{ event.location }}</span>
+                      </div>
+                  </div>
+                }
+
+                @if (event.eventLink) {
+                  <div class="d-flex align-items-center gap-4 task-metadata">
+                      <div class="d-flex align-items-center gap-1">
+                          <i class="ph ph-link"></i>
+                          <a class="text-sm" href="{{ event.eventLink }}" target="_blank">Event Link: {{ event.eventLink }}</a>
+                      </div>
+                  </div>
+                }
+
+                
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+  } -->
 
   <!-- <div class="project-box d-flex gap-3 flex-column">
     <div class="d-flex align-items-center project-box-header">

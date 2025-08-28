@@ -13,6 +13,7 @@ import { EventService } from '../../core/services/event.service';
 import { AlertService } from '../../core/services/alert.service';
 import { SidebarStateService } from '../../core/services/sidebar-state.service';
 import { ProjectPageStateService } from '../../core/services/porjectpage-state.service';
+import { TodayPageStateService } from '../../core/services/todaypage-state.service';
 
 @Component({
   selector: 'app-create-event',
@@ -30,6 +31,7 @@ export class CreateEvent implements OnInit, OnChanges {
   private eventService = inject(EventService);
   private sidebarStateService = inject(SidebarStateService);
   private projectPageStateService = inject(ProjectPageStateService);
+  private todayPageStageService = inject(TodayPageStateService);
 
   public projects: Project[] = [];
   public categories: Category[] = [];
@@ -148,7 +150,20 @@ export class CreateEvent implements OnInit, OnChanges {
     if(this.enteredEventDate.trim().length === 0){
       this.eventDateError = 'Event date is required.';
       isValid = false;
+    } else {
+      const entered = new Date(this.enteredEventDate);
+      const today = new Date();
+    
+      // reset time part for accurate comparison
+      entered.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+    
+      if (entered < today) {
+        this.eventDateError = 'Event date cannot be before today.';
+        isValid = false;
+      }
     }
+  
   
     if(this.enteredEventStartTime.trim().length === 0){
       this.eventStartTimeError = 'Event start time is required.';
@@ -209,7 +224,9 @@ export class CreateEvent implements OnInit, OnChanges {
 
         // Update sidebar and project page
         this.sidebarStateService.updateSidebarProjects(null);
+        this.sidebarStateService.updatePageCounts(null);
         this.projectPageStateService.updateProjectPage(null);
+        this.todayPageStageService.updateTodayPage(null);
         this.closeAddEventModal();
       },
       error: (error) => {

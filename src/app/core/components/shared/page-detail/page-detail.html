@@ -1,0 +1,16 @@
+@for (group of groupedEvents | keyvalue; track group.key) {
+    @if(group.value.length > 0){
+        <div class="project-box d-flex gap-3 flex-column">
+            <div class="d-flex align-items-center project-box-header">
+                <i class="ph ph-hash fs-5 me-2"></i>
+                <h5 class="m-0 p-0 fw-bold">{{ group.key }}</h5>
+            </div>
+    
+            <app-event-preview
+                [events]="group.value"
+                [ignoreCompleted]="ignoreCompleted"
+            />
+
+        </div>
+    }
+}

@@ -1,0 +1,139 @@
+@for (event of events; track event.id) {
+    @if (ignoreCompleted && !event.isCompleted) {
+        <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+            <div class="task-status-check-icons-container" (click)="completeEvent(event)">
+                <i class="ph ph-circle fs-4 task-status-icon-unchecked"></i>
+                <i class="ph ph-check-circle fs-4 task-status-icon-checked"></i>
+            </div>
+            <div class="flex-grow-1 d-flex flex-column gap-1">
+                <div class="d-flex align-items-center gap-3 task-header">
+                    <span class="badge bg-primary ps-3 pe-3">Event</span>
+                    <h5 class="m-0">{{ event.title }}</h5>
+                    <img src="/assets/images/zubayer.jpg" class="rounded-circle task-participants-image" alt="Cinque Terre" />
+                </div>
+                
+                @if(event.description){
+                    <span class="mt-2 mb-2">{{ event.description }}</span>
+                }
+
+                @if(event.checklists.length > 0){
+                    <span class="mt-2 mb-2">
+                        <span class="fw-bold">Checklist</span>
+                        @for (checklist of event.checklists; track checklist.id) {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" [id]="checklist.id" [checked]="checklist.isCompleted" (click)="toggleChecklist(checklist)" />
+                                <label class="form-check-label {{ checklist.isCompleted ? 'text-deleted' : '' }}" [for]="checklist.id">
+                                    {{ checklist.description }}
+                                </label>
+                            </div>
+                        }
+                    </span>
+                }
+
+                <div class="d-flex align-items-center gap-4 task-metadata">
+                    <div class="d-flex align-items-center gap-1">
+                        <i class="ph ph-calendar-dot"></i>
+                        <span class="text-muted text-sm">
+                            {{ getDisplayDate(event.eventDate) }} : 
+                            {{ formatTime(event.startTime) }} - {{ formatTime(event.endTime) }}
+                            ({{ getDuration(event.startTime, event.endTime) }})
+                        </span>
+                    </div>
+
+                    @if (event.categoryId) {
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="ph ph-tag"></i>
+                            <span class="text-muted text-sm">{{ event.categoryName }}</span>
+                        </div>
+                    }
+                </div>
+
+                @if (event.location) {
+                    <div class="d-flex align-items-center gap-4 task-metadata">
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="ph ph-map-pin"></i>
+                            <span class="text-muted text-sm">Location: {{ event.location }}</span>
+                        </div>
+                    </div>
+                }
+
+                @if (event.eventLink) {
+                    <div class="d-flex align-items-center gap-4 task-metadata">
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="ph ph-link"></i>
+                            <span class="text-muted text-sm">Event Link:</span> <a class="text-sm" href="{{ event.eventLink }}" target="_blank">{{ event.eventLink }}</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    } @else {
+        <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
+            <div class="r-task-status-check-icons-container" (click)="inCompleteEvent(event)">
+                <i class="ph ph-check-circle fs-4 r-task-status-icon-checked"></i>
+                <i class="ph ph-circle fs-4 r-task-status-icon-unchecked"></i>
+            </div>
+            <div class="flex-grow-1 d-flex flex-column gap-1">
+                <div class="d-flex align-items-center gap-3 task-header">
+                    <span class="badge bg-primary ps-3 pe-3">Event</span>
+                    <h5 class="m-0">{{ event.title }}</h5>
+                    <img src="/assets/images/zubayer.jpg" class="rounded-circle task-participants-image" alt="Cinque Terre" />
+                </div>
+                
+                @if(event.description){
+                    <span class="mt-2 mb-2">{{ event.description }}</span>
+                }
+
+                @if(event.checklists.length > 0){
+                    <span class="mt-2 mb-2">
+                        <span class="fw-bold">Checklist</span>
+                        @for (checklist of event.checklists; track checklist.id) {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" [id]="checklist.id" [checked]="checklist.isCompleted" disabled/>
+                                <label class="form-check-label {{ checklist.isCompleted ? 'text-deleted' : '' }}" [for]="checklist.id">
+                                    {{ checklist.description }}
+                                </label>
+                            </div>
+                        }
+                    </span>
+                }
+
+                <div class="d-flex align-items-center gap-4 task-metadata">
+                    <div class="d-flex align-items-center gap-1">
+                        <i class="ph ph-calendar-dot"></i>
+                        <span class="text-muted text-sm">
+                            {{ getDisplayDate(event.eventDate) }} : 
+                            {{ formatTime(event.startTime) }} - {{ formatTime(event.endTime) }}
+                            ({{ getDuration(event.startTime, event.endTime) }})
+                        </span>
+                    </div>
+
+                    @if (event.categoryId) {
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="ph ph-tag"></i>
+                            <span class="text-muted text-sm">{{ event.categoryName }}</span>
+                        </div>
+                    }
+                </div>
+
+                @if (event.location) {
+                    <div class="d-flex align-items-center gap-4 task-metadata">
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="ph ph-map-pin"></i>
+                            <span class="text-muted text-sm">Location: {{ event.location }}</span>
+                        </div>
+                    </div>
+                }
+
+                @if (event.eventLink) {
+                    <div class="d-flex align-items-center gap-4 task-metadata">
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="ph ph-link"></i>
+                            <span class="text-muted text-sm">Event Link:</span> <a class="text-sm" href="{{ event.eventLink }}" target="_blank">{{ event.eventLink }}</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    } 
+}

@@ -10,7 +10,12 @@
         <h5 class="m-0 p-0 fw-bold">Events</h5>
     </div>
 
-    @for (event of events; track event.id) {
+    <app-event-preview
+        [events]="events"
+        [ignoreCompleted]="true"
+    />
+
+    <!-- @for (event of events; track event.id) {
         @if (!event.isCompleted) {
             <div class="project-box-content flex-gow-1 d-flex gap-2 mb-3">
                 <div class="task-status-check-icons-container" (click)="completeEvent(event)">
@@ -79,25 +84,12 @@
                     }
                     
 
-                    <!-- <div class="d-flex align-items-center mt-2 gap-2">
-                        <img
-                            src="/assets/images/zubayer.jpg"
-                            class="rounded-circle task-participants-image"
-                            alt="Cinque Terre" />
-                        <img
-                            src="/assets/images/zubayer.jpg"
-                            class="rounded-circle task-participants-image"
-                            alt="Cinque Terre" />
-                        <img
-                            src="/assets/images/zubayer.jpg"
-                            class="rounded-circle task-participants-image"
-                            alt="Cinque Terre" />
-                    </div> -->
+                    
 
                 </div>
             </div>
         }
-    }
+    } -->
 
 </div>
 

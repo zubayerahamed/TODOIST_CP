@@ -126,6 +126,22 @@ CONTENT SECTION
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
+
+.r-task-status-icon-unchecked{
+  display: none;
+}
+.r-task-status-check-icons-container:hover .r-task-status-icon-unchecked{
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.r-task-status-check-icons-container:hover .r-task-status-icon-checked{
+  display: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+
 .task-participants-image{
   width: 25px;
   height: 25px;
