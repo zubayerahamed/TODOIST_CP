@@ -149,6 +149,10 @@ CONTENT SECTION
   box-sizing: border-box;
 }
 
+.project-box-header{
+  padding: 0px 15px 0px 15px;
+}
+
 /*
 RESPONSIVE DESIGN - TABLET AND MOBILE
 */

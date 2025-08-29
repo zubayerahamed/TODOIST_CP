@@ -1,0 +1,12 @@
+.project-box-content{
+    cursor: pointer;
+    padding: 15px;
+}
+
+.project-box-content:hover{
+    background: #EEEEEE;
+    border-radius: 20px;
+    transition: 
+        border-radius 0.3s ease,
+        background-color 0.3s ease;
+}

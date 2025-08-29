@@ -1,3 +1,6 @@
 /* Component-specific styles for project component */
 /* This component uses global styles from src/styles.css */
 /* Add any project specific styles here if needed */
+.project-title, .project-settings-link{
+    padding: 0px 15px 0px 15px;
+}

@@ -1,6 +1,6 @@
 <div class="d-flex align-items-center justify-content-between border-bottom p-2">
-    <h3 class="fw-bold mb-0">{{ projectName === 'Inbox' ? projectName : 'Project : ' + projectName }}</h3>
-    <a [routerLink]="['/project-settings', projectId]" class="page-link"><i class="ph ph-gear fs-3"></i></a>
+    <h3 class="project-title fw-bold mb-0">{{ projectName === 'Inbox' ? projectName : 'Project : ' + projectName }}</h3>
+    <a [routerLink]="['/project-settings', projectId]" class="project-settings-link page-link"><i class="ph ph-gear fs-3"></i></a>
 </div>
 
 
